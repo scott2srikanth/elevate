@@ -1,3 +1,4 @@
+import { analysisSchema } from "./analysis";
 import { z } from "zod";
 import { AREAS, exercises } from "../coach";
 const exerciseId = z
@@ -74,6 +75,7 @@ export const stateSchema = z.object({
         at: timestamp,
         kind: z.string(),
         feedback: z.string().max(20000),
+        analysis: analysisSchema.optional(),
         mediaId: z.string().optional(),
       }),
     )

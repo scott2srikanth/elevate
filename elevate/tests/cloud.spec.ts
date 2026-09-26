@@ -1,3 +1,4 @@
+import { exampleAnalysis } from "./fixtures/analysis";
 import { test, expect } from "@playwright/test";
 test("cloud account backs up coaching and restores it on a second device", async ({
   page,
@@ -54,6 +55,16 @@ test("cloud account backs up coaching and restores it on a second device", async
     .getByRole("textbox", { name: "A useful fact or preference" })
     .fill("I prefer short, seated exercises.");
   await page.getByRole("button", { name: "Save to coach memory" }).click();
+  await page
+    .getByRole("textbox", { name: "Paste ChatGPT response JSON" })
+    .fill(JSON.stringify(exampleAnalysis("coach")));
+  await page
+    .getByRole("button", { name: "Preview analysis", exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: "Save analysis to my history" })
+    .click();
+
   await page.getByRole("button", { name: "Profile", exact: true }).click();
   await expect(page.getByText("Saved to D1", { exact: true })).toBeVisible();
   await page.reload();
@@ -90,14 +101,23 @@ test("cloud account backs up coaching and restores it on a second device", async
     .getByRole("textbox", { name: "What would you like help with?" })
     .fill("Help me speak with clarity.");
   await other
-    .getByRole("checkbox", {
-      name: "Share my saved coaching context with Cloudflare Workers AI for this request",
-    })
+    .getByRole("button", { name: "Generate JSON for ChatGPT" })
     .click();
-  await other
-    .getByRole("button", { name: "Ask my coach", exact: true })
-    .click();
-  await expect(other.getByText(/Workers AI is not enabled/)).toBeVisible();
+  const packet = JSON.parse(
+    await other
+      .getByRole("textbox", { name: "JSON to paste into ChatGPT" })
+      .inputValue(),
+  );
+  expect(packet.kind).toBe("coach");
+  expect(packet.context.previousAnalysis[0].summary).toBe(
+    exampleAnalysis("coach").summary,
+  );
+  await expect(
+    other.getByText("Make space for your next sentence", { exact: true }),
+  ).toBeVisible();
+  expect(packet.context.approvedMemories).toContain(
+    "I prefer short, seated exercises.",
+  );
   await other
     .getByRole("button", { name: "More coaching tools", exact: true })
     .click();

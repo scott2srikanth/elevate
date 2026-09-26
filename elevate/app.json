@@ -19,7 +19,8 @@
       },
       "predictiveBackGestureEnabled": false,
       "package": "com.elevate.presencecoach",
-      "allowBackup": false
+      "allowBackup": false,
+      "blockedPermissions": ["android.permission.RECORD_AUDIO"]
     },
     "web": {
       "favicon": "./assets/favicon.png",
@@ -30,20 +31,14 @@
       "expo-secure-store",
       "expo-sharing",
       [
-        "expo-audio",
-        {
-          "microphonePermission": "Allow Elevate to record a practice introduction you choose to review."
-        }
-      ],
-      [
         "expo-image-picker",
         {
-          "photosPermission": "Choose a photo or video to practice with Elevate.",
-          "cameraPermission": "Take a practice or wardrobe photo with Elevate."
+          "photosPermission": "Choose a wardrobe photo to save in Elevate.",
+          "cameraPermission": "Take a wardrobe photo with Elevate.",
+          "microphonePermission": false
         }
       ],
-      "expo-notifications",
-      "expo-video"
+      "expo-notifications"
     ],
     "scheme": "elevate"
   }

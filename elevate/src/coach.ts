@@ -1,3 +1,4 @@
+import type { CoachingAnalysis } from "./shared/analysis";
 import { stagePlan, practiceForTime, reflectionSignals } from "./development";
 export { weeks } from "./curriculum";
 export const AREAS = [
@@ -62,6 +63,7 @@ export type State = {
     at: string;
     kind: string;
     feedback: string;
+    analysis?: CoachingAnalysis;
     mediaId?: string;
   }[];
   brand: {

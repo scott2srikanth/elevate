@@ -312,27 +312,10 @@ export function Preferences({
         calendar; native notifications require a development or production
         build.
       </Text>
-      <Text style={k.label}>New analysis uploads: retention</Text>
-      <View style={k.row}>
-        {([0, 7, 30] as const).map((days) => (
-          <Choice
-            key={days}
-            title={days === 0 ? "Delete after analysis" : `${days} days`}
-            selected={state.preferences.retentionDays === days}
-            onPress={() =>
-              update((s) => ({
-                ...s,
-                preferences: { ...s.preferences, retentionDays: days },
-              }))
-            }
-          />
-        ))}
-      </View>
       <Text style={k.muted}>
-        Changes apply to new uploads. Analysis-only files expire after one hour
-        if analysis is interrupted; scheduled cleanup runs hourly. Wardrobe
-        images use a separate 30-day retention period. Delete any upload earlier
-        in the media library.
+        Studio analysis uses a manual JSON exchange with ChatGPT. Elevate does
+        not upload studio photos or voice recordings. Optional wardrobe photos
+        are stored privately for 30 days and can be deleted in My style.
       </Text>
       {!!message && (
         <Text accessibilityRole="alert" style={k.message}>

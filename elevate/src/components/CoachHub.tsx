@@ -1,19 +1,18 @@
 import React, { useState } from "react";
 import { View, Text, Pressable } from "react-native";
 import { State } from "../coach";
-import { Cloud } from "../useCloud";
 import { WeeklyReview } from "./WeeklyReview";
-import { AssessmentHistory, CoachConversation, MediaStudio } from "./Studio";
+import { AssessmentHistory, CoachMemory } from "./Studio";
+import { StudioExchange } from "./StudioExchange";
+import { StudioBanner } from "./StudioVisuals";
 import { Brand, Culture, Dining } from "./CoachingTools";
 import { Choice, k } from "./kit";
 export function CoachHub({
   state,
   update,
-  cloud,
 }: {
   state: State;
   update: React.Dispatch<React.SetStateAction<State>>;
-  cloud: Cloud;
 }) {
   const [more, setMore] = useState(false);
   const [section, setSection] = useState("Weekly review");
@@ -21,8 +20,8 @@ export function CoachHub({
     <View style={{ gap: 18 }}>
       <Text style={k.title}>Your coaching studio</Text>
       <Text style={k.body}>
-        Review what happened, prepare for your next moment, and carry the
-        learning forward.
+        Your life, your context, your next step. Exchange JSON with ChatGPT and
+        bring your insights to life here.
       </Text>
       <View style={k.row}>
         {["Weekly review", "My coach", "Photo & voice"].map((s) => (
@@ -63,21 +62,53 @@ export function CoachHub({
           )}
         </View>
       )}
-      {section === "Weekly review" ? (
+      <View
+        style={{
+          display: section === "Weekly review" ? "flex" : "none",
+          gap: 14,
+        }}
+      >
+        <StudioBanner
+          image="reflection"
+          title="Turn your week into a way forward"
+          subtitle="Notice the wins. Learn from difficult moments. Choose one next step."
+        />
         <WeeklyReview state={state} update={update} />
-      ) : section === "My coach" ? (
-        <CoachConversation state={state} update={update} cloud={cloud} />
-      ) : section === "Photo & voice" ? (
-        <MediaStudio state={state} update={update} cloud={cloud} />
-      ) : section === "Dining" ? (
+        <StudioExchange kind="weekly" state={state} update={update} />
+      </View>
+      <View
+        style={{ display: section === "My coach" ? "flex" : "none", gap: 14 }}
+      >
+        <StudioBanner
+          image="conversation"
+          title="A coach with your context"
+          subtitle="Bring your goals, real experiences and a question to your next ChatGPT conversation."
+        />
+        <StudioExchange kind="coach" state={state} update={update} />
+        <CoachMemory state={state} update={update} />
+      </View>
+      <View
+        style={{
+          display: section === "Photo & voice" ? "flex" : "none",
+          gap: 14,
+        }}
+      >
+        <StudioBanner
+          image="speaking"
+          title="See and hear your progress"
+          subtitle="Get guidance on your presentation, spoken message and next rehearsal."
+        />
+        <StudioExchange kind="media" state={state} update={update} />
+      </View>
+      {section === "Dining" ? (
         <Dining state={state} update={update} />
       ) : section === "Cultural context" ? (
         <Culture state={state} update={update} />
       ) : section === "Personal brand" ? (
         <Brand state={state} update={update} />
-      ) : (
+      ) : section === "History" ? (
         <AssessmentHistory state={state} update={update} />
-      )}
+      ) : null}
     </View>
   );
 }

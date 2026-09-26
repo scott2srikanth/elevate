@@ -14,6 +14,7 @@ import {
 import { CoachHub } from "./src/components/CoachHub";
 import { MediaStudio, PrivateImage } from "./src/components/Studio";
 import { Outfit, Preferences } from "./src/components/CoachingTools";
+import { StudioBanner } from "./src/components/StudioVisuals";
 import { setReminder } from "./src/dataTools";
 import React, { useEffect, useState } from "react";
 import {
@@ -819,6 +820,11 @@ function AppContent() {
           title="Your style, made simple."
           subtitle="A wardrobe for your life. A little less guesswork each morning."
         />
+        <StudioBanner
+          image="style"
+          title="Build outfits that work for your life"
+          subtitle="Start with what you own. Coordinate with confidence. Make room for comfort."
+        />
         <View
           style={[
             s.card,
@@ -1031,12 +1037,12 @@ function AppContent() {
           <Text style={s.cardTitle}>Personal means personal.</Text>
           <Text style={s.bodyMuted}>
             Your device vault is encrypted. Connected accounts sync to D1;
-            uploaded media stays private in R2 with your chosen retention.
-            Browser encryption cannot protect against someone using your
-            unlocked browser.
+            optional wardrobe photos stay private in R2 for 30 days. Browser
+            encryption cannot protect against someone using your unlocked
+            browser.
           </Text>
           <Text style={s.bodyMuted}>
-            AI requests require your consent. You control coach memories,
+            You choose what to copy to ChatGPT. You control coach memories,
             uploaded media, exports, and account deletion. Appearance and
             personality are never scored.
           </Text>
@@ -1255,7 +1261,7 @@ function AppContent() {
             ) : tab === "Practice" ? (
               Practice()
             ) : tab === "Coach" ? (
-              <CoachHub state={state} update={setState} cloud={cloud} />
+              <CoachHub state={state} update={setState} />
             ) : tab === "My style" ? (
               Wardrobe()
             ) : (

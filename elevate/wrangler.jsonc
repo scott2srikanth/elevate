@@ -21,13 +21,9 @@
   "r2_buckets": [
     { "binding": "MEDIA", "bucket_name": "elevate-private-media" },
   ],
-  "ai": { "binding": "AI" },
   "vars": {
     "APP_ORIGIN": "http://localhost:8787",
     "ALLOWED_ORIGINS": "http://localhost:8081,http://localhost:8787",
-    "AI_ENABLED": "false",
-    "TEXT_MODEL": "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
-    "VISION_MODEL": "@cf/meta/llama-3.2-11b-vision-instruct",
   },
   "triggers": { "crons": ["17 * * * *"] },
   "observability": { "enabled": true, "head_sampling_rate": 0.1 },

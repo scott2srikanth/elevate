@@ -136,7 +136,7 @@ test("D1 account isolation, sync conflicts, private media, export, recovery, and
         body: { message: "Help me", consent: true },
       })
     ).status,
-    503,
+    410,
   );
   assert.equal(
     (
@@ -146,7 +146,7 @@ test("D1 account isolation, sync conflicts, private media, export, recovery, and
         body: { message: "Help me", consent: false },
       })
     ).status,
-    400,
+    410,
   );
   const exported = (await (await request("/export", { cookie })).json()) as {
     account: { email: string };
