@@ -252,10 +252,8 @@ export function AnalysisView({ analysis }: { analysis: CoachingAnalysis }) {
             <Image
               source={studioImages[guide.image]}
               accessibilityLabel={guide.title}
-              style={{
-                width: "100%",
-                aspectRatio: guide.image === "posture" ? 1370 / 1148 : 1.5,
-              }}
+              resizeMode="contain"
+              style={{ width: "100%", height: 280, backgroundColor: "#F4F2E9" }}
             />
             <View style={{ padding: 18, gap: 9 }}>
               <Text style={k.title}>{guide.title}</Text>
