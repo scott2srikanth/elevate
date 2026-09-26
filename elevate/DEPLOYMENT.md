@@ -34,6 +34,10 @@ The app never sends studio media to an AI provider. Users attach media directly 
 
 ## 3. Native Android builds
 
+The Android source is version **1.1.0**, including the manual ChatGPT JSON studio, charts, illustrations, native clipboard and sharing, and removal of microphone access. `android.versionCode` supplies a baseline of 2; EAS manages build numbers remotely and increments them for preview and production builds. Installable upgrades must use the same application ID and signing key as the installed app.
+
+`npm run build:android` verifies the JavaScript/Hermes bundle only. To produce an installable APK after EAS account/project setup, run `npm run build:android:apk`; use `npm run build:android:aab` for the Play Store bundle. Neither command submits a store release.
+
 Use your Expo account and connect the project through EAS. Set `EXPO_PUBLIC_API_URL` in the EAS preview and production environments to your deployed HTTPS Worker origin.
 
 ```sh
