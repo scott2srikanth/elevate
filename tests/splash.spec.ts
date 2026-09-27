@@ -41,3 +41,46 @@ test("reduced motion shows static multilingual branding", async ({ page }) => {
   await page.getByRole("button", { name: "Continue", exact: true }).click();
   await expect(page.getByTestId("launch-splash")).toHaveCount(0);
 });
+
+test("writing reveal resets seamlessly while the text only travels upward", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const word = page
+    .getByTestId("launch-splash")
+    .getByText("Elevate", { exact: true })
+    .first();
+  await word.waitFor({ state: "attached" });
+  const samples = await word.evaluate(async (element) => {
+    const mask = element.parentElement!;
+    const track = mask.parentElement!.parentElement!;
+    const samples: { y: number; width: number }[] = [];
+    await new Promise<void>((resolve) => {
+      const interval = setInterval(() => {
+        const transform = getComputedStyle(track).transform;
+        samples.push({
+          y: transform === "none" ? 0 : new DOMMatrixReadOnly(transform).m42,
+          width: mask.getBoundingClientRect().width,
+        });
+        if (samples.length >= 145) {
+          clearInterval(interval);
+          resolve();
+        }
+      }, 100);
+    });
+    return samples;
+  });
+  expect(samples.some((x) => x.width > 20 && x.width < 200)).toBe(true);
+  let wraps = 0;
+  for (let i = 1; i < samples.length; i++) {
+    const previous = samples[i - 1],
+      current = samples[i];
+    if (current.y > previous.y + 1) {
+      expect(previous.y).toBeLessThan(-500);
+      expect(current.y).toBeGreaterThan(-1);
+      expect(current.width).toBeLessThan(100);
+      wraps++;
+    }
+  }
+  expect(wraps).toBeGreaterThan(0);
+});

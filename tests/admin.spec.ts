@@ -196,6 +196,29 @@ test("administrator JSON publication reaches an open learner, with authorization
     await expect(
       page.getByRole("heading", { name: "Review changes" }),
     ).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: "Apply to all devices", exact: true }),
+    ).toBeDisabled();
+    await expect(
+      page.getByRole("heading", { name: lesson.title, exact: true }),
+    ).toBeVisible();
+    await page.getByRole("button", { name: /^Languages \(/ }).click();
+    await expect(
+      page.getByRole("cell", { name: "आज", exact: true }),
+    ).toBeVisible();
+    await page.getByRole("button", { name: /^Videos \(/ }).click();
+    await expect(
+      page.getByRole("button", { name: "Preview video", exact: true }),
+    ).toBeVisible();
+    await page
+      .getByRole("checkbox", {
+        name: "I reviewed the preview and any removals.",
+      })
+      .check();
+    await page.screenshot({
+      path: `test-results/${test.info().project.name}-admin-dashboard-preview.png`,
+      fullPage: true,
+    });
     await page
       .getByRole("button", { name: "Apply to all devices", exact: true })
       .click();

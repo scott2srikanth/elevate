@@ -1,3 +1,4 @@
+import ContentPreview from "./ContentPreview.web";
 import React, { useEffect, useState } from "react";
 import { router } from "expo-router";
 import { z } from "zod";
@@ -64,6 +65,7 @@ function Administrator() {
     user: { email: string };
     recoveryCode: string;
   } | null>(null);
+  const [reviewed, setReviewed] = useState(false);
   const [published, setPublished] = useState<ContentSnapshot | null>(null);
   const [email, setEmail] = useState(""),
     [password, setPassword] = useState("");
@@ -93,6 +95,7 @@ function Administrator() {
     const next = await api<ContentSnapshot>("/admin/content");
     setPublished(next);
     setPreview(null);
+    setReviewed(false);
     setRaw("");
     setMessage(`Loaded published revision ${next.revision}.`);
   };
@@ -169,6 +172,7 @@ function Administrator() {
   function validate(value: string) {
     setRaw(value);
     setPreview(null);
+    setReviewed(false);
     setMessage("");
     try {
       const doc = parseContent(value);
@@ -189,8 +193,11 @@ function Administrator() {
   }
   return (
     <main
+      className="admin-workspace"
       style={{
-        maxWidth: 1000,
+        maxWidth: 1240,
+        width: "100%",
+        flexShrink: 0,
         margin: "0 auto",
         padding: 24,
         color: "#344333",
@@ -200,9 +207,44 @@ function Administrator() {
         boxSizing: "border-box",
       }}
     >
+      <style>{`
+        .admin-workspace { line-height: 1.6; }
+        .admin-workspace h1 { font-size: clamp(30px, 4vw, 44px); margin: 8px 0; letter-spacing: -1.5px; }
+        .admin-workspace h2 { margin-top: 0; font-size: 23px; }
+        .admin-workspace section { scroll-margin-top: 24px; box-shadow: 0 4px 20px #34433306; }
+        .admin-kicker { font-size: 11px; letter-spacing: 1.8px; font-weight: 700; color: #59634f; }
+        .admin-navigation { display: flex; gap: 8px; flex-wrap: wrap; padding: 12px; background: #344333; border-radius: 14px; margin: 24px 0; }
+        .admin-navigation a { color: white; text-decoration: none; padding: 10px 16px; border-radius: 8px; }
+        .admin-navigation a:hover, .admin-navigation a:focus-visible { background: #526649; }
+        .admin-metrics { display: grid; grid-template-columns: repeat(auto-fit,minmax(130px,1fr)); gap: 14px; margin: 18px 0 24px; }
+        .admin-stat { background: #fff; padding: 20px; border: 1px solid #e5dfd3; border-radius: 14px; display: flex; flex-direction: column; }
+        .admin-stat strong { font-size: 32px; line-height: 1.3; }
+        .admin-stat span { font-size: 13px; color: #59634f; text-transform: capitalize; }
+        .config-preview { border: 1px solid #d4d7c9; border-radius: 16px; background: #f7f3ec; padding: 22px; margin: 24px 0; }
+        .admin-preview-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0; }
+        .config-preview button { border: 1px solid #d4d7c9; background: white; color: #344333; padding: 12px 16px; border-radius: 10px; cursor: pointer; }
+        .config-preview button[aria-pressed=true] { background: #344333; color: white; }
+        .config-preview select { display: block; padding: 12px; width: 100%; margin: 8px 0 18px; border: 1px solid #d4d7c9; border-radius: 8px; background: white; color: #344333; }
+        .learner-preview { background: white; border: 1px solid #e5dfd3; border-radius: 14px; padding: 24px; overflow-wrap: anywhere; }
+        .learner-preview h2 { margin: 12px 0; font-family: Georgia, serif; }
+        .admin-challenge { background: #e2e8d8; border-radius: 12px; padding: 16px; }
+        .admin-challenge h4 { margin-top: 0; }
+        .admin-video-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(280px,100%),1fr)); gap: 16px; }
+        .admin-warning { background: #fff1e5; border-left: 3px solid #a36343; padding: 12px; overflow-wrap: anywhere; }
+        .admin-translation-table { max-height: 380px; overflow: auto; }
+        .admin-translation-table table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+        .admin-translation-table td,.admin-translation-table th { padding: 12px; text-align: left; border-bottom: 1px solid #d4d7c9; overflow-wrap: anywhere; }
+        .admin-footnote { font-size: 13px; color: #59634f; }
+        .admin-approval { display: flex; align-items: center; gap: 10px; margin-top: 20px; }
+        .admin-approval input { width: 20px; height: 20px; accent-color: #425441; }
+        .admin-workspace button:disabled { opacity: .45; cursor: not-allowed; }
+        .admin-workspace button:focus-visible,.admin-workspace a:focus-visible { outline: 3px solid #a36343; outline-offset: 3px; }
+        @media(max-width: 600px) { .config-preview { padding: 14px; } .learner-preview { padding: 16px; } }
+      `}</style>
       <button style={button} onClick={() => router.push("/profile")}>
         ← Back to profile
       </button>
+      <div className="admin-kicker">ELEVATE / CONTROL CENTER</div>
       <h1>Administrator workspace</h1>
       <p>
         Publish lessons, playable videos and languages to every device. This
@@ -264,7 +306,30 @@ function Administrator() {
         </form>
       ) : (
         <>
-          <section style={panel}>
+          <nav
+            className="admin-navigation"
+            aria-label="Administrator navigation"
+          >
+            <a href="#dashboard">Overview</a>
+            <a href="#accounts">User accounts</a>
+            <a href="#templates">Create content</a>
+            <a href="#import">Preview & publish</a>
+          </nav>
+          <div className="admin-metrics">
+            {[
+              ["Managed lessons", published.document.lessons.length],
+              ["Managed videos", published.document.videos.length],
+              ["Language packs", published.document.languages.length],
+              ["Live revision", published.revision],
+            ].map(([label, value]) => (
+              <div className="admin-stat" key={label}>
+                <span>{label}</span>
+                <strong>{value}</strong>
+              </div>
+            ))}
+          </div>
+          <section id="dashboard" style={panel}>
+            <span className="admin-kicker">LIVE CONTENT</span>
             <h2>Published revision {published.revision}</h2>
             <p>
               {published.document.lessons.length} managed lessons ·{" "}
@@ -297,6 +362,7 @@ function Administrator() {
                   await api("/auth/logout", { method: "POST" });
                   setPublished(null);
                   setPreview(null);
+                  setReviewed(false);
                   setRaw("");
                   setTemplate("");
                   setUserEmail("");
@@ -308,7 +374,7 @@ function Administrator() {
               Sign out
             </button>
           </section>
-          <section style={panel}>
+          <section id="accounts" style={panel}>
             <h2>Create a user account</h2>
             <p>
               Create a learner account and share its credentials privately with
@@ -381,7 +447,7 @@ function Administrator() {
               </div>
             )}
           </section>
-          <section style={panel}>
+          <section id="templates" style={panel}>
             <h2>1. Create a JSON template</h2>
             <label>
               Template type
@@ -505,7 +571,7 @@ function Administrator() {
               </>
             )}
           </section>
-          <section style={panel}>
+          <section id="import" style={panel}>
             <h2>2. Import and review ChatGPT’s JSON</h2>
             <p>
               Import the completed document, not the prompt wrapper. Publishing
@@ -524,6 +590,7 @@ function Administrator() {
                   e.target.value = "";
                   if (!file) return;
                   setPreview(null);
+                  setReviewed(false);
                   void run(async () => {
                     if (file.size > 2 * 1024 * 1024)
                       throw new Error("JSON must be smaller than 2 MB.");
@@ -541,6 +608,7 @@ function Administrator() {
                 onChange={(e) => {
                   setRaw(e.target.value);
                   setPreview(null);
+                  setReviewed(false);
                 }}
               />
             </label>
@@ -553,33 +621,11 @@ function Administrator() {
             </button>
             {preview && (
               <>
-                <h3>Review changes</h3>
-                <ul>
-                  {preview.lessons.map((x) => (
-                    <li key={`l-${x.id}`}>
-                      Lesson: {x.title} ({x.id})
-                    </li>
-                  ))}
-                  {preview.videos.map((x) => (
-                    <li key={`v-${x.id}`}>
-                      Video: {x.title} · {x.audio} · {x.format} ·{" "}
-                      {x.lessonIds.join(", ")}
-                      <br />
-                      {x.url}
-                    </li>
-                  ))}
-                  {preview.languages.map((x) => (
-                    <li key={`p-${x.code}`}>
-                      Language: {x.name} ({x.code}) ·{" "}
-                      {Object.keys(x.strings).length} translations
-                    </li>
-                  ))}
-                </ul>
-                <p>
-                  Missing translations fall back to English. User notes and
-                  names are never translated. Interview-format items are
-                  excluded from the learner library.
-                </p>
+                <ContentPreview
+                  key={JSON.stringify(preview)}
+                  document={preview}
+                  published={published.document}
+                />
                 <details>
                   <summary>Full validated document</summary>
                   <pre
@@ -588,11 +634,20 @@ function Administrator() {
                     {JSON.stringify(preview, null, 2)}
                   </pre>
                 </details>
+                <label className="admin-approval">
+                  <input
+                    type="checkbox"
+                    checked={reviewed}
+                    onChange={(e) => setReviewed(e.target.checked)}
+                  />{" "}
+                  I reviewed the preview and any removals.
+                </label>
                 <button
                   style={button}
-                  disabled={busy}
+                  disabled={busy || !reviewed}
                   onClick={() =>
                     void run(async () => {
+                      if (!reviewed) return;
                       const result = await api<ContentSnapshot>(
                         "/admin/content",
                         {
@@ -605,6 +660,7 @@ function Administrator() {
                       );
                       setPublished(result);
                       setPreview(null);
+                      setReviewed(false);
                       setMessage(
                         `Revision ${result.revision} published. Online apps refresh within 60 seconds or on next resume. Offline devices update when connected.`,
                       );

@@ -18,7 +18,7 @@ const names = [
   { text: "எலிவேட்", language: "தமிழ்", color: "#855A46" },
   { text: "എലിവേറ്റ്", language: "മലയാളം", color: "#425441" },
 ];
-const rowHeight = 90;
+const rowHeight = 108;
 export function LaunchSplash({
   ready,
   onFinish,
@@ -28,6 +28,10 @@ export function LaunchSplash({
 }) {
   const { height, width } = useWindowDimensions();
   const [offset] = useState(() => new Animated.Value(0));
+  const [reveals] = useState(() =>
+    [...names, names[0]].map(() => new Animated.Value(0)),
+  );
+  const wordWidth = Math.min(560, width - 48);
   const [reducedMotion, setReducedMotion] = useState(true);
   useEffect(() => {
     let alive = true;
@@ -47,11 +51,23 @@ export function LaunchSplash({
   }, []);
   useEffect(() => {
     offset.setValue(0);
+    reveals.forEach((value) => value.setValue(reducedMotion ? 1 : 0));
     if (reducedMotion) return;
-    const animation = Animated.loop(
-      Animated.sequence(
+    let stopped = false;
+    let animation: Animated.CompositeAnimation;
+    const cycle = () => {
+      // The duplicate first row is still blank here, so resetting the track is invisible.
+      offset.setValue(0);
+      reveals.forEach((value) => value.setValue(0));
+      animation = Animated.sequence(
         names.flatMap((_, index) => [
-          Animated.delay(1600),
+          Animated.timing(reveals[index], {
+            toValue: 1,
+            duration: 1000,
+            easing: Easing.linear,
+            useNativeDriver: false,
+          }),
+          Animated.delay(1100),
           Animated.timing(offset, {
             toValue: -(index + 1) * rowHeight,
             duration: 500,
@@ -59,11 +75,17 @@ export function LaunchSplash({
             useNativeDriver: Platform.OS !== "web",
           }),
         ]),
-      ),
-    );
-    animation.start();
-    return () => animation.stop();
-  }, [offset, reducedMotion]);
+      );
+      animation.start(({ finished }) => {
+        if (finished && !stopped) cycle();
+      });
+    };
+    cycle();
+    return () => {
+      stopped = true;
+      animation?.stop();
+    };
+  }, [offset, reveals, reducedMotion]);
   const artworkSize = Math.max(100, Math.min(260, height * 0.32, width * 0.65));
   return (
     <View testID="launch-splash" style={styles.root}>
@@ -89,19 +111,33 @@ export function LaunchSplash({
             style={{ transform: [{ translateY: offset }] }}
           >
             {[...names, names[0]].map((name, index) => (
-              <View key={index} style={styles.wordRow}>
-                <Text
-                  raw
-                  style={[
-                    styles.word,
-                    {
-                      color: name.color,
-                      fontSize: Math.min(46, width * 0.105),
-                    },
-                  ]}
+              <View key={index} style={[styles.wordRow, { width: wordWidth }]}>
+                <Animated.View
+                  style={{
+                    overflow: "hidden",
+                    width: reveals[index].interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [0, wordWidth],
+                    }),
+                    alignSelf: "flex-start",
+                  }}
                 >
-                  {name.text}
-                </Text>
+                  <Text
+                    raw
+                    style={[
+                      styles.word,
+                      {
+                        color: name.color,
+                        fontSize:
+                          Math.min(68, width * 0.145) *
+                          (index === 4 ? 0.82 : index === 3 ? 0.92 : 1),
+                        width: wordWidth,
+                      },
+                    ]}
+                  >
+                    {name.text}
+                  </Text>
+                </Animated.View>
               </View>
             ))}
           </Animated.View>
@@ -170,7 +206,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  word: { fontWeight: "600", lineHeight: 78, textAlign: "center" },
+  word: { fontWeight: "600", lineHeight: 100, textAlign: "center" },
   languages: {
     flexDirection: "row",
     flexWrap: "wrap",
