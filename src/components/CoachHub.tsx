@@ -7,6 +7,7 @@ import { AssessmentHistory, CoachMemory } from "./Studio";
 import { StudioExchange } from "./StudioExchange";
 import { StudioBanner } from "./StudioVisuals";
 import { Brand, Culture, Dining } from "./CoachingTools";
+import { VideoLibrary } from "./VideoLibrary";
 import { Choice, k } from "./kit";
 export function CoachHub({
   state,
@@ -25,7 +26,7 @@ export function CoachHub({
         bring your insights to life here.
       </Text>
       <View style={k.row}>
-        {["Weekly review", "My coach", "Photo & voice"].map((s) => (
+        {["Weekly review", "My coach", "Photo & voice", "Videos"].map((s) => (
           <Choice
             key={s}
             title={s}
@@ -101,6 +102,7 @@ export function CoachHub({
         />
         <StudioExchange kind="media" state={state} update={update} />
       </View>
+      {section === "Videos" && <VideoLibrary />}
       {section === "Dining" ? (
         <Dining state={state} update={update} />
       ) : section === "Cultural context" ? (

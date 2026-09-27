@@ -1,0 +1,73 @@
+import { test, expect } from "@playwright/test";
+
+test("video filters, single player, practice handoff and Telugu guidance", async ({
+  page,
+}) => {
+  // Third-party streaming is deliberately mocked: exercise our UI without ads or network variability.
+  await page.route("https://www.youtube-nocookie.com/**", (route) =>
+    route.fulfill({
+      contentType: "text/html",
+      body: "<p>Publisher player</p>",
+    }),
+  );
+  await page.goto("/");
+  await page.getByRole("button", { name: "Close dialog" }).click();
+  await page.getByRole("button", { name: "Coach", exact: true }).click();
+  await page.getByRole("button", { name: "Videos", exact: true }).click();
+  await expect(
+    page.getByRole("button", { name: "Watch lesson", exact: true }),
+  ).toHaveCount(6);
+  await expect(page.locator("iframe")).toHaveCount(0);
+  await page
+    .getByRole("button", { name: "Watch lesson", exact: true })
+    .first()
+    .click();
+  await expect(page.locator("iframe")).toHaveAttribute("src", /eIho2S0ZahI/);
+  await expect(page.locator("iframe")).toHaveAttribute(
+    "referrerpolicy",
+    "strict-origin-when-cross-origin",
+  );
+  await page
+    .getByRole("button", { name: "Watch lesson", exact: true })
+    .first()
+    .click();
+  await expect(page.locator("iframe")).toHaveCount(1);
+  await expect(page.locator("iframe")).toHaveAttribute("src", /R1vskiVDwl4/);
+  await page.getByRole("button", { name: "Listening", exact: true }).click();
+  await expect(page.locator("iframe")).toHaveCount(0);
+  await expect(
+    page.getByRole("button", { name: "Watch lesson", exact: true }),
+  ).toHaveCount(2);
+  await page
+    .getByRole("button", { name: "Watch lesson", exact: true })
+    .first()
+    .click();
+  await page.getByRole("button", { name: "My coach", exact: true }).click();
+  await expect(page.locator("iframe")).toHaveCount(0);
+  await page.getByRole("button", { name: "Videos", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Watch lesson", exact: true })
+    .first()
+    .click();
+  await page
+    .getByRole("button", { name: "Go to practice", exact: true })
+    .click();
+  await expect(page).toHaveURL(/\/practice$/);
+  await expect(page.locator("iframe")).toHaveCount(0);
+  await page.getByRole("button", { name: "Profile", exact: true }).click();
+  await page.getByRole("button", { name: "తెలుగు", exact: true }).click();
+  await page.getByRole("button", { name: "కోచ్", exact: true }).click();
+  await page.getByRole("button", { name: "వీడియోలు", exact: true }).click();
+  await expect(
+    page.getByText("ఇతరులు ఆసక్తిగా వినేలా మాట్లాడండి", { exact: true }),
+  ).toBeVisible();
+  await page
+    .getByRole("button", { name: "పాఠం చూడండి", exact: true })
+    .first()
+    .click();
+  await expect(page.locator("iframe")).toHaveAttribute("src", /hl=te/);
+  await page.screenshot({
+    path: `test-results/${test.info().project.name}-video-library.png`,
+    fullPage: true,
+  });
+});
