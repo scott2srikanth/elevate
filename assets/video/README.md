@@ -1,7 +1,7 @@
-# Silent welcome video
+# Character welcome video
 
-`welcome.mp4` is a six-second, 720×720 H.264 motion graphic rendered from the supplied coaching-companions artwork. It uses gentle whole-image movement, welcome text, and a downward Continue cue. It does not contain generated character gestures or lip movement. There is no audio stream.
+`welcome.mp4` uses the user-supplied `still_head_and_shoes_are_cut.mp4`. It retains the actual animated gestures and full 16:9 frame. The cleaner 0.8–6.4 second section is used, with a 0.4-second tail-to-head dissolve and the playback start shifted beyond the overlap so the loop boundary is continuous. Audio is removed. Output is 960×540 H.264, 24 fps.
 
-Rebuild from the repository root with `sh scripts/build-welcome-video.sh`. On another OS, set `FONT_FILE` to an available TrueType font. FFmpeg must include drawtext.
+Rebuild with `sh scripts/build-welcome-video.sh /path/to/original.mp4`. The original is not bundled. Foot cropping present in the original cannot be recovered through playback styling.
 
-The video is bundled for offline native playback and served as a local static asset on the web. It loops muted, pauses in the background, and unmounts on Continue. Reduced-motion users see the original still image; load/autoplay failure also retains the image. The multilingual word animation remains separate.
+Web and Android preserve the frame with contain sizing. The video loops muted, pauses in the background, and unmounts on Continue. Reduced-motion users see the supplied still image. Load/autoplay failures retain the still-image fallback. The multilingual writing animation remains separate.

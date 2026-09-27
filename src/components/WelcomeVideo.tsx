@@ -31,12 +31,22 @@ export default function WelcomeVideo({ size }: { size: number }) {
     <View
       accessibilityLabel="Welcome to Elevate. Tap Continue below to begin."
       accessible
-      style={{ width: size, height: size }}
+      style={{
+        width: size,
+        height: (size * 9) / 16,
+        borderRadius: 18,
+        overflow: "hidden",
+      }}
       pointerEvents="none"
     >
       <Image
         source={require("../../assets/brand-splash.png")}
-        style={{ width: size, height: size, position: "absolute" }}
+        style={{
+          width: size,
+          height: (size * 9) / 16,
+          position: "absolute",
+          opacity: visible ? 0 : 1,
+        }}
         resizeMode="contain"
         accessible={false}
       />
@@ -45,7 +55,11 @@ export default function WelcomeVideo({ size }: { size: number }) {
         nativeControls={false}
         contentFit="contain"
         surfaceType="textureView"
-        style={{ width: size, height: size, opacity: visible ? 1 : 0 }}
+        style={{
+          width: size,
+          height: (size * 9) / 16,
+          opacity: visible ? 1 : 0,
+        }}
       />
     </View>
   );

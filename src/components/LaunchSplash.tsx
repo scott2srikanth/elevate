@@ -103,7 +103,7 @@ export function LaunchSplash({
             accessibilityLabel="Elevate coaching companions"
           />
         ) : (
-          <WelcomeVideo size={artworkSize} />
+          <WelcomeVideo size={Math.min(width - 48, 520, artworkSize * 1.8)} />
         )}
         <View
           accessible

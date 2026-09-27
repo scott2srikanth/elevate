@@ -22,11 +22,22 @@ export default function WelcomeVideo({ size }: { size: number }) {
     <div
       role="img"
       aria-label="Welcome to Elevate. Tap Continue below to begin."
-      style={{ width: size, height: size, position: "relative" }}
+      style={{
+        width: size,
+        height: (size * 9) / 16,
+        position: "relative",
+        borderRadius: 18,
+        overflow: "hidden",
+      }}
     >
       <Image
         source={require("../../assets/brand-splash.png")}
-        style={{ width: size, height: size, position: "absolute" }}
+        style={{
+          width: size,
+          height: (size * 9) / 16,
+          position: "absolute",
+          opacity: playing ? 0 : 1,
+        }}
         resizeMode="contain"
         accessible={false}
       />
@@ -45,7 +56,7 @@ export default function WelcomeVideo({ size }: { size: number }) {
         style={{
           position: "relative",
           width: size,
-          height: size,
+          height: (size * 9) / 16,
           objectFit: "contain",
           pointerEvents: "none",
           opacity: playing ? 1 : 0,
