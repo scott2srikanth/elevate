@@ -57,7 +57,7 @@ The Android source is version **1.1.0**, including the manual ChatGPT JSON studi
 
 `npm run build:android` verifies the JavaScript/Hermes bundle only. To produce an installable APK after EAS account/project setup, run `npm run build:android:apk`; use `npm run build:android:aab` for the Play Store bundle. Neither command submits a store release.
 
-Use your Expo account and connect the project through EAS. Set `EXPO_PUBLIC_API_URL` in the EAS preview and production environments to your deployed HTTPS Worker origin.
+Use your Expo account and connect the project through EAS. The preview and production profiles in `eas.json` now set `EXPO_PUBLIC_API_URL` to `https://elevate.skrdy.com`. An APK built before this setting must be rebuilt and installed; changing the Worker configuration does not update an installed APK.
 
 ```sh
 npx eas-cli@latest login

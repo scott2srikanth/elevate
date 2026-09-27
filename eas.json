@@ -10,14 +10,20 @@
         "buildType": "apk"
       },
       "environment": "preview",
-      "autoIncrement": true
+      "autoIncrement": true,
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://elevate.skrdy.com"
+      }
     },
     "production": {
       "android": {
         "buildType": "app-bundle"
       },
       "environment": "production",
-      "autoIncrement": true
+      "autoIncrement": true,
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://elevate.skrdy.com"
+      }
     },
     "development": {
       "developmentClient": true,
