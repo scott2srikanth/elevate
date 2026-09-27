@@ -84,3 +84,37 @@ test("writing reveal resets seamlessly while the text only travels upward", asyn
   }
   expect(wraps).toBeGreaterThan(0);
 });
+
+test("silent welcome video autoplays and stops when Continue is pressed", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const video = page.getByTestId("welcome-video");
+  await expect(video).toBeVisible();
+  await expect
+    .poll(() =>
+      video.evaluate((element: HTMLVideoElement) => element.currentTime),
+    )
+    .toBeGreaterThan(0.2);
+  expect(
+    await video.evaluate((element: HTMLVideoElement) => ({
+      muted: element.muted,
+      controls: element.controls,
+      loop: element.loop,
+      inline: element.playsInline,
+    })),
+  ).toEqual({ muted: true, controls: false, loop: true, inline: true });
+  await page.screenshot({
+    path: `test-results/${test.info().project.name}-welcome-video.png`,
+  });
+  await page.getByRole("button", { name: "Continue", exact: true }).click();
+  await expect(video).toHaveCount(0);
+});
+test("reduced motion skips the welcome video", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+  await expect(
+    page.getByRole("img", { name: "Elevate coaching companions" }),
+  ).toBeVisible();
+  await expect(page.getByTestId("welcome-video")).toHaveCount(0);
+});

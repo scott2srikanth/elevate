@@ -1,3 +1,4 @@
+import WelcomeVideo from "./WelcomeVideo";
 import React, { useEffect, useState } from "react";
 import {
   AccessibilityInfo,
@@ -94,12 +95,16 @@ export function LaunchSplash({
         <Text raw style={styles.eyebrow}>
           YOUR PERSONAL COACH
         </Text>
-        <Image
-          source={require("../../assets/brand-splash.png")}
-          style={{ width: artworkSize, height: artworkSize }}
-          resizeMode="contain"
-          accessibilityLabel="Elevate coaching companions"
-        />
+        {reducedMotion ? (
+          <Image
+            source={require("../../assets/brand-splash.png")}
+            style={{ width: artworkSize, height: artworkSize }}
+            resizeMode="contain"
+            accessibilityLabel="Elevate coaching companions"
+          />
+        ) : (
+          <WelcomeVideo size={artworkSize} />
+        )}
         <View
           accessible
           accessibilityLabel="Elevate — English, Hindi, Telugu, Tamil, Malayalam"
@@ -160,7 +165,7 @@ export function LaunchSplash({
         <Text style={styles.tagline}>Your personal coach, every day.</Text>
         <View style={styles.rule} />
         <Text raw style={styles.caption}>
-          A little practice. A lasting difference.
+          Welcome! Tap Continue below to begin.
         </Text>
       </View>
       <Pressable
