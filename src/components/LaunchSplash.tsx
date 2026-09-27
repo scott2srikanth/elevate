@@ -88,36 +88,22 @@ export function LaunchSplash({
       animation?.stop();
     };
   }, [offset, reveals, reducedMotion]);
-  const artworkSize = Math.max(100, Math.min(260, height * 0.32, width * 0.65));
   return (
     <View testID="launch-splash" style={styles.root}>
       <StatusBar style="dark" />
       <SplashBackdrop />
-      {!reducedMotion && <WelcomeVideo width={width} height={height} />}
-      <View
-        pointerEvents="none"
-        style={[
-          StyleSheet.absoluteFill,
-          { backgroundColor: "rgba(247,243,236,0.48)" },
-        ]}
-      />
-      <View
-        style={[
-          styles.content,
-          { marginTop: reducedMotion ? 0 : height * 0.34 },
-        ]}
-      >
-        <Text raw style={styles.eyebrow}>
-          YOUR NEXT CHAPTER STARTS HERE
-        </Text>
-        {reducedMotion && (
-          <Image
-            source={require("../../assets/brand-splash.png")}
-            style={{ width: artworkSize, height: artworkSize }}
-            resizeMode="contain"
-            accessibilityLabel="Elevate coaching companions"
-          />
-        )}
+      {reducedMotion ? (
+        <Image
+          source={require("../../assets/brand-splash.png")}
+          style={StyleSheet.absoluteFill}
+          resizeMode="cover"
+          accessibilityLabel="Elevate coaching companions"
+        />
+      ) : (
+        <WelcomeVideo width={width} height={height} />
+      )}
+      <View style={[styles.content, { marginTop: height * 0.34 }]}>
+        <View style={{ height: 32 }} accessible={false} />
         <View
           accessible
           accessibilityLabel="Elevate — English, Hindi, Telugu, Tamil, Malayalam"
@@ -160,26 +146,6 @@ export function LaunchSplash({
             ))}
           </Animated.View>
         </View>
-        <View style={styles.languages}>
-          {names.map((name) => (
-            <Text raw key={name.language} style={styles.language}>
-              {name.language}
-            </Text>
-          ))}
-        </View>
-        {reducedMotion && (
-          <Text raw style={styles.staticNames}>
-            {names
-              .slice(1)
-              .map((name) => name.text)
-              .join(" · ")}
-          </Text>
-        )}
-        <Text style={styles.tagline}>Your personal coach, every day.</Text>
-        <View style={styles.rule} />
-        <Text raw style={styles.caption}>
-          Welcome! Tap Continue below to begin.
-        </Text>
       </View>
       <Pressable
         accessibilityRole="button"
@@ -189,9 +155,7 @@ export function LaunchSplash({
         onPress={onFinish}
         style={[styles.continue, !ready && { opacity: 0.55 }]}
       >
-        <Text style={styles.continueText}>
-          {ready ? "Continue" : "Getting your coach ready…"}
-        </Text>
+        <Text style={styles.continueText}>Continue</Text>
       </Pressable>
     </View>
   );
@@ -209,16 +173,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "100%",
     maxWidth: 560,
+    height: 297,
     paddingVertical: 18,
     flexShrink: 1,
     zIndex: 1,
-  },
-  eyebrow: {
-    fontSize: 10,
-    letterSpacing: 3,
-    fontWeight: "600",
-    color: "#59634F",
-    marginBottom: 20,
   },
   wordWindow: { height: rowHeight, overflow: "hidden", width: "100%" },
   wordRow: {
@@ -227,34 +185,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   word: { fontWeight: "600", lineHeight: 100, textAlign: "center" },
-  languages: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "center",
-    gap: 12,
-    marginBottom: 20,
-  },
-  language: { fontSize: 12, lineHeight: 22, color: "#59634F" },
-  staticNames: {
-    fontSize: 14,
-    lineHeight: 28,
-    textAlign: "center",
-    color: "#425441",
-    marginBottom: 12,
-  },
-  tagline: {
-    fontSize: 17,
-    lineHeight: 26,
-    color: "#344333",
-    textAlign: "center",
-  },
-  rule: {
-    width: 36,
-    height: 2,
-    backgroundColor: "#AA7254",
-    marginVertical: 18,
-  },
-  caption: { fontSize: 12, color: "#59634F", textAlign: "center" },
   continue: {
     minHeight: 52,
     width: "100%",

@@ -32,11 +32,11 @@ test("multilingual splash scrolls names and waits for Continue", async ({
     page.getByRole("textbox", { name: "What should we call you?" }),
   ).toBeVisible();
 });
-test("reduced motion shows static multilingual branding", async ({ page }) => {
+test("reduced motion shows static Elevate branding", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
   await expect(
-    page.getByText("एलिवेट · ఎలివేట్ · எலிவேட் · എലിവേറ്റ്", { exact: true }),
+    page.getByText("Elevate", { exact: true }).first(),
   ).toBeVisible();
   await page.getByRole("button", { name: "Continue", exact: true }).click();
   await expect(page.getByTestId("launch-splash")).toHaveCount(0);
@@ -104,6 +104,10 @@ test("silent welcome video autoplays and stops when Continue is pressed", async 
       inline: element.playsInline,
     })),
   ).toEqual({ muted: true, controls: false, loop: true, inline: true });
+  const button = await page.getByRole("button", { name: "Continue", exact: true }).boundingBox();
+  expect(button!.y).toBeCloseTo(test.info().project.name === "mobile" ? 721.3125 : 843, 0);
+  await expect(page.getByText("Your personal coach, every day.", { exact: true })).toHaveCount(0);
+  await expect(page.getByText("Welcome! Tap Continue below to begin.", { exact: true })).toHaveCount(0);
   await page.screenshot({
     path: `test-results/${test.info().project.name}-welcome-video.png`,
   });
