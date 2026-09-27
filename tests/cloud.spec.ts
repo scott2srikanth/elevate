@@ -1,8 +1,10 @@
+import { localAccount } from "./fixtures/localAccount";
 import { exampleAnalysis } from "./fixtures/analysis";
 import { test, expect } from "@playwright/test";
 test("cloud account backs up coaching and restores it on a second device", async ({
   page,
   browser,
+  baseURL,
 }) => {
   const email = `ui-${test.info().project.name}-${Date.now()}@example.com`,
     password = "test-cloud-password-2026";
@@ -15,20 +17,17 @@ test("cloud account backs up coaching and restores it on a second device", async
     .fill("Morgan");
   await page.getByRole("button", { name: "Begin my journey" }).click();
   await page.getByRole("button", { name: "Profile", exact: true }).click();
-  await page
-    .getByRole("button", { name: "Create account", exact: true })
-    .click();
+  await localAccount(email, password, baseURL);
+  await expect(
+    page.getByRole("button", { name: "Create account", exact: true }),
+  ).toHaveCount(0);
   await page.getByRole("textbox", { name: "Email address" }).fill(email);
   await page
     .getByRole("textbox", { name: "Password (12+ characters)", exact: true })
     .fill(password);
   await page
-    .getByRole("button", { name: "Create cloud account", exact: true })
+    .getByRole("button", { name: "Sign in to cloud", exact: true })
     .click();
-  await expect(
-    page.getByText("Save this recovery code now. It is only shown once."),
-  ).toBeVisible();
-  await page.getByRole("button", { name: "I saved my recovery code" }).click();
   await page
     .getByRole("button", { name: "Back up this device to cloud" })
     .click();

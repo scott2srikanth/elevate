@@ -1,3 +1,4 @@
+import { localAccount } from "./fixtures/localAccount";
 import { test, expect } from "@playwright/test";
 import { execFileSync } from "node:child_process";
 import type { ContentDocument, ContentSnapshot } from "../src/shared/content";
@@ -15,12 +16,29 @@ test("administrator JSON publication reaches an open learner, with authorization
   const headers = { "X-Elevate-Request": "1", "CF-Connecting-IP": email };
   const anonymous = await page.request.get("/api/admin/content");
   expect(anonymous.status()).toBe(401);
-  const register = await page.request.post("/api/auth/register", {
+  await localAccount(email, password, baseURL);
+  expect(
+    (
+      await page.request.post("/api/auth/register", {
+        headers,
+        data: { email, password },
+      })
+    ).status(),
+  ).toBe(403);
+  const register = await page.request.post("/api/auth/login", {
     headers,
     data: { email, password },
   });
   expect(register.status()).toBe(200);
   expect((await page.request.get("/api/admin/content")).status()).toBe(403);
+  expect(
+    (
+      await page.request.post("/api/admin/users", {
+        headers,
+        data: { email: "denied@example.com", password },
+      })
+    ).status(),
+  ).toBe(403);
   expect(
     (
       await page.request.put("/api/admin/content", {
@@ -76,6 +94,40 @@ test("administrator JSON publication reaches an open learner, with authorization
     await expect(
       page.getByRole("heading", { name: "Administrator workspace" }),
     ).toBeVisible();
+    const learnerEmail = `learner-${crypto.randomUUID()}@example.com`;
+    await page.getByLabel("User email", { exact: true }).fill(learnerEmail);
+    await page.getByLabel("User password (12+ characters)").fill(password);
+    await page
+      .getByRole("button", { name: "Create user account", exact: true })
+      .click();
+    await expect(
+      page.getByText(`Account created: ${learnerEmail}`),
+    ).toBeVisible();
+    expect(
+      (
+        await page.request.post("/api/admin/users", {
+          headers,
+          data: { email: learnerEmail, password },
+        })
+      ).status(),
+    ).toBe(409);
+    await page.getByRole("button", { name: "I saved the recovery code" }).click();
+    const login = await learner.request.post("/api/auth/login", {
+      headers,
+      data: { email: learnerEmail, password },
+    });
+    expect(login.status()).toBe(200);
+    expect((await learner.request.get("/api/admin/content")).status()).toBe(
+      403,
+    );
+    expect(
+      (
+        await learner.request.delete("/api/account", {
+          headers,
+          data: { password },
+        })
+      ).status(),
+    ).toBe(200);
     await page.getByLabel("Template type").selectOption("language");
     await page.getByLabel("Language code").fill("hi");
     await page.getByLabel("Language name").fill("हिन्दी");

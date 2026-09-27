@@ -1,6 +1,13 @@
 import { contentSchema, emptyContent } from "../src/shared/content";
-import { exercises } from "../src/coach";
-import { HttpError, jsonBody, limitedBody } from "./security";
+import { exercises, initialState } from "../src/coach";
+import {
+  HttpError,
+  jsonBody,
+  limitedBody,
+  passwordHash,
+  randomToken,
+  sha256,
+} from "./security";
 import { z } from "zod";
 type Env = { DB: D1Database; MEDIA: R2Bucket };
 const respond = (body: unknown, status = 200) =>
@@ -72,6 +79,43 @@ export async function contentRoute(
       403,
       "Administrator access is required. Ask the owner to assign your account.",
     );
+  if (path === "/api/admin/users" && request.method === "POST") {
+    const input = z
+      .object({
+        email: z.string().trim().toLowerCase().email().max(254),
+        password: z.string().min(12).max(128),
+      })
+      .strict()
+      .parse(await jsonBody(request, 2048));
+    const id = crypto.randomUUID(),
+      salt = randomToken(),
+      recoveryCode = randomToken();
+    const timestamp = Math.floor(Date.now() / 1000);
+    try {
+      await env.DB.batch([
+        env.DB.prepare(
+          "INSERT INTO users(id,email,password_hash,salt,recovery_hash,created_at) VALUES(?,?,?,?,?,?)",
+        ).bind(
+          id,
+          input.email,
+          await passwordHash(input.password, salt),
+          salt,
+          await sha256(recoveryCode),
+          timestamp,
+        ),
+        env.DB.prepare("INSERT INTO coach_state VALUES(?,?,0,?)").bind(
+          id,
+          JSON.stringify(initialState()),
+          timestamp,
+        ),
+      ]);
+    } catch (error) {
+      if (String(error).includes("UNIQUE"))
+        throw new HttpError(409, "An account with this email already exists.");
+      throw error;
+    }
+    return respond({ user: { id, email: input.email }, recoveryCode }, 201);
+  }
   if (path === "/api/admin/content" && request.method === "GET")
     return respond(await currentContent(env));
   if (path === "/api/admin/content" && request.method === "PUT") {

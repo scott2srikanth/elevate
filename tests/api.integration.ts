@@ -1,3 +1,4 @@
+import { localAccount } from "./fixtures/localAccount";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { initialState } from "../src/coach";
@@ -33,16 +34,18 @@ const request = async (
 test("D1 account isolation, sync conflicts, private media, export, recovery, and deletion", async () => {
   const email = `a-${runId}@example.com`,
     password = "a-strong-test-password-2026";
-  const a = await request("/auth/register", {
+  const data = await localAccount(email, password, base);
+  await localAccount(`b-${runId}@example.com`, password, base);
+  const a = await request("/auth/login", {
     method: "POST",
     body: { email, password },
   });
   assert.equal(a.status, 200);
-  const data = (await a.json()) as { recoveryCode: string };
+
   assert.equal(data.recoveryCode.length, 64);
   const cookie = a.headers.get("set-cookie")!.split(";")[0];
   assert.match(a.headers.get("set-cookie")!, /HttpOnly/);
-  const b = await request("/auth/register", {
+  const b = await request("/auth/login", {
     method: "POST",
     body: { email: `b-${runId}@example.com`, password },
   });

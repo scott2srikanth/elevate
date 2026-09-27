@@ -72,7 +72,7 @@ test("video filters, single player, practice handoff and Telugu guidance", async
   });
 });
 
-test("practice has occasion filters, contained session videos and Telugu guidance", async ({
+test("practice shows only relevant contained session videos", async ({
   page,
 }) => {
   await page.route("https://www.youtube-nocookie.com/**", (route) =>
@@ -87,32 +87,9 @@ test("practice has occasion filters, contained session videos and Telugu guidanc
     .fill("Video learner");
   await page.getByRole("button", { name: "Begin my journey" }).click();
   await page.getByRole("button", { name: "Practice", exact: true }).click();
-  await page
-    .getByRole("button", { name: "Browse practice videos", exact: true })
-    .click();
-  for (const topic of [
-    "Dressing & etiquette",
-    "Dining & etiquette",
-    "Public appearances",
-    "Functions & celebrations",
-    "Holiday & vacation",
-  ]) {
-    await page.getByRole("button", { name: topic, exact: true }).click();
-    expect(
-      await page
-        .getByRole("button", { name: "Watch lesson", exact: true })
-        .count(),
-    ).toBeGreaterThan(0);
-  }
-  await page
-    .getByRole("button", { name: "Watch lesson", exact: true })
-    .first()
-    .click();
-  await expect(page.locator("iframe")).toHaveCount(1);
-  await page
-    .getByRole("button", { name: "Browse practice videos", exact: true })
-    .click();
-  await expect(page.locator("iframe")).toHaveCount(0);
+  await expect(
+    page.getByRole("button", { name: "Browse practice videos", exact: true }),
+  ).toHaveCount(0);
   await page
     .getByRole("button", { name: /Feel at ease at the table Bring attention/ })
     .click();
@@ -143,16 +120,4 @@ test("practice has occasion filters, contained session videos and Telugu guidanc
   ).toHaveCount(0);
   await page.getByRole("button", { name: "Got it. Let’s rehearse" }).click();
   await expect(page.locator("iframe")).toHaveCount(0);
-  await page.getByRole("button", { name: "Close dialog" }).click();
-  await page.getByRole("button", { name: "Profile", exact: true }).click();
-  await page.getByRole("button", { name: "తెలుగు", exact: true }).click();
-  await page.getByRole("button", { name: "సాధన", exact: true }).click();
-  await page
-    .getByRole("button", { name: "సాధన వీడియోలు చూడండి", exact: true })
-    .click();
-  await page
-    .getByRole("button", { name: "పాఠం చూడండి", exact: true })
-    .first()
-    .click();
-  await expect(page.locator("iframe")).toHaveAttribute("src", /eIho2S0ZahI/);
 });

@@ -12,10 +12,8 @@
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundImage": "./assets/android-icon-background.png",
-        "monochromeImage": "./assets/android-icon-monochrome.png"
+        "backgroundColor": "#F5F7F1",
+        "foregroundImage": "./assets/android-icon-foreground.png"
       },
       "predictiveBackGestureEnabled": false,
       "package": "com.elevate.presencecoach",
@@ -47,7 +45,7 @@
         {
           "backgroundColor": "#173B31",
           "image": "./assets/brand-splash.png",
-          "imageWidth": 150
+          "imageWidth": 240
         }
       ],
       "expo-video"

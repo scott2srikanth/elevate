@@ -58,6 +58,12 @@ export default function AdminEntry({ full = false }: { full?: boolean }) {
   );
 }
 function Administrator() {
+  const [userEmail, setUserEmail] = useState("");
+  const [userPassword, setUserPassword] = useState("");
+  const [createdUser, setCreatedUser] = useState<{
+    user: { email: string };
+    recoveryCode: string;
+  } | null>(null);
   const [published, setPublished] = useState<ContentSnapshot | null>(null);
   const [email, setEmail] = useState(""),
     [password, setPassword] = useState("");
@@ -293,11 +299,87 @@ function Administrator() {
                   setPreview(null);
                   setRaw("");
                   setTemplate("");
+                  setUserEmail("");
+                  setUserPassword("");
+                  setCreatedUser(null);
                 })
               }
             >
               Sign out
             </button>
+          </section>
+          <section style={panel}>
+            <h2>Create a user account</h2>
+            <p>
+              Create a learner account and share its credentials privately with
+              the user.
+            </p>
+            <form
+              onSubmit={(event) => {
+                event.preventDefault();
+                void run(async () => {
+                  setCreatedUser(null);
+                  const result = await api<{
+                    user: { email: string };
+                    recoveryCode: string;
+                  }>("/admin/users", {
+                    method: "POST",
+                    body: JSON.stringify({
+                      email: userEmail,
+                      password: userPassword,
+                    }),
+                  });
+                  setCreatedUser(result);
+                  setUserPassword("");
+                  setUserEmail("");
+                });
+              }}
+            >
+              <label>
+                User email
+                <input
+                  style={field}
+                  type="email"
+                  required
+                  autoComplete="off"
+                  value={userEmail}
+                  onChange={(event) => setUserEmail(event.target.value)}
+                />
+              </label>
+              <label>
+                User password (12+ characters)
+                <input
+                  style={field}
+                  type="password"
+                  required
+                  minLength={12}
+                  maxLength={128}
+                  autoComplete="new-password"
+                  value={userPassword}
+                  onChange={(event) => setUserPassword(event.target.value)}
+                />
+              </label>
+              <button style={button} disabled={busy} type="submit">
+                Create user account
+              </button>
+            </form>
+            {createdUser && (
+              <div role="status">
+                <p>Account created: {createdUser.user.email}</p>
+                <p>
+                  Save and share this recovery code privately. It is shown only
+                  once:
+                </p>
+                <code style={{ overflowWrap: "anywhere" }}>
+                  {createdUser.recoveryCode}
+                </code>
+                <div>
+                  <button style={button} onClick={() => setCreatedUser(null)}>
+                    I saved the recovery code
+                  </button>
+                </div>
+              </div>
+            )}
           </section>
           <section style={panel}>
             <h2>1. Create a JSON template</h2>

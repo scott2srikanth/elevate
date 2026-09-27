@@ -32,12 +32,16 @@ export function Account({ cloud, state }: { cloud: Cloud; state: State }) {
     <View style={k.card}>
       <Text style={k.title}>Your cloud account</Text>
       <Text style={k.body}>{cloud.status}</Text>
+      {!cloud.user && (
+        <Text style={k.muted}>
+          Ask your administrator for an account and password.
+        </Text>
+      )}
       {!cloud.user ? (
         <>
           <View style={k.row}>
             {[
               ["login", "Sign in"],
-              ["register", "Create account"],
               ["recover", "Recover account"],
             ].map(([id, title]) => (
               <Choice
@@ -68,13 +72,7 @@ export function Account({ cloud, state }: { cloud: Cloud; state: State }) {
             />
           )}
           <Action
-            title={
-              mode === "register"
-                ? "Create cloud account"
-                : mode === "recover"
-                  ? "Reset password"
-                  : "Sign in to cloud"
-            }
+            title={mode === "recover" ? "Reset password" : "Sign in to cloud"}
             disabled={disabled || !email || password.length < 12}
             onPress={() =>
               void run(async () => {

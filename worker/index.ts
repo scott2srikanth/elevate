@@ -154,39 +154,9 @@ async function handle(request: Request, env: Env): Promise<Response> {
     const b = credentials.parse(input);
     await limit(env, `account:${await sha256(b.email)}`, 10, 900);
     if (path === "/api/auth/register") {
-      const salt = randomToken(),
-        recovery = randomToken(),
-        id = crypto.randomUUID();
-      const hash = await passwordHash(b.password, salt);
-      try {
-        await env.DB.batch([
-          env.DB.prepare("INSERT INTO users VALUES(?,?,?,?,?,?)").bind(
-            id,
-            b.email,
-            hash,
-            salt,
-            await sha256(recovery),
-            now(),
-          ),
-          env.DB.prepare("INSERT INTO coach_state VALUES(?,?,0,?)").bind(
-            id,
-            JSON.stringify(initialState()),
-            now(),
-          ),
-        ]);
-      } catch (e) {
-        if (String(e).includes("UNIQUE"))
-          throw new HttpError(
-            409,
-            "This email is already registered. Sign in or use your recovery code.",
-          );
-        throw e;
-      }
-      return signIn(
-        { id, email: b.email, password_hash: hash, salt, recovery_hash: "" },
-        request,
-        env,
-        recovery,
+      throw new HttpError(
+        403,
+        "Account creation is managed by your administrator.",
       );
     }
     if (path === "/api/auth/login") {

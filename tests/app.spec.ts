@@ -30,6 +30,15 @@ test("personal coaching loop survives reload, with wardrobe, occasions, and dele
   await page
     .getByRole("button", { name: "I’ve rehearsed — set my challenge" })
     .click();
+  await page.getByRole("tab", { name: "1. Learn" }).click();
+  await expect(
+    page.getByRole("button", { name: "Got it. Let’s rehearse" }),
+  ).toBeVisible();
+  await page.getByRole("tab", { name: "2. Rehearse" }).click();
+  await expect(
+    page.getByRole("button", { name: "I’ve rehearsed — set my challenge" }),
+  ).toBeVisible();
+  await page.getByRole("tab", { name: "3. Real life" }).click();
   await page
     .getByRole("button", { name: "I’ll come back after trying it" })
     .click();

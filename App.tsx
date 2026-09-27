@@ -3,7 +3,7 @@ import AdminEntry from "./src/components/AdminEntry";
 import { LanguageProvider, translate } from "./src/i18n";
 import { LaunchSplash } from "./src/components/LaunchSplash";
 import { LanguagePicker } from "./src/components/LanguagePicker";
-import { Pressable, Text, TextInput } from "./src/i18n";
+import { Pressable, Text, TextInput, Image } from "./src/i18n";
 import { router, usePathname } from "expo-router";
 import {
   adaptiveStage,
@@ -784,7 +784,6 @@ function AppContent() {
           subtitle="Short exercises. Real situations. Changes that stay with you."
         />
         <PracticeScene />
-        {sheet === null && <PracticeVideos />}
         <View
           style={[
             s.card,
@@ -1139,7 +1138,12 @@ function AppContent() {
             <View style={s.sidebar}>
               <View style={[s.row, { marginBottom: 50 }]}>
                 <View style={s.brandMark}>
-                  <Icon name="leaf-outline" color="white" size={22} />
+                  <Image
+                    source={require("./assets/icon.png")}
+                    style={{ width: 44, height: 44 }}
+                    resizeMode="contain"
+                    accessibilityLabel="Elevate logo"
+                  />
                 </View>
                 <Text style={s.logo}>
                   elevate<Text style={{ color: "#87A071" }}>.</Text>
@@ -1240,7 +1244,12 @@ function AppContent() {
                 </Text>
               ) : (
                 <View style={s.row}>
-                  <Icon name="leaf-outline" size={24} />
+                  <Image
+                    source={require("./assets/icon.png")}
+                    style={{ width: 40, height: 40 }}
+                    resizeMode="contain"
+                    accessibilityLabel="Elevate logo"
+                  />
                   <Text style={[s.logo, { fontSize: 26 }]}>elevate.</Text>
                 </View>
               )}
@@ -1561,7 +1570,19 @@ function AppContent() {
                     <>
                       <View style={s.row}>
                         {["Learn", "Rehearse", "Real life"].map((p, i) => (
-                          <View
+                          <Pressable
+                            accessibilityRole="tab"
+                            accessibilityState={{
+                              selected: phase === i,
+                              disabled:
+                                i === 2 &&
+                                state.assignment?.exerciseId !== active.id,
+                            }}
+                            disabled={
+                              i === 2 &&
+                              state.assignment?.exerciseId !== active.id
+                            }
+                            onPress={() => setPhase(i)}
                             key={p}
                             style={[
                               s.pill,
@@ -1571,7 +1592,7 @@ function AppContent() {
                             <Text style={s.pillText}>
                               {i + 1}. {p}
                             </Text>
-                          </View>
+                          </Pressable>
                         ))}
                       </View>
                       <Text style={s.modalTitle}>{active.title}</Text>
@@ -1629,10 +1650,13 @@ function AppContent() {
                             onPress={() => {
                               setState((v) => ({
                                 ...v,
-                                assignment: {
-                                  exerciseId: active.id,
-                                  rehearsedAt: new Date().toISOString(),
-                                },
+                                assignment:
+                                  v.assignment?.exerciseId === active.id
+                                    ? v.assignment
+                                    : {
+                                        exerciseId: active.id,
+                                        rehearsedAt: new Date().toISOString(),
+                                      },
                               }));
                               setPhase(2);
                             }}

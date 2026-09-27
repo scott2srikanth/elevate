@@ -8,8 +8,7 @@ import {
   View,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import { Text, Pressable } from "../i18n";
+import { Text, Pressable, Image } from "../i18n";
 
 export function LaunchSplash({
   ready,
@@ -104,9 +103,12 @@ export function LaunchSplash({
           ],
         }}
       >
-        <View style={styles.mark}>
-          <Ionicons name="leaf-outline" size={54} color="#D9EDBD" />
-        </View>
+        <Image
+          source={require("../../assets/brand-splash.png")}
+          style={{ width: 240, height: 240 }}
+          resizeMode="contain"
+          accessibilityLabel="Elevate coaching companions"
+        />
         <Text raw style={styles.logo}>
           elevate.
         </Text>
