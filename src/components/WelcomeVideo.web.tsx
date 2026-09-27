@@ -1,3 +1,4 @@
+import CoachWindowHeader from "./CoachWindowHeader";
 import React, { useEffect, useRef, useState } from "react";
 import { Image } from "../i18n";
 const source = require("../../assets/video/welcome.mp4");
@@ -26,7 +27,7 @@ export default function WelcomeVideo({ size }: { size: number }) {
         width: size,
         height: (size * 9) / 16,
         position: "relative",
-        paddingTop: 18,
+        paddingTop: 30,
         paddingBottom: 10,
         boxSizing: "content-box",
         background: "radial-gradient(ellipse at 50% 45%, #F1E7D3, #E8D9C1)",
@@ -68,6 +69,7 @@ export default function WelcomeVideo({ size }: { size: number }) {
           opacity: playing ? 1 : 0,
         }}
       />
+      <CoachWindowHeader />
     </div>
   );
 }

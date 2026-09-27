@@ -1,3 +1,4 @@
+import CoachWindowHeader from "./CoachWindowHeader";
 import { useEvent } from "expo";
 import React, { useEffect } from "react";
 import { AppState, View } from "react-native";
@@ -33,8 +34,8 @@ export default function WelcomeVideo({ size }: { size: number }) {
       accessible
       style={{
         width: size,
-        height: (size * 9) / 16 + 28,
-        paddingTop: 18,
+        height: (size * 9) / 16 + 40,
+        paddingTop: 30,
         paddingBottom: 10,
         backgroundColor: "#E8D9C1",
         borderRadius: 24,
@@ -48,7 +49,7 @@ export default function WelcomeVideo({ size }: { size: number }) {
           width: size,
           height: (size * 9) / 16,
           position: "absolute",
-          top: 18,
+          top: 30,
           opacity: visible ? 0 : 1,
         }}
         resizeMode="contain"
@@ -65,6 +66,7 @@ export default function WelcomeVideo({ size }: { size: number }) {
           opacity: visible ? 1 : 0,
         }}
       />
+      <CoachWindowHeader />
     </View>
   );
 }
