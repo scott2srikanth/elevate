@@ -5,6 +5,7 @@ test("main mobile and desktop screens have no serious accessibility violations",
 }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
+  await page.getByRole("button", { name: "Continue", exact: true }).click();
   await page.getByRole("button", { name: "Close dialog" }).click();
   await expect(
     page.getByRole("button", { name: "Create my personal plan" }),
@@ -27,6 +28,7 @@ test("illustrations and grouped navigation work on mobile and desktop", async ({
 }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
+  await page.getByRole("button", { name: "Continue", exact: true }).click();
   await page.getByRole("button", { name: "Close dialog" }).click();
   const companions = page.getByRole("button", {
     name: "Greet your coaching companions",
@@ -60,6 +62,7 @@ test("illustrations and grouped navigation work on mobile and desktop", async ({
   await page.getByRole("button", { name: "My journey", exact: true }).click();
   await expect(page).toHaveURL(/\/journey$/);
   await page.reload();
+  await page.getByRole("button", { name: "Continue", exact: true }).click();
   await page.getByRole("button", { name: "Close dialog" }).click();
   await expect(
     page.getByRole("button", { name: "My journey", exact: true }),

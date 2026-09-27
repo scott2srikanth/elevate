@@ -11,6 +11,7 @@ test("video filters, single player, practice handoff and Telugu guidance", async
     }),
   );
   await page.goto("/");
+  await page.getByRole("button", { name: "Continue", exact: true }).click();
   await page.getByRole("button", { name: "Close dialog" }).click();
   await page.getByRole("button", { name: "Coach", exact: true }).click();
   await page.getByRole("button", { name: "Videos", exact: true }).click();
@@ -82,6 +83,7 @@ test("practice shows only relevant contained session videos", async ({
     }),
   );
   await page.goto("/");
+  await page.getByRole("button", { name: "Continue", exact: true }).click();
   await page
     .getByRole("textbox", { name: "What should we call you?" })
     .fill("Video learner");

@@ -98,7 +98,7 @@ function DataChart({ chart }: { chart: CoachingAnalysis["charts"][number] }) {
                       right: 0,
                       top: y(tick * chart.max),
                       height: 1,
-                      backgroundColor: "#DDE4D9",
+                      backgroundColor: "#E5DFD3",
                     }}
                   />
                 ))}
@@ -117,7 +117,7 @@ function DataChart({ chart }: { chart: CoachingAnalysis["charts"][number] }) {
                             top: (y(p.value) + y(next.value)) / 2,
                             width: length,
                             height: 2,
-                            backgroundColor: "#456B49",
+                            backgroundColor: "#526649",
                             transform: [{ rotate: `${Math.atan2(dy, dx)}rad` }],
                           }}
                         />
@@ -130,7 +130,7 @@ function DataChart({ chart }: { chart: CoachingAnalysis["charts"][number] }) {
                           width: 10,
                           height: 10,
                           borderRadius: 5,
-                          backgroundColor: "#203E36",
+                          backgroundColor: "#344333",
                         }}
                       />
                       <Text
@@ -142,7 +142,7 @@ function DataChart({ chart }: { chart: CoachingAnalysis["charts"][number] }) {
                             Math.max(0, x(i) - 15),
                           ),
                           fontSize: 11,
-                          color: "#203E36",
+                          color: "#344333",
                         }}
                       >
                         {p.value}
@@ -168,7 +168,7 @@ function DataChart({ chart }: { chart: CoachingAnalysis["charts"][number] }) {
                       style={{
                         width: `${100 / chart.points.length}%`,
                         fontSize: 10,
-                        color: "#52665C",
+                        color: "#56604F",
                         textAlign:
                           i === 0
                             ? "left"
@@ -301,7 +301,7 @@ export function AnalysisView({ analysis }: { analysis: CoachingAnalysis }) {
             {i < analysis.diagram.steps.length - 1 && (
               <Text
                 accessibilityElementsHidden
-                style={{ color: "#456B49", fontSize: 24, marginLeft: 30 }}
+                style={{ color: "#526649", fontSize: 24, marginLeft: 30 }}
               >
                 ↓
               </Text>
@@ -317,7 +317,7 @@ export function AnalysisView({ analysis }: { analysis: CoachingAnalysis }) {
             style={{
               gap: 8,
               borderTopWidth: 1,
-              borderColor: "#DDE4D9",
+              borderColor: "#E5DFD3",
               paddingTop: 14,
             }}
           >
@@ -357,12 +357,12 @@ const v = StyleSheet.create({
     borderRadius: 16,
     overflow: "hidden",
     borderWidth: 1,
-    borderColor: "#DDE4D9",
+    borderColor: "#E5DFD3",
     marginBottom: 12,
   },
   bannerImage: { width: "100%", height: 190 },
   tag: {
-    color: "#456B49",
+    color: "#526649",
     fontSize: 11,
     fontWeight: "600",
     letterSpacing: 0.8,
@@ -376,5 +376,5 @@ const v = StyleSheet.create({
     backgroundColor: "#E8EDE3",
     overflow: "hidden",
   },
-  fill: { height: "100%", backgroundColor: "#456B49", borderRadius: 7 },
+  fill: { height: "100%", backgroundColor: "#526649", borderRadius: 7 },
 });

@@ -214,7 +214,7 @@ export function StudioExchange({
         <TextInput
           accessibilityLabel="Paste ChatGPT response JSON"
           placeholder="Paste the JSON response here…"
-          placeholderTextColor="#607066"
+          placeholderTextColor="#59634F"
           value={response}
           onChangeText={(value) => {
             setResponse(value);

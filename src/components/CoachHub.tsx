@@ -43,7 +43,7 @@ export function CoachHub({
         style={{
           paddingVertical: 12,
           borderBottomWidth: 1,
-          borderColor: "#DDE4D9",
+          borderColor: "#E5DFD3",
         }}
       >
         <Text style={k.label}>

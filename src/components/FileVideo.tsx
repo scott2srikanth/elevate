@@ -16,7 +16,7 @@ export default function FileVideo({ url }: { url: string }) {
         aspectRatio: 16 / 9,
         minHeight: 200,
         overflow: "hidden",
-        backgroundColor: "#173B31",
+        backgroundColor: "#F7F3EC",
       }}
     >
       <VideoView

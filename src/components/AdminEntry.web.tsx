@@ -14,13 +14,13 @@ import { coachingVideos, videoTopics } from "../coachingVideos";
 import baseStrings from "../i18n/te.json";
 const panel: React.CSSProperties = {
   background: "white",
-  border: "1px solid #DDE4D9",
+  border: "1px solid #E5DFD3",
   borderRadius: 14,
   padding: 24,
   marginBottom: 20,
 };
 const button: React.CSSProperties = {
-  background: "#203E36",
+  background: "#344333",
   color: "white",
   padding: "13px 18px",
   border: 0,
@@ -193,8 +193,8 @@ function Administrator() {
         maxWidth: 1000,
         margin: "0 auto",
         padding: 24,
-        color: "#203E36",
-        background: "#F6F7F3",
+        color: "#344333",
+        background: "#F7F3EC",
         fontFamily: "system-ui",
         minHeight: "100vh",
         boxSizing: "border-box",

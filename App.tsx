@@ -52,15 +52,15 @@ import {
 } from "./src/coach";
 import { loadState, saveState } from "./src/storage";
 const C = {
-  bg: "#F6F7F3",
-  ink: "#203E36",
-  muted: "#526258",
-  line: "#E2E7DF",
-  mint: "#DAECCC",
-  green: "#456B49",
+  bg: "#F7F3EC",
+  ink: "#344333",
+  muted: "#56604F",
+  line: "#E5DFD3",
+  mint: "#E2E8D8",
+  green: "#526649",
   white: "#FFFFFF",
-  cream: "#F0EADF",
-  orange: "#AB673E",
+  cream: "#EFE4D5",
+  orange: "#A36343",
 };
 type IconName = React.ComponentProps<typeof Ionicons>["name"];
 type Tab =
@@ -1920,7 +1920,6 @@ const s = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 12,
-    backgroundColor: C.ink,
     alignItems: "center",
     justifyContent: "center",
   },

@@ -37,7 +37,7 @@ export default function CoachingVideoPlayer({
             uri: embedUrl(id, language),
             headers: { Referer: "https://com.elevate.presencecoach/" },
           }}
-          style={{ flex: 1, backgroundColor: "#173B31" }}
+          style={{ flex: 1, backgroundColor: "#F7F3EC" }}
           allowsFullscreenVideo
           allowsInlineMediaPlayback
           mediaPlaybackRequiresUserAction

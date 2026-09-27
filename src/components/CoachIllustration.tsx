@@ -110,7 +110,7 @@ export function PracticeScene() {
 const styles = StyleSheet.create({
   caption: {
     fontSize: 11,
-    color: "#456B49",
+    color: "#526649",
     textAlign: "center",
     marginTop: 3,
   },

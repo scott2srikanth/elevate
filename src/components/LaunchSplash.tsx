@@ -6,10 +6,19 @@ import {
   Platform,
   StyleSheet,
   View,
+  useWindowDimensions,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { Text, Pressable, Image } from "../i18n";
 
+const names = [
+  { text: "Elevate", language: "English", color: "#425441" },
+  { text: "एलिवेट", language: "हिन्दी", color: "#9A5438" },
+  { text: "ఎలివేట్", language: "తెలుగు", color: "#53644B" },
+  { text: "எலிவேட்", language: "தமிழ்", color: "#855A46" },
+  { text: "എലിവേറ്റ്", language: "മലയാളം", color: "#425441" },
+];
+const rowHeight = 90;
 export function LaunchSplash({
   ready,
   onFinish,
@@ -17,167 +26,189 @@ export function LaunchSplash({
   ready: boolean;
   onFinish: () => void;
 }) {
-  const [progress] = useState(() => new Animated.Value(0));
-  const [finished, setFinished] = useState(false);
+  const { height, width } = useWindowDimensions();
+  const [offset] = useState(() => new Animated.Value(0));
+  const [reducedMotion, setReducedMotion] = useState(true);
   useEffect(() => {
     let alive = true;
-    let animation: Animated.CompositeAnimation | undefined;
-    let timer: ReturnType<typeof setTimeout>;
-    const complete = () => {
-      if (alive) setFinished(true);
-    };
-    AccessibilityInfo.isReduceMotionEnabled()
-      .then((reduced) => {
-        if (!alive) return;
-        if (reduced) {
-          progress.setValue(1);
-          timer = setTimeout(complete, 250);
-          return;
-        }
-        animation = Animated.timing(progress, {
-          toValue: 1,
-          duration: 1400,
-          easing: Easing.out(Easing.cubic),
-          useNativeDriver: Platform.OS !== "web",
-        });
-        animation.start(({ finished }) => {
-          if (finished) complete();
-        });
+    void AccessibilityInfo.isReduceMotionEnabled()
+      .then((value) => {
+        if (alive) setReducedMotion(value);
       })
-      .catch(() => {
-        progress.setValue(1);
-        complete();
-      });
+      .catch(() => {});
     const subscription = AccessibilityInfo.addEventListener(
       "reduceMotionChanged",
-      (reduced) => {
-        if (reduced) {
-          animation?.stop();
-          progress.setValue(1);
-          complete();
-        }
-      },
+      setReducedMotion,
     );
     return () => {
       alive = false;
-      clearTimeout(timer);
-      animation?.stop();
       subscription.remove();
     };
-  }, [progress]);
+  }, []);
   useEffect(() => {
-    if (ready && finished) onFinish();
-  }, [ready, finished, onFinish]);
+    offset.setValue(0);
+    if (reducedMotion) return;
+    const animation = Animated.loop(
+      Animated.sequence(
+        names.flatMap((_, index) => [
+          Animated.delay(1600),
+          Animated.timing(offset, {
+            toValue: -(index + 1) * rowHeight,
+            duration: 500,
+            easing: Easing.inOut(Easing.cubic),
+            useNativeDriver: Platform.OS !== "web",
+          }),
+        ]),
+      ),
+    );
+    animation.start();
+    return () => animation.stop();
+  }, [offset, reducedMotion]);
+  const artworkSize = Math.max(100, Math.min(260, height * 0.32, width * 0.65));
   return (
     <View testID="launch-splash" style={styles.root}>
-      <StatusBar style="light" />
-      <View
-        pointerEvents="none"
-        style={[styles.orbit, { width: 340, height: 340 }]}
-      />
-      <View
-        pointerEvents="none"
-        style={[styles.orbit, { width: 270, height: 270 }]}
-      />
-      <Animated.View
-        style={{
-          alignItems: "center",
-          gap: 22,
-          opacity: progress.interpolate({
-            inputRange: [0, 0.3, 1],
-            outputRange: [0, 1, 1],
-          }),
-          transform: [
-            {
-              translateY: progress.interpolate({
-                inputRange: [0, 1],
-                outputRange: [20, 0],
-              }),
-            },
-            {
-              scale: progress.interpolate({
-                inputRange: [0, 1],
-                outputRange: [0.9, 1],
-              }),
-            },
-          ],
-        }}
-      >
+      <StatusBar style="dark" />
+      <View style={styles.content}>
+        <Text raw style={styles.eyebrow}>
+          YOUR PERSONAL COACH
+        </Text>
         <Image
           source={require("../../assets/brand-splash.png")}
-          style={{ width: 240, height: 240 }}
+          style={{ width: artworkSize, height: artworkSize }}
           resizeMode="contain"
           accessibilityLabel="Elevate coaching companions"
         />
-        <Text raw style={styles.logo}>
-          elevate.
-        </Text>
+        <View
+          accessible
+          accessibilityLabel="Elevate — English, Hindi, Telugu, Tamil, Malayalam"
+          style={styles.wordWindow}
+        >
+          <Animated.View
+            accessibilityElementsHidden
+            importantForAccessibility="no-hide-descendants"
+            style={{ transform: [{ translateY: offset }] }}
+          >
+            {[...names, names[0]].map((name, index) => (
+              <View key={index} style={styles.wordRow}>
+                <Text
+                  raw
+                  style={[
+                    styles.word,
+                    {
+                      color: name.color,
+                      fontSize: Math.min(46, width * 0.105),
+                    },
+                  ]}
+                >
+                  {name.text}
+                </Text>
+              </View>
+            ))}
+          </Animated.View>
+        </View>
+        <View style={styles.languages}>
+          {names.map((name) => (
+            <Text raw key={name.language} style={styles.language}>
+              {name.language}
+            </Text>
+          ))}
+        </View>
+        {reducedMotion && (
+          <Text raw style={styles.staticNames}>
+            {names
+              .slice(1)
+              .map((name) => name.text)
+              .join(" · ")}
+          </Text>
+        )}
         <Text style={styles.tagline}>Your personal coach, every day.</Text>
         <View style={styles.rule} />
-        <Text raw style={styles.bilingual}>
-          A little practice. A lasting difference.{"\n"}చిన్న సాధన. నిలిచిపోయే
-          మార్పు.
+        <Text raw style={styles.caption}>
+          A little practice. A lasting difference.
         </Text>
-      </Animated.View>
-      <View style={styles.bottom}>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Continue"
-          disabled={!ready}
-          onPress={onFinish}
-          style={{ padding: 18 }}
-        >
-          <Text style={{ color: "#DBE9D0", fontSize: 14 }}>
-            {ready ? "Continue" : "Getting your coach ready…"}
-          </Text>
-        </Pressable>
       </View>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel="Continue"
+        accessibilityState={{ disabled: !ready }}
+        disabled={!ready}
+        onPress={onFinish}
+        style={[styles.continue, !ready && { opacity: 0.55 }]}
+      >
+        <Text style={styles.continueText}>
+          {ready ? "Continue" : "Getting your coach ready…"}
+        </Text>
+      </Pressable>
     </View>
   );
 }
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: "#173B31",
+    backgroundColor: "#F7F3EC",
+    alignItems: "center",
+    justifyContent: "space-evenly",
+    paddingHorizontal: 24,
+    paddingVertical: 24,
+  },
+  content: {
+    alignItems: "center",
+    width: "100%",
+    maxWidth: 560,
+    flexShrink: 1,
+  },
+  eyebrow: {
+    fontSize: 10,
+    letterSpacing: 3,
+    fontWeight: "600",
+    color: "#59634F",
+    marginBottom: 12,
+  },
+  wordWindow: { height: rowHeight, overflow: "hidden", width: "100%" },
+  wordRow: {
+    height: rowHeight,
     alignItems: "center",
     justifyContent: "center",
-    overflow: "hidden",
   },
-  orbit: {
-    position: "absolute",
-    borderRadius: 999,
-    borderWidth: 1,
-    borderColor: "#325347",
-    transform: [{ translateY: -55 }],
-  },
-  mark: {
-    width: 110,
-    height: 110,
-    borderRadius: 36,
-    backgroundColor: "#254C3E",
-    alignItems: "center",
+  word: { fontWeight: "600", lineHeight: 78, textAlign: "center" },
+  languages: {
+    flexDirection: "row",
+    flexWrap: "wrap",
     justifyContent: "center",
-    borderWidth: 1,
-    borderColor: "#537451",
+    gap: 12,
+    marginBottom: 20,
   },
-  logo: {
-    fontSize: 64,
-    color: "#F6F7EE",
-    letterSpacing: -2,
-    fontWeight: "500",
+  language: { fontSize: 12, lineHeight: 22, color: "#59634F" },
+  staticNames: {
+    fontSize: 14,
+    lineHeight: 28,
+    textAlign: "center",
+    color: "#425441",
+    marginBottom: 12,
   },
   tagline: {
     fontSize: 17,
-    color: "#E0EBDD",
-    textAlign: "center",
-    maxWidth: 300,
-  },
-  rule: { width: 42, height: 2, backgroundColor: "#A9CA8B", marginTop: 16 },
-  bilingual: {
-    fontSize: 13,
-    lineHeight: 25,
-    color: "#B9CEB7",
+    lineHeight: 26,
+    color: "#344333",
     textAlign: "center",
   },
-  bottom: { position: "absolute", bottom: 40 },
+  rule: {
+    width: 36,
+    height: 2,
+    backgroundColor: "#AA7254",
+    marginVertical: 18,
+  },
+  caption: { fontSize: 12, color: "#59634F", textAlign: "center" },
+  continue: {
+    minHeight: 52,
+    width: "100%",
+    maxWidth: 320,
+    borderRadius: 16,
+    backgroundColor: "#425441",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 20,
+    paddingHorizontal: 20,
+  },
+  continueText: { color: "#FFFFFF", fontSize: 16, fontWeight: "600" },
 });

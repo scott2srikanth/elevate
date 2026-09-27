@@ -83,6 +83,9 @@ test("administrator JSON publication reaches an open learner, with authorization
     await learner.clock.install();
     await learner.goto(`${baseURL}/`);
     await learner
+      .getByRole("button", { name: "Continue", exact: true })
+      .click();
+    await learner
       .getByRole("textbox", { name: "What should we call you?" })
       .fill("Synced learner");
     await learner.getByRole("button", { name: "Begin my journey" }).click();
@@ -111,7 +114,9 @@ test("administrator JSON publication reaches an open learner, with authorization
         })
       ).status(),
     ).toBe(409);
-    await page.getByRole("button", { name: "I saved the recovery code" }).click();
+    await page
+      .getByRole("button", { name: "I saved the recovery code" })
+      .click();
     const login = await learner.request.post("/api/auth/login", {
       headers,
       data: { email: learnerEmail, password },
@@ -239,6 +244,9 @@ test("administrator JSON publication reaches an open learner, with authorization
     // Failure to refresh must retain the last good configuration on reload.
     await learner.route("**/api/content", (route) => route.abort());
     await learner.reload();
+    await learner
+      .getByRole("button", { name: "Continue", exact: true })
+      .click();
     await expect(
       learner.getByRole("button", { name: "अभ्यास", exact: true }),
     ).toBeVisible();

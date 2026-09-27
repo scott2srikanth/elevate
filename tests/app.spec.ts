@@ -12,6 +12,7 @@ test("personal coaching loop survives reload, with wardrobe, occasions, and dele
       errors.push(message.text());
   });
   await page.goto("/");
+  await page.getByRole("button", { name: "Continue", exact: true }).click();
   await expect(
     page.getByRole("textbox", { name: "What should we call you?" }),
   ).toBeVisible();
@@ -24,6 +25,7 @@ test("personal coaching loop survives reload, with wardrobe, occasions, and dele
   await page.getByRole("button", { name: "Begin my journey" }).click();
   await expect(page.getByText("Your next chapter, Alex.")).toBeVisible();
   await page.reload();
+  await page.getByRole("button", { name: "Continue", exact: true }).click();
   await expect(page.getByText("Your next chapter, Alex.")).toBeVisible();
   await page.getByRole("button", { name: "Start today’s practice" }).click();
   await page.getByRole("button", { name: "Got it. Let’s rehearse" }).click();
@@ -43,6 +45,7 @@ test("personal coaching loop survives reload, with wardrobe, occasions, and dele
     .getByRole("button", { name: "I’ll come back after trying it" })
     .click();
   await page.reload();
+  await page.getByRole("button", { name: "Continue", exact: true }).click();
   await page.getByRole("button", { name: "Add my reflection" }).click();
   await page
     .getByRole("textbox", { name: "Where did you try it?" })
@@ -87,6 +90,7 @@ test("personal coaching loop survives reload, with wardrobe, occasions, and dele
     }),
   ).toBeChecked();
   await page.reload();
+  await page.getByRole("button", { name: "Continue", exact: true }).click();
   await page.getByRole("button", { name: "Profile", exact: true }).click();
   await expect(
     page.getByRole("checkbox", {
@@ -108,6 +112,7 @@ test("personal coaching loop survives reload, with wardrobe, occasions, and dele
     .getByRole("button", { name: "Yes, delete all my local data" })
     .click();
   await page.reload();
+  await page.getByRole("button", { name: "Continue", exact: true }).click();
   await expect(
     page.getByRole("button", { name: "Begin my journey" }),
   ).toBeVisible();

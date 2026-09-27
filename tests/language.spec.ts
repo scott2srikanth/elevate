@@ -6,7 +6,7 @@ test("Telugu onboarding, coaching, export language and profile language persist"
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
   await page.goto("/");
-  await expect(page.getByTestId("launch-splash")).toBeVisible();
+  await page.getByRole("button", { name: "Continue", exact: true }).click();
   await page.getByRole("button", { name: "తెలుగు", exact: true }).click();
   await expect(page.getByText("మీ ప్రయాణం మీతోనే మొదలవుతుంది.")).toBeVisible();
   await expect(
@@ -24,6 +24,7 @@ test("Telugu onboarding, coaching, export language and profile language persist"
   await page.getByRole("button", { name: "నా ప్రయాణం ప్రారంభించండి" }).click();
   await expect(page.getByText("అనన్య, మీ కొత్త ప్రయాణం.")).toBeVisible();
   await page.reload();
+  await page.getByRole("button", { name: "Continue", exact: true }).click();
   await expect(page.getByText("అనన్య, మీ కొత్త ప్రయాణం.")).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Begin my journey" }),
@@ -57,6 +58,7 @@ test("Telugu onboarding, coaching, export language and profile language persist"
   await expect(page.getByText("Always, authentically you.")).toBeVisible();
   await expect(page.getByText("అనన్య", { exact: true }).first()).toBeVisible();
   await page.reload();
+  await page.getByRole("button", { name: "Continue", exact: true }).click();
   await expect(page.getByText("Always, authentically you.")).toBeVisible();
   await page.getByRole("button", { name: "తెలుగు", exact: true }).click();
   await page.getByRole("button", { name: "నా ప్రొఫైల్ మార్చండి" }).click();

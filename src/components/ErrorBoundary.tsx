@@ -25,7 +25,7 @@ export class ErrorBoundary extends React.Component<
           justifyContent: "center",
           padding: 30,
           gap: 20,
-          backgroundColor: "#F6F7F3",
+          backgroundColor: "#F7F3EC",
         }}
       >
         <Text style={k.title}>Let’s get your coach back.</Text>

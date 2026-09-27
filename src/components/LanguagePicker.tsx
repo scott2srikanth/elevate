@@ -11,7 +11,7 @@ export function LanguagePicker({
 }) {
   return (
     <View style={{ gap: 12 }}>
-      <Text style={{ fontSize: 18, fontWeight: "600", color: "#203E36" }}>
+      <Text style={{ fontSize: 18, fontWeight: "600", color: "#344333" }}>
         Choose your language
       </Text>
       <View style={{ flexDirection: "row", gap: 12, flexWrap: "wrap" }}>
@@ -28,24 +28,24 @@ export function LanguagePicker({
               padding: 17,
               borderRadius: 14,
               borderWidth: 2,
-              borderColor: value === code ? "#456B49" : "#DFE6DA",
-              backgroundColor: value === code ? "#DAECCC" : "#FFFFFF",
+              borderColor: value === code ? "#526649" : "#DFE6DA",
+              backgroundColor: value === code ? "#E2E8D8" : "#FFFFFF",
             }}
           >
             <Text
               raw
-              style={{ color: "#203E36", fontSize: 18, fontWeight: "600" }}
+              style={{ color: "#344333", fontSize: 18, fontWeight: "600" }}
             >
               {value === code ? "✓  " : ""}
               {label}
             </Text>
-            <Text raw style={{ fontSize: 12, color: "#52665C", marginTop: 6 }}>
+            <Text raw style={{ fontSize: 12, color: "#56604F", marginTop: 6 }}>
               {code}
             </Text>
           </Pressable>
         ))}
       </View>
-      <Text style={{ color: "#52665C", fontSize: 13, lineHeight: 22 }}>
+      <Text style={{ color: "#56604F", fontSize: 13, lineHeight: 22 }}>
         You can change your language anytime in Profile.
       </Text>
     </View>

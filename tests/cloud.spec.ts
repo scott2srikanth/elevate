@@ -9,6 +9,7 @@ test("cloud account backs up coaching and restores it on a second device", async
   const email = `ui-${test.info().project.name}-${Date.now()}@example.com`,
     password = "test-cloud-password-2026";
   await page.goto("/");
+  await page.getByRole("button", { name: "Continue", exact: true }).click();
   await expect(
     page.getByRole("textbox", { name: "What should we call you?" }),
   ).toBeVisible();
@@ -69,6 +70,7 @@ test("cloud account backs up coaching and restores it on a second device", async
   await page.getByRole("button", { name: "Profile", exact: true }).click();
   await expect(page.getByText("Saved to D1", { exact: true })).toBeVisible();
   await page.reload();
+  await page.getByRole("button", { name: "Continue", exact: true }).click();
   await expect(
     page.getByText("Cloud sync resumed.", { exact: true }),
   ).toBeVisible();
@@ -82,6 +84,7 @@ test("cloud account backs up coaching and restores it on a second device", async
   });
   const other = await second.newPage();
   await other.goto("http://localhost:8787/profile");
+  await other.getByRole("button", { name: "Continue", exact: true }).click();
   await other.getByRole("button", { name: "Close dialog" }).click();
   await other.getByRole("textbox", { name: "Email address" }).fill(email);
   await other

@@ -10,6 +10,7 @@ test("manual ChatGPT exchange works without an account and saves visual analysis
   });
   await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
   await page.goto("/coach");
+  await page.getByRole("button", { name: "Continue", exact: true }).click();
   await page.getByRole("button", { name: "Close dialog" }).click();
   for (const [tab, kind] of [
     ["Weekly review", "weekly"],
@@ -89,6 +90,7 @@ test("manual ChatGPT exchange works without an account and saves visual analysis
     ).toBeVisible();
   }
   await page.reload();
+  await page.getByRole("button", { name: "Continue", exact: true }).click();
   await page.getByRole("button", { name: "Close dialog" }).click();
   await page
     .getByRole("button", { name: "Photo & voice", exact: true })

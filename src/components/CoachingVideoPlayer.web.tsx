@@ -20,7 +20,7 @@ export default function CoachingVideoPlayer({
         aspectRatio: "16 / 9",
         minHeight: 200,
         border: 0,
-        background: "#173B31",
+        background: "#F7F3EC",
       }}
       allow="encrypted-media; fullscreen; picture-in-picture"
       allowFullScreen

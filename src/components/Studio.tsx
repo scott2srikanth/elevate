@@ -292,7 +292,7 @@ export function AssessmentHistory({
             gap: 12,
             paddingTop: 14,
             borderTopWidth: 1,
-            borderColor: "#DDE4D9",
+            borderColor: "#E5DFD3",
           }}
         >
           <Text style={k.label}>

@@ -26,7 +26,7 @@ export function Dining({
       <View
         accessibilityLabel="Illustrative place setting: forks to the left, plate in the center, knife and spoon to the right, water above"
         style={{
-          backgroundColor: "#F0EADF",
+          backgroundColor: "#EFE4D5",
           padding: 24,
           borderRadius: 14,
           alignItems: "center",
@@ -34,7 +34,7 @@ export function Dining({
         }}
       >
         <Text style={k.body}>Water ◯</Text>
-        <Text style={{ fontSize: 30, color: "#456B49" }}>♜ ║ ◯ │ ♧</Text>
+        <Text style={{ fontSize: 30, color: "#526649" }}>♜ ║ ◯ │ ♧</Text>
         <Text style={k.muted}>Forks · Plate · Knife · Spoon</Text>
       </View>
       <Text style={k.muted}>

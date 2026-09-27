@@ -12,7 +12,7 @@ export default function FileVideo({ url }: { url: string }) {
         maxWidth: "100%",
         aspectRatio: "16/9",
         objectFit: "contain",
-        background: "#173B31",
+        background: "#F7F3EC",
       }}
     />
   );

@@ -5,22 +5,22 @@ export const k = StyleSheet.create({
   card: {
     backgroundColor: "#fff",
     borderWidth: 1,
-    borderColor: "#DDE4D9",
+    borderColor: "#E5DFD3",
     borderRadius: 14,
     padding: 22,
     gap: 15,
     marginBottom: 18,
   },
-  title: { fontSize: 22, fontWeight: "600", color: "#203E36" },
-  body: { fontSize: 14, lineHeight: 23, color: "#52665C" },
-  label: { fontSize: 13, fontWeight: "600", color: "#203E36" },
+  title: { fontSize: 22, fontWeight: "600", color: "#344333" },
+  body: { fontSize: 14, lineHeight: 23, color: "#56604F" },
+  label: { fontSize: 13, fontWeight: "600", color: "#344333" },
   input: {
     borderWidth: 1,
-    borderColor: "#CCD7C6",
+    borderColor: "#D4D7C9",
     borderRadius: 8,
     padding: 13,
     minHeight: 48,
-    color: "#203E36",
+    color: "#344333",
     backgroundColor: "#fff",
     fontSize: 15,
   },
@@ -31,7 +31,7 @@ export const k = StyleSheet.create({
     alignItems: "center",
   },
   button: {
-    backgroundColor: "#203E36",
+    backgroundColor: "#344333",
     borderRadius: 8,
     paddingHorizontal: 16,
     paddingVertical: 14,
@@ -39,20 +39,20 @@ export const k = StyleSheet.create({
     alignSelf: "flex-start",
   },
   buttonText: { color: "#fff", fontWeight: "600", fontSize: 13 },
-  muted: { fontSize: 12, color: "#607066", lineHeight: 19 },
+  muted: { fontSize: 12, color: "#59634F", lineHeight: 19 },
   error: { color: "#9D3829", lineHeight: 22 },
   pill: {
     padding: 12,
     borderRadius: 20,
     borderWidth: 1,
     borderColor: "#C4D5B9",
-    backgroundColor: "#F4F7F0",
+    backgroundColor: "#F7F3EC",
   },
   message: {
     padding: 14,
-    backgroundColor: "#E4EFDC",
+    backgroundColor: "#E2E8D8",
     borderRadius: 8,
-    color: "#203E36",
+    color: "#344333",
     lineHeight: 22,
   },
 });
@@ -79,7 +79,7 @@ export function Action({
         disabled && { opacity: 0.45 },
       ]}
     >
-      <Text style={[k.buttonText, secondary && { color: "#203E36" }]}>
+      <Text style={[k.buttonText, secondary && { color: "#344333" }]}>
         {title}
       </Text>
     </Pressable>
@@ -161,7 +161,7 @@ export function Consent({
         { flexWrap: "nowrap", alignItems: "flex-start", minHeight: 44 },
       ]}
     >
-      <Text style={{ fontSize: 23, color: "#456B49" }}>
+      <Text style={{ fontSize: 23, color: "#526649" }}>
         {value ? "☑" : "☐"}
       </Text>
       <Text style={[k.body, { flex: 1 }]}>{label}</Text>
