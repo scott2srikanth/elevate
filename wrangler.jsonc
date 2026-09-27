@@ -23,8 +23,8 @@
     { "binding": "MEDIA", "bucket_name": "elevate-private-media" },
   ],
   "vars": {
-    "APP_ORIGIN": "http://localhost:8787",
-    "ALLOWED_ORIGINS": "http://localhost:8081,http://localhost:8787",
+    "APP_ORIGIN": "https://elevate.skrdy.com",
+    "ALLOWED_ORIGINS": "https://elevate.skrdy.com",
   },
   "triggers": { "crons": ["17 * * * *"] },
   "observability": { "enabled": true, "head_sampling_rate": 0.1 },
