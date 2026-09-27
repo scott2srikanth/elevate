@@ -12,7 +12,9 @@ test("personal coaching loop survives reload, with wardrobe, occasions, and dele
       errors.push(message.text());
   });
   await page.goto("/");
-  await page.getByRole("button", { name: "Create my personal plan" }).click();
+  await expect(
+    page.getByRole("textbox", { name: "What should we call you?" }),
+  ).toBeVisible();
   await page
     .getByRole("textbox", { name: "What should we call you?" })
     .fill("Alex");
@@ -98,7 +100,7 @@ test("personal coaching loop survives reload, with wardrobe, occasions, and dele
     .click();
   await page.reload();
   await expect(
-    page.getByRole("button", { name: "Create my personal plan" }),
+    page.getByRole("button", { name: "Begin my journey" }),
   ).toBeVisible();
   expect(errors).toEqual([]);
 });

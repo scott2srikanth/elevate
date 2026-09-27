@@ -1,5 +1,6 @@
+import { Text } from "../i18n";
 import React, { useState } from "react";
-import { View, Text } from "react-native";
+import { View } from "react-native";
 import { State } from "../coach";
 import { Cloud } from "../useCloud";
 import { api } from "../api";
@@ -97,13 +98,15 @@ export function Account({ cloud, state }: { cloud: Cloud; state: State }) {
         </>
       ) : (
         <>
-          <Text style={k.label}>{cloud.user.email}</Text>
+          <Text raw style={k.label}>
+            {cloud.user.email}
+          </Text>
           {!!newRecovery && (
             <View style={{ gap: 10 }}>
               <Text style={k.label}>
                 Save this recovery code now. It is only shown once.
               </Text>
-              <Text selectable style={k.message}>
+              <Text raw selectable style={k.message}>
                 {newRecovery}
               </Text>
               <Action

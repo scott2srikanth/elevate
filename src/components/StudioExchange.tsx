@@ -1,5 +1,6 @@
+import { Text, TextInput } from "../i18n";
 import React, { useState } from "react";
-import { Linking, Text, TextInput, View } from "react-native";
+import { Linking, View } from "react-native";
 import * as Clipboard from "expo-clipboard";
 import { State } from "../coach";
 import { exportFile } from "../dataTools";

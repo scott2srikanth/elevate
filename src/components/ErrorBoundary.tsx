@@ -1,5 +1,6 @@
+import { Text } from "../i18n";
 import React from "react";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import { api } from "../api";
 import { Action, k } from "./kit";
 export class ErrorBoundary extends React.Component<

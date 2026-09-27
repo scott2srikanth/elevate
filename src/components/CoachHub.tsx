@@ -1,5 +1,6 @@
+import { Text, Pressable } from "../i18n";
 import React, { useState } from "react";
-import { View, Text, Pressable } from "react-native";
+import { View } from "react-native";
 import { State } from "../coach";
 import { WeeklyReview } from "./WeeklyReview";
 import { AssessmentHistory, CoachMemory } from "./Studio";

@@ -1,3 +1,4 @@
+import { translate, type Language } from "./i18n/translate";
 import { Platform } from "react-native";
 export async function exportFile(
   name: string,
@@ -54,6 +55,7 @@ export async function setReminder(
   enabled: boolean,
   hour: number,
   minute: number,
+  language: Language = "en",
 ) {
   if (Platform.OS === "web") {
     if (enabled)
@@ -83,8 +85,11 @@ export async function setReminder(
   await Notifications.scheduleNotificationAsync({
     identifier: "elevate-daily",
     content: {
-      title: "A little practice. A lasting difference.",
-      body: "Make time for one skill and one real-world reflection.",
+      title: translate("A LITTLE PRACTICE. A LASTING DIFFERENCE.", language),
+      body: translate(
+        "Make time for one skill and one real-world reflection.",
+        language,
+      ),
     },
     trigger: {
       type: Notifications.SchedulableTriggerInputTypes.DAILY,
@@ -96,8 +101,11 @@ export async function setReminder(
   await Notifications.scheduleNotificationAsync({
     identifier: "elevate-weekly",
     content: {
-      title: "Your weekly coaching review",
-      body: "Notice a win, name an obstacle, and choose your next commitment.",
+      title: translate("Your weekly coaching review", language),
+      body: translate(
+        "Notice a win, name an obstacle, and choose your next commitment.",
+        language,
+      ),
     },
     trigger: {
       type: Notifications.SchedulableTriggerInputTypes.WEEKLY,

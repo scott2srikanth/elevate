@@ -1,6 +1,6 @@
 {
   "name": "elevate",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "main": "expo-router/entry",
   "dependencies": {
     "@expo/vector-icons": "^15.0.2",
@@ -19,6 +19,7 @@
     "expo-router": "~57.0.23",
     "expo-secure-store": "~57.0.4",
     "expo-sharing": "~57.0.22",
+    "expo-splash-screen": "~57.0.9",
     "expo-status-bar": "~57.0.1",
     "react": "19.2.3",
     "react-dom": "19.2.3",
@@ -50,7 +51,7 @@
     "ios": "expo start --ios",
     "web": "EXPO_PUBLIC_API_URL=http://localhost:8787 expo start --web",
     "typecheck": "tsc --noEmit && tsc -p worker/tsconfig.json",
-    "test": "node --import tsx --test tests/coach.test.ts tests/development.test.ts tests/studio.test.ts",
+    "test": "node --import tsx --test tests/coach.test.ts tests/development.test.ts tests/studio.test.ts tests/language.test.ts",
     "test:e2e": "playwright test",
     "build:web": "expo export --platform web",
     "build:android": "expo export --platform android --output-dir dist-android",

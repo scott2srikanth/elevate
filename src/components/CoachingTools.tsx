@@ -1,5 +1,6 @@
+import { Text } from "../i18n";
 import React, { useState } from "react";
-import { Text, View, Linking, Platform } from "react-native";
+import { View, Linking, Platform } from "react-native";
 import { State } from "../coach";
 import {
   brandStatement,
@@ -176,6 +177,7 @@ export function Brand({
                 audience,
                 expertise,
                 value,
+                s.preferences.language,
               ),
             },
           }))
@@ -183,18 +185,20 @@ export function Brand({
       />
       {!!state.brand.statement && (
         <>
-          <Text selectable style={k.message}>
+          <Text raw selectable style={k.message}>
             {state.brand.statement}
           </Text>
           <Text style={k.label}>LinkedIn headline draft</Text>
-          <Text selectable style={k.body}>
-            {state.brand.expertise} | Helping {state.brand.audience}{" "}
-            {state.brand.value}
+          <Text raw selectable style={k.body}>
+            {state.preferences.language === "te"
+              ? `${state.brand.expertise} | ${state.brand.audience} కోసం ${state.brand.value}`
+              : `${state.brand.expertise} | Helping ${state.brand.audience} ${state.brand.value}`}
           </Text>
           <Text style={k.label}>Networking introduction</Text>
-          <Text selectable style={k.body}>
-            Hi, I’m {state.profile?.name}. I work with {state.brand.audience} on{" "}
-            {state.brand.value}. What are you working on at the moment?
+          <Text raw selectable style={k.body}>
+            {state.preferences.language === "te"
+              ? `నమస్కారం, నా పేరు ${state.profile?.name}. ${state.brand.audience}తో ${state.brand.value} విషయంపై పనిచేస్తున్నాను. ప్రస్తుతం మీరు ఏ పని చేస్తున్నారు?`
+              : `Hi, I’m ${state.profile?.name}. I work with ${state.brand.audience} on ${state.brand.value}. What are you working on at the moment?`}
           </Text>
           <Text style={k.muted}>
             Use specific evidence in your bio: one project, your contribution,
@@ -256,7 +260,12 @@ export function Preferences({
   async function schedule(enabled: boolean) {
     setBusy(true);
     try {
-      await setReminder(enabled, Number(hour), Number(minute));
+      await setReminder(
+        enabled,
+        Number(hour),
+        Number(minute),
+        state.preferences.language,
+      );
       update((s) => ({
         ...s,
         preferences: {

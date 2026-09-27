@@ -1,12 +1,10 @@
+import { Image, Pressable, Text } from "../i18n";
 import React, { useEffect, useState } from "react";
 import {
   AccessibilityInfo,
   Animated,
-  Image,
   Platform,
-  Pressable,
   StyleSheet,
-  Text,
   View,
 } from "react-native";
 

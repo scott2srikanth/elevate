@@ -59,27 +59,27 @@ export function reflectionSignals(state: State) {
     {
       label: "Speaking pace and clarity",
       id: "story",
-      re: /\b(rush|rushed|rushing|fast|rambl|clarity|unclear)/,
+      re: /\b(rush|rushed|rushing|fast|rambl|clarity|unclear)|వేగం|తొందర|స్పష్టత|అస్పష్టం/,
     },
     {
       label: "Listening and turn-taking",
       id: "listening",
-      re: /\b(interrupt|interrupted|listen|listening)/,
+      re: /\b(interrupt|interrupted|listen|listening)|వినడం|వినాలి|వినలే|మధ్యలో మాట్లాడ/,
     },
     {
       label: "Introductions",
       id: "introduction",
-      re: /\b(introduction|introduce|intro)\b/,
+      re: /\b(introduction|introduce|intro)\b|పరిచయం/,
     },
     {
       label: "Preparation and clothing",
       id: "wardrobe",
-      re: /\b(outfit|clothing|wardrobe|dress)\b/,
+      re: /\b(outfit|clothing|wardrobe|dress)\b|దుస్తు|వస్త్ర/,
     },
     {
       label: "Dining confidence",
       id: "dining",
-      re: /\b(dining|utensil|dinner)\b/,
+      re: /\b(dining|utensil|dinner)\b|భోజన|విందు/,
     },
   ];
   return signals.filter((x) => x.re.test(text));
@@ -127,7 +127,10 @@ export function brandStatement(
   audience: string,
   expertise: string,
   value: string,
+  language: "en" | "te" = "en",
 ) {
+  if (language === "te")
+    return `${name}${role ? ` (${role})` : ""}, ${expertise.trim()} నైపుణ్యంతో ${audience.trim()} కోసం ${value.trim()} సాధించేందుకు సహాయపడతారు.`;
   return `${name}${role ? `, ${role},` : ""} helps ${audience.trim()} ${value.trim()} through ${expertise.trim()}.`;
 }
 export const diningScenarios = [

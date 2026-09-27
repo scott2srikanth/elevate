@@ -7,7 +7,9 @@ test("cloud account backs up coaching and restores it on a second device", async
   const email = `ui-${test.info().project.name}-${Date.now()}@example.com`,
     password = "test-cloud-password-2026";
   await page.goto("/");
-  await page.getByRole("button", { name: "Create my personal plan" }).click();
+  await expect(
+    page.getByRole("textbox", { name: "What should we call you?" }),
+  ).toBeVisible();
   await page
     .getByRole("textbox", { name: "What should we call you?" })
     .fill("Morgan");
@@ -81,6 +83,7 @@ test("cloud account backs up coaching and restores it on a second device", async
   });
   const other = await second.newPage();
   await other.goto("http://localhost:8787/profile");
+  await other.getByRole("button", { name: "Close dialog" }).click();
   await other.getByRole("textbox", { name: "Email address" }).fill(email);
   await other
     .getByRole("textbox", { name: "Password (12+ characters)", exact: true })

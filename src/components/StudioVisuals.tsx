@@ -1,9 +1,8 @@
+import { Image, Text } from "../i18n";
 import React, { useState } from "react";
 import {
-  Image,
   ScrollView,
   StyleSheet,
-  Text,
   View,
   useWindowDimensions,
 } from "react-native";
@@ -51,7 +50,9 @@ function DataChart({ chart }: { chart: CoachingAnalysis["charts"][number] }) {
   const y = (n: number) => 144 - (n / chart.max) * 126;
   return (
     <View style={k.card}>
-      <Text style={k.title}>{chart.title}</Text>
+      <Text raw style={k.title}>
+        {chart.title}
+      </Text>
       <Text style={v.tag}>
         {chart.basis.replaceAll("_", " ").toUpperCase()} · {chart.unit}
       </Text>
@@ -60,7 +61,9 @@ function DataChart({ chart }: { chart: CoachingAnalysis["charts"][number] }) {
           {chart.points.map((p, i) => (
             <View key={i} style={{ gap: 6 }}>
               <View style={v.between}>
-                <Text style={[k.label, { flex: 1 }]}>{p.label}</Text>
+                <Text raw style={[k.label, { flex: 1 }]}>
+                  {p.label}
+                </Text>
                 <Text style={k.label}>
                   {p.value}{" "}
                   {chart.unit === "confidence / 5" ? "/ 5" : chart.unit}
@@ -159,6 +162,7 @@ function DataChart({ chart }: { chart: CoachingAnalysis["charts"][number] }) {
                 >
                   {chart.points.map((p, i) => (
                     <Text
+                      raw
                       key={i}
                       numberOfLines={3}
                       style={{
@@ -182,8 +186,10 @@ function DataChart({ chart }: { chart: CoachingAnalysis["charts"][number] }) {
           </View>
         </>
       )}
-      <Text style={k.body}>{chart.explanation}</Text>
-      <Text selectable style={k.muted}>
+      <Text raw style={k.body}>
+        {chart.explanation}
+      </Text>
+      <Text raw selectable style={k.muted}>
         {chart.points
           .map((p) => `${p.label}: ${p.value} ${chart.unit}`)
           .join(" · ")}
@@ -196,10 +202,10 @@ export function AnalysisView({ analysis }: { analysis: CoachingAnalysis }) {
     <View style={{ gap: 12 }}>
       <View style={[k.card, { backgroundColor: "#E9F0E1" }]}>
         <Text style={v.tag}>YOUR IMPORTED CHATGPT ANALYSIS</Text>
-        <Text accessibilityRole="header" style={k.title}>
+        <Text raw accessibilityRole="header" style={k.title}>
           {analysis.title}
         </Text>
-        <Text selectable style={k.body}>
+        <Text raw selectable style={k.body}>
           {analysis.summary}
         </Text>
       </View>
@@ -207,7 +213,7 @@ export function AnalysisView({ analysis }: { analysis: CoachingAnalysis }) {
         <View style={k.card}>
           <Text style={k.label}>What this is based on</Text>
           {analysis.evidence.map((item, i) => (
-            <Text key={i} selectable style={k.body}>
+            <Text raw key={i} selectable style={k.body}>
               • {item}
             </Text>
           ))}
@@ -223,7 +229,7 @@ export function AnalysisView({ analysis }: { analysis: CoachingAnalysis }) {
             <View key={group.title} style={[k.card, v.column]}>
               <Text style={k.title}>{group.title}</Text>
               {group.items.map((item, i) => (
-                <Text key={i} style={k.body}>
+                <Text raw key={i} style={k.body}>
                   • {item}
                 </Text>
               ))}
@@ -256,16 +262,24 @@ export function AnalysisView({ analysis }: { analysis: CoachingAnalysis }) {
               style={{ width: "100%", height: 280, backgroundColor: "#F4F2E9" }}
             />
             <View style={{ padding: 18, gap: 9 }}>
-              <Text style={k.title}>{guide.title}</Text>
-              <Text style={k.body}>{guide.caption}</Text>
+              <Text raw style={k.title}>
+                {guide.title}
+              </Text>
+              <Text raw style={k.body}>
+                {guide.caption}
+              </Text>
               <Text style={k.label}>Try this</Text>
-              <Text style={k.body}>{guide.tryThis}</Text>
+              <Text raw style={k.body}>
+                {guide.tryThis}
+              </Text>
             </View>
           </View>
         ))}
       </View>
       <View style={k.card}>
-        <Text style={k.title}>{analysis.diagram.title}</Text>
+        <Text raw style={k.title}>
+          {analysis.diagram.title}
+        </Text>
         {analysis.diagram.steps.map((step, i) => (
           <View key={i} style={{ gap: 8 }}>
             <View style={{ flexDirection: "row", gap: 12 }}>
@@ -276,10 +290,12 @@ export function AnalysisView({ analysis }: { analysis: CoachingAnalysis }) {
                 style={{ width: 76, height: 76, borderRadius: 10 }}
               />
               <View style={{ flex: 1, gap: 5 }}>
-                <Text style={k.label}>
+                <Text raw style={k.label}>
                   {i + 1}. {step.title}
                 </Text>
-                <Text style={k.body}>{step.detail}</Text>
+                <Text raw style={k.body}>
+                  {step.detail}
+                </Text>
               </View>
             </View>
             {i < analysis.diagram.steps.length - 1 && (
@@ -305,16 +321,20 @@ export function AnalysisView({ analysis }: { analysis: CoachingAnalysis }) {
               paddingTop: 14,
             }}
           >
-            <Text style={k.label}>
+            <Text raw style={k.label}>
               {i + 1}. {action.title}
             </Text>
-            <Text style={v.tag}>{action.when}</Text>
+            <Text raw style={v.tag}>
+              {action.when}
+            </Text>
             {action.steps.map((step, j) => (
-              <Text key={j} style={k.body}>
+              <Text raw key={j} style={k.body}>
                 {j + 1}. {step}
               </Text>
             ))}
-            <Text style={k.body}>Reflect afterward: {action.reflection}</Text>
+            <Text style={k.body}>
+              Reflect afterward: <Text raw>{action.reflection}</Text>
+            </Text>
           </View>
         ))}
       </View>
@@ -322,7 +342,7 @@ export function AnalysisView({ analysis }: { analysis: CoachingAnalysis }) {
         <View style={k.card}>
           <Text style={k.label}>Keep in mind</Text>
           {analysis.limitations.map((item, i) => (
-            <Text key={i} style={k.body}>
+            <Text raw key={i} style={k.body}>
               • {item}
             </Text>
           ))}

@@ -1,5 +1,6 @@
+import { Text } from "../i18n";
 import React, { useState } from "react";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import { AREAS, Area, State } from "../coach";
 import { weeklySummary, adaptiveStage } from "../development";
 import { Action, Input, Choice, k } from "./kit";
@@ -110,8 +111,12 @@ export function WeeklyReview({
           <Text style={k.label}>
             {new Date(r.at).toLocaleDateString()} · {r.focus}
           </Text>
-          <Text style={k.body}>Win: {r.win}</Text>
-          <Text style={k.body}>Next: {r.commitment}</Text>
+          <Text raw style={k.body}>
+            Win: {r.win}
+          </Text>
+          <Text raw style={k.body}>
+            Next: {r.commitment}
+          </Text>
         </View>
       ))}
     </View>

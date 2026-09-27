@@ -1,5 +1,6 @@
+import { Pressable, Text, TextInput } from "../i18n";
 import React from "react";
-import { Pressable, Text, TextInput, View, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
 export const k = StyleSheet.create({
   card: {
     backgroundColor: "#fff",

@@ -73,6 +73,7 @@ export type State = {
     statement: string;
   };
   preferences: {
+    language: "en" | "te";
     reminderHour: number;
     reminderMinute: number;
     reminders: boolean;
@@ -245,6 +246,7 @@ export function initialState(): State {
     scenarioResults: [],
     brand: { audience: "", expertise: "", value: "", statement: "" },
     preferences: {
+      language: "en",
       reminderHour: 9,
       reminderMinute: 0,
       reminders: false,

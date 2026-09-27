@@ -1,3 +1,7 @@
+import { LanguageProvider, translate } from "./src/i18n";
+import { LaunchSplash } from "./src/components/LaunchSplash";
+import { LanguagePicker } from "./src/components/LanguagePicker";
+import { Pressable, Text, TextInput } from "./src/i18n";
 import { router, usePathname } from "expo-router";
 import {
   adaptiveStage,
@@ -18,14 +22,10 @@ import { StudioBanner } from "./src/components/StudioVisuals";
 import { setReminder } from "./src/dataTools";
 import React, { useEffect, useState } from "react";
 import {
-  ActivityIndicator,
   Modal,
   Platform,
-  Pressable,
   ScrollView,
   StyleSheet,
-  Text,
-  TextInput,
   View,
   useWindowDimensions,
   KeyboardAvoidingView,
@@ -206,6 +206,7 @@ function AppContent() {
   const wide = width >= 1000;
   const [state, setState] = useState<State>(initialState);
   const [loading, setLoading] = useState(true);
+  const [introDone, setIntroDone] = useState(false);
   const [storageError, setStorageError] = useState("");
   const [loadFailed, setLoadFailed] = useState(false);
   const pathname = usePathname();
@@ -278,7 +279,13 @@ function AppContent() {
   const openProfile = (edit = false) => {
     setName(profile?.name || "");
     setRole(profile?.role || "");
-    setGoal(profile?.goal || "Feel confident in professional situations");
+    setGoal(
+      profile?.goal ||
+        translate(
+          "Feel confident in professional situations",
+          state.preferences.language,
+        ),
+    );
     setFocus(profile?.focus || "Executive presence");
     setContext(profile?.context || "Smart casual");
     setMinutes(profile?.minutes || 5);
@@ -643,12 +650,12 @@ function AppContent() {
         />
         <View style={[s.card, { marginBottom: 24, gap: 14 }]}>
           <Label>YOUR NORTH STAR</Label>
-          <Text style={s.cardTitle}>
+          <Text raw style={s.cardTitle}>
             {profile?.goal || "Build confidence in the moments that matter."}
           </Text>
           <Text style={s.bodyMuted}>
             {profile
-              ? `${profile.minutes} minutes a day · ${profile.focus} · Started ${new Date(profile.startedAt).toLocaleDateString()}`
+              ? `${profile.minutes} minutes a day · ${profile.focus} · Started ${new Date(profile.startedAt).toLocaleDateString(state.preferences.language === "te" ? "te-IN" : "en-IN")}`
               : "Create your profile to start your own coaching path."}
           </Text>
           {!profile && (
@@ -725,16 +732,24 @@ function AppContent() {
             state.reflections.map((r) => (
               <View key={r.id} style={[s.card, { marginBottom: 12, gap: 12 }]}>
                 <Label>
-                  {new Date(r.at).toLocaleDateString()} · CONFIDENCE{" "}
-                  {r.confidence}/5
+                  {new Date(r.at).toLocaleDateString(
+                    state.preferences.language === "te" ? "te-IN" : "en-IN",
+                  )}{" "}
+                  · CONFIDENCE {r.confidence}/5
                 </Label>
                 <Text style={s.cardTitle}>
                   {exercises.find((e) => e.id === r.exerciseId)?.title}
                 </Text>
-                <Text style={s.small}>{r.situation}</Text>
-                <Text style={s.body}>{r.note}</Text>
+                <Text raw style={s.small}>
+                  {r.situation}
+                </Text>
+                <Text raw style={s.body}>
+                  {r.note}
+                </Text>
                 {!!r.next && (
-                  <Text style={s.bodyMuted}>Next time: {r.next}</Text>
+                  <Text style={s.bodyMuted}>
+                    Next time: <Text raw>{r.next}</Text>
+                  </Text>
                 )}
               </View>
             ))
@@ -867,8 +882,10 @@ function AppContent() {
                   <Icon name="shirt-outline" />
                 </View>
                 <View style={{ flex: 1, gap: 6 }}>
-                  <Text style={s.cardTitle}>{g.name}</Text>
-                  <Text style={s.small}>
+                  <Text raw style={s.cardTitle}>
+                    {g.name}
+                  </Text>
+                  <Text raw style={s.small}>
                     {g.color} · {g.category}
                   </Text>
                 </View>
@@ -908,22 +925,24 @@ function AppContent() {
         <View style={[s.card, { gap: 20 }]}>
           <View style={s.row}>
             <View style={s.avatar}>
-              <Text style={{ fontSize: 24, color: C.ink }}>
+              <Text raw style={{ fontSize: 24, color: C.ink }}>
                 {profile?.name.charAt(0).toUpperCase() || "E"}
               </Text>
             </View>
             <View style={{ gap: 5, flex: 1 }}>
-              <Text style={s.cardTitle}>
+              <Text raw style={s.cardTitle}>
                 {profile?.name || "Your personal profile"}
               </Text>
-              <Text style={s.bodyMuted}>
+              <Text raw style={s.bodyMuted}>
                 {profile?.role || "A new chapter starts here"}
               </Text>
             </View>
           </View>
           {profile && (
             <>
-              <Text style={s.body}>{profile.goal}</Text>
+              <Text raw style={s.body}>
+                {profile.goal}
+              </Text>
               <View style={[s.row, { flexWrap: "wrap" }]}>
                 <View style={s.pill}>
                   <Text style={s.pillText}>{profile.focus}</Text>
@@ -1029,6 +1048,17 @@ function AppContent() {
           ))}
         </View>
         <View style={{ marginTop: 28 }}>
+          <View style={s.card}>
+            <LanguagePicker
+              value={state.preferences.language}
+              onChange={(language) =>
+                setState((v) => ({
+                  ...v,
+                  preferences: { ...v.preferences, language },
+                }))
+              }
+            />
+          </View>
           <Account cloud={cloud} state={state} />
           <Preferences state={state} update={setState} />
         </View>
@@ -1055,241 +1085,62 @@ function AppContent() {
       </>
     );
   }
-  if (loading)
+  const changeLanguage = (language: "en" | "te") => {
+    setState((v) => ({ ...v, preferences: { ...v.preferences, language } }));
+    const defaultGoal = "Feel confident in professional situations";
+    if (
+      sheet === "onboard" &&
+      [defaultGoal, translate(defaultGoal, "te")].includes(goal)
+    )
+      setGoal(translate(defaultGoal, language));
+  };
+  if (!introDone)
     return (
-      <View style={[s.center, { flex: 1 }]}>
-        <ActivityIndicator color={C.green} />
-        <Text style={s.body}>Getting your coach ready…</Text>
-      </View>
+      <LanguageProvider language={state.preferences.language}>
+        <LaunchSplash
+          ready={!loading}
+          onFinish={() => {
+            setIntroDone(true);
+            if (!state.profile && !loadFailed) openProfile();
+          }}
+        />
+      </LanguageProvider>
     );
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: C.bg }}>
-      <StatusBar style="dark" />
-      <View
-        style={{ flex: 1, flexDirection: "row" }}
-        accessibilityElementsHidden={sheet !== null}
-        importantForAccessibility={sheet ? "no-hide-descendants" : "auto"}
-        aria-hidden={sheet !== null}
-      >
-        {wide && (
-          <View style={s.sidebar}>
-            <View style={[s.row, { marginBottom: 50 }]}>
-              <View style={s.brandMark}>
-                <Icon name="leaf-outline" color="white" size={22} />
-              </View>
-              <Text style={s.logo}>
-                elevate<Text style={{ color: "#87A071" }}>.</Text>
-              </Text>
-            </View>
-            <Label>YOUR PERSONAL COACH</Label>
-            <View style={{ gap: 8, marginTop: 22 }}>
-              {nav.map((n) => (
-                <Pressable
-                  accessibilityRole="button"
-                  accessibilityLabel={n.tab}
-                  accessibilityState={{
-                    selected:
-                      tab === n.tab ||
-                      (tab === "My journey" && n.tab === "Practice"),
-                  }}
-                  key={n.tab}
-                  onPress={() => setTab(n.tab)}
-                  style={[
-                    s.navItem,
-                    (tab === n.tab ||
-                      (tab === "My journey" && n.tab === "Practice")) && {
-                      backgroundColor: C.mint,
-                    },
-                  ]}
-                >
-                  <Icon
-                    name={n.icon}
-                    color={
-                      tab === n.tab ||
-                      (tab === "My journey" && n.tab === "Practice")
-                        ? C.ink
-                        : C.muted
-                    }
-                  />
-                  <Text
-                    style={[
-                      s.navText,
-                      (tab === n.tab ||
-                        (tab === "My journey" && n.tab === "Practice")) && {
-                        color: C.ink,
-                        fontWeight: "600",
-                      },
-                    ]}
-                  >
-                    {n.tab}
-                  </Text>
-                  {(tab === n.tab ||
-                    (tab === "My journey" && n.tab === "Practice")) && (
-                    <View style={[s.dot, { marginLeft: "auto" }]} />
-                  )}
-                </Pressable>
-              ))}
-            </View>
-            <View
-              style={[
-                s.card,
-                {
-                  marginTop: "auto",
-                  backgroundColor: C.bg,
-                  borderWidth: 0,
-                  gap: 12,
-                },
-              ]}
-            >
-              <Icon name="sparkles-outline" color={C.green} />
-              <Text style={s.fieldLabel}>Becoming, not perfect.</Text>
-              <Text style={s.small}>
-                Your own pace. Your own path. A little growth, every day.
-              </Text>
-            </View>
-            <Pressable
-              onPress={() => setTab("Profile")}
-              accessibilityRole="button"
-              style={[s.row, { marginTop: 25 }]}
-            >
-              <View style={[s.avatar, { width: 38, height: 38 }]}>
-                <Text style={s.body}>
-                  {profile?.name[0]?.toUpperCase() || "Y"}
+    <LanguageProvider language={state.preferences.language}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: C.bg }}>
+        <StatusBar style="dark" />
+        <View
+          style={{ flex: 1, flexDirection: "row" }}
+          accessibilityElementsHidden={sheet !== null}
+          importantForAccessibility={sheet ? "no-hide-descendants" : "auto"}
+          aria-hidden={sheet !== null}
+        >
+          {wide && (
+            <View style={s.sidebar}>
+              <View style={[s.row, { marginBottom: 50 }]}>
+                <View style={s.brandMark}>
+                  <Icon name="leaf-outline" color="white" size={22} />
+                </View>
+                <Text style={s.logo}>
+                  elevate<Text style={{ color: "#87A071" }}>.</Text>
                 </Text>
               </View>
-              <View style={{ flex: 1, gap: 4 }}>
-                <Text style={s.fieldLabel}>
-                  {profile?.name || "Your personal space"}
-                </Text>
-                <Text style={s.small}>Private · Your coaching space</Text>
-              </View>
-              <Icon name="chevron-forward" size={16} />
-            </Pressable>
-          </View>
-        )}
-        <View style={{ flex: 1 }}>
-          <View style={[s.topbar, { paddingHorizontal: wide ? 42 : 22 }]}>
-            {wide ? (
-              <Text style={s.small}>
-                MY SPACE /{" "}
-                <Text style={{ color: C.ink }}>{tab.toUpperCase()}</Text>
-              </Text>
-            ) : (
-              <View style={s.row}>
-                <Icon name="leaf-outline" size={24} />
-                <Text style={[s.logo, { fontSize: 26 }]}>elevate.</Text>
-              </View>
-            )}
-            <View style={s.row}>
-              <Icon name="sunny-outline" size={18} color={C.green} />
-              <Text style={s.small}>
-                {new Date().toLocaleDateString("en", {
-                  month: "short",
-                  day: "numeric",
-                  weekday: "short",
-                })}
-              </Text>
-            </View>
-          </View>
-          {!!storageError && (
-            <View style={{ padding: 16, backgroundColor: "#FBE8D9", gap: 10 }}>
-              <Text accessibilityRole="alert" style={s.body}>
-                {storageError}
-              </Text>
-              <Button
-                secondary
-                title={
-                  loadFailed ? "Reset unreadable local data" : "Retry saving"
-                }
-                onPress={() =>
-                  loadFailed ? setSheet("delete") : setState((v) => ({ ...v }))
-                }
-              />
-            </View>
-          )}
-          <ScrollView
-            key={tab}
-            contentContainerStyle={{
-              padding: wide ? 40 : 20,
-              paddingTop: wide ? 32 : 24,
-              paddingBottom: 40,
-              maxWidth: 1250,
-              width: "100%",
-              alignSelf: "center",
-            }}
-          >
-            {(tab === "Practice" || tab === "My journey") && (
-              <View
-                style={{
-                  flexDirection: "row",
-                  gap: 8,
-                  marginBottom: 24,
-                  backgroundColor: "#E9EEE4",
-                  padding: 5,
-                  borderRadius: 12,
-                }}
-              >
-                {(["Practice", "My journey"] as Tab[]).map((item) => (
+              <Label>YOUR PERSONAL COACH</Label>
+              <View style={{ gap: 8, marginTop: 22 }}>
+                {nav.map((n) => (
                   <Pressable
-                    key={item}
                     accessibilityRole="button"
-                    accessibilityLabel={
-                      item === "Practice" ? "Exercise library" : item
-                    }
-                    aria-pressed={tab === item}
-                    onPress={() => setTab(item)}
-                    style={{
-                      flex: 1,
-                      minHeight: 46,
-                      justifyContent: "center",
-                      alignItems: "center",
-                      backgroundColor: tab === item ? "white" : "transparent",
-                      borderRadius: 8,
+                    accessibilityLabel={n.tab}
+                    accessibilityState={{
+                      selected:
+                        tab === n.tab ||
+                        (tab === "My journey" && n.tab === "Practice"),
                     }}
-                  >
-                    <Text style={s.fieldLabel}>
-                      {item === "Practice" ? "Exercise library" : "My journey"}
-                    </Text>
-                  </Pressable>
-                ))}
-              </View>
-            )}
-            {tab === "Today" ? (
-              Today()
-            ) : tab === "My journey" ? (
-              Journey()
-            ) : tab === "Practice" ? (
-              Practice()
-            ) : tab === "Coach" ? (
-              <CoachHub state={state} update={setState} />
-            ) : tab === "My style" ? (
-              Wardrobe()
-            ) : (
-              ProfileScreen()
-            )}
-          </ScrollView>
-          {!wide && (
-            <View style={s.bottomNav}>
-              {nav.map((n) => (
-                <Pressable
-                  accessibilityRole="button"
-                  accessibilityLabel={n.tab}
-                  accessibilityState={{
-                    selected:
-                      tab === n.tab ||
-                      (tab === "My journey" && n.tab === "Practice"),
-                  }}
-                  key={n.tab}
-                  onPress={() => setTab(n.tab)}
-                  style={s.bottomItem}
-                >
-                  <View
+                    key={n.tab}
+                    onPress={() => setTab(n.tab)}
                     style={[
-                      {
-                        paddingHorizontal: 16,
-                        paddingVertical: 5,
-                        borderRadius: 20,
-                      },
+                      s.navItem,
                       (tab === n.tab ||
                         (tab === "My journey" && n.tab === "Practice")) && {
                         backgroundColor: C.mint,
@@ -1298,7 +1149,6 @@ function AppContent() {
                   >
                     <Icon
                       name={n.icon}
-                      size={22}
                       color={
                         tab === n.tab ||
                         (tab === "My journey" && n.tab === "Practice")
@@ -1306,429 +1156,686 @@ function AppContent() {
                           : C.muted
                       }
                     />
-                  </View>
-                  <Text
-                    style={{
-                      fontSize: 11,
-                      fontWeight: "500",
-                      color:
-                        tab === n.tab ||
-                        (tab === "My journey" && n.tab === "Practice")
-                          ? C.ink
-                          : C.muted,
-                    }}
-                  >
-                    {n.tab}
-                  </Text>
-                </Pressable>
-              ))}
-            </View>
-          )}
-        </View>
-      </View>
-      {!!message && (
-        <View
-          accessibilityRole="alert"
-          style={[s.toast, { bottom: wide ? 24 : 85 }]}
-        >
-          <Icon name="checkmark-circle-outline" color="white" size={20} />
-          <Text style={{ color: "white", flex: 1, lineHeight: 21 }}>
-            {message}
-          </Text>
-        </View>
-      )}
-      <Modal
-        visible={sheet !== null}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setSheet(null)}
-      >
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : undefined}
-          style={s.overlay}
-        >
-          <View
-            style={[s.modal, { maxHeight: "92%", width: wide ? 580 : "100%" }]}
-          >
-            <View
-              style={[
-                s.between,
-                { padding: 22, borderBottomWidth: 1, borderColor: C.line },
-              ]}
-            >
-              <Text style={s.fieldLabel}>
-                {sheet === "onboard"
-                  ? "LET’S GET TO KNOW YOU"
-                  : sheet === "edit"
-                    ? "YOUR PERSONAL PROFILE"
-                    : sheet === "exercise"
-                      ? "YOUR PRACTICE STUDIO"
-                      : sheet === "occasion"
-                        ? "PREPARE ME"
-                        : sheet === "garment"
-                          ? "YOUR WARDROBE"
-                          : "YOUR DATA"}
-              </Text>
-              <Pressable
-                accessibilityRole="button"
-                accessibilityLabel="Close dialog"
-                style={s.touch}
-                onPress={() => setSheet(null)}
+                    <Text
+                      style={[
+                        s.navText,
+                        (tab === n.tab ||
+                          (tab === "My journey" && n.tab === "Practice")) && {
+                          color: C.ink,
+                          fontWeight: "600",
+                        },
+                      ]}
+                    >
+                      {n.tab}
+                    </Text>
+                    {(tab === n.tab ||
+                      (tab === "My journey" && n.tab === "Practice")) && (
+                      <View style={[s.dot, { marginLeft: "auto" }]} />
+                    )}
+                  </Pressable>
+                ))}
+              </View>
+              <View
+                style={[
+                  s.card,
+                  {
+                    marginTop: "auto",
+                    backgroundColor: C.bg,
+                    borderWidth: 0,
+                    gap: 12,
+                  },
+                ]}
               >
-                <Icon name="close" />
+                <Icon name="sparkles-outline" color={C.green} />
+                <Text style={s.fieldLabel}>Becoming, not perfect.</Text>
+                <Text style={s.small}>
+                  Your own pace. Your own path. A little growth, every day.
+                </Text>
+              </View>
+              <Pressable
+                onPress={() => setTab("Profile")}
+                accessibilityRole="button"
+                style={[s.row, { marginTop: 25 }]}
+              >
+                <View style={[s.avatar, { width: 38, height: 38 }]}>
+                  <Text raw style={s.body}>
+                    {profile?.name[0]?.toUpperCase() || "Y"}
+                  </Text>
+                </View>
+                <View style={{ flex: 1, gap: 4 }}>
+                  <Text raw style={s.fieldLabel}>
+                    {profile?.name || "Your personal space"}
+                  </Text>
+                  <Text style={s.small}>Private · Your coaching space</Text>
+                </View>
+                <Icon name="chevron-forward" size={16} />
               </Pressable>
             </View>
-            <ScrollView
-              keyboardShouldPersistTaps="handled"
-              contentContainerStyle={{ padding: 26, gap: 22 }}
-            >
-              {(sheet === "onboard" || sheet === "edit") && (
-                <>
-                  <Text style={s.modalTitle}>
-                    Your journey starts with you.
-                  </Text>
-                  <Text style={s.bodyMuted}>
-                    A few details help shape your daily coaching. You can change
-                    these whenever life changes.
-                  </Text>
-                  <Field
-                    label="What should we call you?"
-                    value={name}
-                    onChange={setName}
-                    placeholder="Your first name"
-                  />
-                  <Field
-                    label="Your role or everyday context"
-                    value={role}
-                    onChange={setRole}
-                    placeholder="e.g. Educator, manager, student"
-                  />
-                  <Field
-                    label="What would you like to work toward?"
-                    value={goal}
-                    onChange={setGoal}
-                    multiline
-                  />
-                  <Text style={s.fieldLabel}>Your first focus</Text>
-                  <View style={[s.row, { flexWrap: "wrap" }]}>
-                    {AREAS.map((a) => (
-                      <Chip
-                        key={a}
-                        title={a}
-                        selected={focus === a}
-                        onPress={() => setFocus(a)}
-                      />
-                    ))}
-                  </View>
-                  <Text style={s.fieldLabel}>Your usual environment</Text>
-                  <View style={[s.row, { flexWrap: "wrap" }]}>
-                    {["Casual", "Smart casual", "Formal", "Varies"].map((c) => (
-                      <Chip
-                        key={c}
-                        title={c}
-                        selected={context === c}
-                        onPress={() => setContext(c)}
-                      />
-                    ))}
-                  </View>
-                  <Text style={s.fieldLabel}>
-                    Time you can make for yourself
-                  </Text>
-                  <View style={s.row}>
-                    {[3, 5, 10].map((n) => (
-                      <Chip
-                        key={n}
-                        title={`${n} min / day`}
-                        selected={minutes === n}
-                        onPress={() => setMinutes(n)}
-                      />
-                    ))}
-                  </View>
-                  <Text style={s.fieldLabel}>
-                    How confident do you feel today?
-                  </Text>
-                  <Rating value={confidence} onChange={setConfidence} />
-                  <Text style={s.small}>
-                    Saved in your device vault, and synced when you connect a
-                    cloud account.
-                  </Text>
-                  <Button
-                    title={
-                      sheet === "edit" ? "Save my profile" : "Begin my journey"
-                    }
-                    onPress={saveProfile}
-                    disabled={!name.trim() || !goal.trim() || loadFailed}
-                    icon="arrow-forward"
-                  />
-                </>
+          )}
+          <View style={{ flex: 1 }}>
+            <View style={[s.topbar, { paddingHorizontal: wide ? 42 : 22 }]}>
+              {wide ? (
+                <Text style={s.small}>
+                  MY SPACE /{" "}
+                  <Text style={{ color: C.ink }}>{tab.toUpperCase()}</Text>
+                </Text>
+              ) : (
+                <View style={s.row}>
+                  <Icon name="leaf-outline" size={24} />
+                  <Text style={[s.logo, { fontSize: 26 }]}>elevate.</Text>
+                </View>
               )}
-              {sheet === "exercise" && (
-                <>
-                  <View style={s.row}>
-                    {["Learn", "Rehearse", "Real life"].map((p, i) => (
+              <View style={s.row}>
+                <Icon name="sunny-outline" size={18} color={C.green} />
+                <Text style={s.small}>
+                  {new Date().toLocaleDateString(
+                    state.preferences.language === "te" ? "te-IN" : "en-IN",
+                    {
+                      month: "short",
+                      day: "numeric",
+                      weekday: "short",
+                    },
+                  )}
+                </Text>
+              </View>
+            </View>
+            {!!storageError && (
+              <View
+                style={{ padding: 16, backgroundColor: "#FBE8D9", gap: 10 }}
+              >
+                <Text accessibilityRole="alert" style={s.body}>
+                  {storageError}
+                </Text>
+                <Button
+                  secondary
+                  title={
+                    loadFailed ? "Reset unreadable local data" : "Retry saving"
+                  }
+                  onPress={() =>
+                    loadFailed
+                      ? setSheet("delete")
+                      : setState((v) => ({ ...v }))
+                  }
+                />
+              </View>
+            )}
+            <ScrollView
+              key={tab}
+              contentContainerStyle={{
+                padding: wide ? 40 : 20,
+                paddingTop: wide ? 32 : 24,
+                paddingBottom: 40,
+                maxWidth: 1250,
+                width: "100%",
+                alignSelf: "center",
+              }}
+            >
+              {(tab === "Practice" || tab === "My journey") && (
+                <View
+                  style={{
+                    flexDirection: "row",
+                    gap: 8,
+                    marginBottom: 24,
+                    backgroundColor: "#E9EEE4",
+                    padding: 5,
+                    borderRadius: 12,
+                  }}
+                >
+                  {(["Practice", "My journey"] as Tab[]).map((item) => (
+                    <Pressable
+                      key={item}
+                      accessibilityRole="button"
+                      accessibilityLabel={
+                        item === "Practice" ? "Exercise library" : item
+                      }
+                      aria-pressed={tab === item}
+                      onPress={() => setTab(item)}
+                      style={{
+                        flex: 1,
+                        minHeight: 46,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        backgroundColor: tab === item ? "white" : "transparent",
+                        borderRadius: 8,
+                      }}
+                    >
+                      <Text style={s.fieldLabel}>
+                        {item === "Practice"
+                          ? "Exercise library"
+                          : "My journey"}
+                      </Text>
+                    </Pressable>
+                  ))}
+                </View>
+              )}
+              {tab === "Today" ? (
+                Today()
+              ) : tab === "My journey" ? (
+                Journey()
+              ) : tab === "Practice" ? (
+                Practice()
+              ) : tab === "Coach" ? (
+                <CoachHub state={state} update={setState} />
+              ) : tab === "My style" ? (
+                Wardrobe()
+              ) : (
+                ProfileScreen()
+              )}
+            </ScrollView>
+            {!wide && (
+              <View style={s.bottomNav}>
+                {nav.map((n) => (
+                  <Pressable
+                    accessibilityRole="button"
+                    accessibilityLabel={n.tab}
+                    accessibilityState={{
+                      selected:
+                        tab === n.tab ||
+                        (tab === "My journey" && n.tab === "Practice"),
+                    }}
+                    key={n.tab}
+                    onPress={() => setTab(n.tab)}
+                    style={s.bottomItem}
+                  >
+                    <View
+                      style={[
+                        {
+                          paddingHorizontal: 16,
+                          paddingVertical: 5,
+                          borderRadius: 20,
+                        },
+                        (tab === n.tab ||
+                          (tab === "My journey" && n.tab === "Practice")) && {
+                          backgroundColor: C.mint,
+                        },
+                      ]}
+                    >
+                      <Icon
+                        name={n.icon}
+                        size={22}
+                        color={
+                          tab === n.tab ||
+                          (tab === "My journey" && n.tab === "Practice")
+                            ? C.ink
+                            : C.muted
+                        }
+                      />
+                    </View>
+                    <Text
+                      style={{
+                        fontSize: 11,
+                        fontWeight: "500",
+                        color:
+                          tab === n.tab ||
+                          (tab === "My journey" && n.tab === "Practice")
+                            ? C.ink
+                            : C.muted,
+                      }}
+                    >
+                      {n.tab}
+                    </Text>
+                  </Pressable>
+                ))}
+              </View>
+            )}
+          </View>
+        </View>
+        {!!message && (
+          <View
+            accessibilityRole="alert"
+            style={[s.toast, { bottom: wide ? 24 : 85 }]}
+          >
+            <Icon name="checkmark-circle-outline" color="white" size={20} />
+            <Text style={{ color: "white", flex: 1, lineHeight: 21 }}>
+              {message}
+            </Text>
+          </View>
+        )}
+        {sheet !== null && (
+          <Modal
+            visible={sheet !== null}
+            transparent
+            animationType="fade"
+            onRequestClose={() => setSheet(null)}
+          >
+            <KeyboardAvoidingView
+              behavior={Platform.OS === "ios" ? "padding" : undefined}
+              style={s.overlay}
+            >
+              <View
+                style={[
+                  s.modal,
+                  {
+                    maxHeight: sheet === "onboard" ? "100%" : "92%",
+                    width: wide ? 580 : "100%",
+                    ...(sheet === "onboard"
+                      ? { flex: 1, borderRadius: wide ? 20 : 0 }
+                      : {}),
+                  },
+                ]}
+              >
+                <View
+                  style={[
+                    s.between,
+                    { padding: 22, borderBottomWidth: 1, borderColor: C.line },
+                  ]}
+                >
+                  <Text style={s.fieldLabel}>
+                    {sheet === "onboard"
+                      ? "LET’S GET TO KNOW YOU"
+                      : sheet === "edit"
+                        ? "YOUR PERSONAL PROFILE"
+                        : sheet === "exercise"
+                          ? "YOUR PRACTICE STUDIO"
+                          : sheet === "occasion"
+                            ? "PREPARE ME"
+                            : sheet === "garment"
+                              ? "YOUR WARDROBE"
+                              : "YOUR DATA"}
+                  </Text>
+                  <Pressable
+                    accessibilityRole="button"
+                    accessibilityLabel="Close dialog"
+                    style={s.touch}
+                    onPress={() => setSheet(null)}
+                  >
+                    <Icon name="close" />
+                  </Pressable>
+                </View>
+                <ScrollView
+                  keyboardShouldPersistTaps="handled"
+                  contentContainerStyle={{ padding: 26, gap: 22 }}
+                >
+                  {(sheet === "onboard" || sheet === "edit") && (
+                    <>
+                      <Text style={s.modalTitle}>
+                        Your journey starts with you.
+                      </Text>
+                      <Text style={s.bodyMuted}>
+                        A few details help shape your daily coaching. You can
+                        change these whenever life changes.
+                      </Text>
+                      <LanguagePicker
+                        value={state.preferences.language}
+                        onChange={changeLanguage}
+                      />
+                      <Text style={s.small}>
+                        Name and goal are required. Other details help
+                        personalise your plan.
+                      </Text>
+                      <Field
+                        label="What should we call you?"
+                        value={name}
+                        onChange={setName}
+                        placeholder="Your first name"
+                      />
+                      <Field
+                        label="Your role or everyday context"
+                        value={role}
+                        onChange={setRole}
+                        placeholder="e.g. Educator, manager, student"
+                      />
+                      <Field
+                        label="What would you like to work toward?"
+                        value={goal}
+                        onChange={setGoal}
+                        multiline
+                      />
+                      <Text style={s.fieldLabel}>Your first focus</Text>
+                      <View style={[s.row, { flexWrap: "wrap" }]}>
+                        {AREAS.map((a) => (
+                          <Chip
+                            key={a}
+                            title={a}
+                            selected={focus === a}
+                            onPress={() => setFocus(a)}
+                          />
+                        ))}
+                      </View>
+                      <Text style={s.fieldLabel}>Your usual environment</Text>
+                      <View style={[s.row, { flexWrap: "wrap" }]}>
+                        {["Casual", "Smart casual", "Formal", "Varies"].map(
+                          (c) => (
+                            <Chip
+                              key={c}
+                              title={c}
+                              selected={context === c}
+                              onPress={() => setContext(c)}
+                            />
+                          ),
+                        )}
+                      </View>
+                      <Text style={s.fieldLabel}>
+                        Time you can make for yourself
+                      </Text>
+                      <View style={s.row}>
+                        {[3, 5, 10].map((n) => (
+                          <Chip
+                            key={n}
+                            title={`${n} min / day`}
+                            selected={minutes === n}
+                            onPress={() => setMinutes(n)}
+                          />
+                        ))}
+                      </View>
+                      <Text style={s.fieldLabel}>
+                        How confident do you feel today?
+                      </Text>
+                      <Rating value={confidence} onChange={setConfidence} />
+                      <Text style={s.small}>
+                        Saved in your device vault, and synced when you connect
+                        a cloud account.
+                      </Text>
+                      <Button
+                        title={
+                          sheet === "edit"
+                            ? "Save my profile"
+                            : "Begin my journey"
+                        }
+                        onPress={saveProfile}
+                        disabled={!name.trim() || !goal.trim() || loadFailed}
+                        icon="arrow-forward"
+                      />
+                    </>
+                  )}
+                  {sheet === "exercise" && (
+                    <>
+                      <View style={s.row}>
+                        {["Learn", "Rehearse", "Real life"].map((p, i) => (
+                          <View
+                            key={p}
+                            style={[
+                              s.pill,
+                              { backgroundColor: phase === i ? C.mint : C.bg },
+                            ]}
+                          >
+                            <Text style={s.pillText}>
+                              {i + 1}. {p}
+                            </Text>
+                          </View>
+                        ))}
+                      </View>
+                      <Text style={s.modalTitle}>{active.title}</Text>
+                      {phase === 0 ? (
+                        <>
+                          <Text style={s.body}>{active.lesson}</Text>
+                          <View
+                            style={[
+                              s.card,
+                              { backgroundColor: C.cream, gap: 8 },
+                            ]}
+                          >
+                            <Label>WHY THIS PRACTICE</Label>
+                            <Text style={s.bodyMuted}>
+                              {active.description}
+                            </Text>
+                          </View>
+                          <Button
+                            title="Got it. Let’s rehearse"
+                            onPress={() => {
+                              setState((v) => ({
+                                ...v,
+                                learned: [
+                                  ...new Set([...v.learned, active.id]),
+                                ],
+                              }));
+                              setPhase(1);
+                            }}
+                            icon="arrow-forward"
+                          />
+                        </>
+                      ) : phase === 1 ? (
+                        <>
+                          <Text style={s.bodyMuted}>
+                            Take {active.minutes} minutes. Move through each
+                            step at your own pace.
+                          </Text>
+                          {active.steps.map((step, i) => (
+                            <View
+                              style={[s.row, { alignItems: "flex-start" }]}
+                              key={step}
+                            >
+                              <View style={s.stepCircle}>
+                                <Text style={s.body}>{i + 1}</Text>
+                              </View>
+                              <Text style={[s.body, { flex: 1 }]}>{step}</Text>
+                            </View>
+                          ))}
+                          <Button
+                            title="I’ve rehearsed — set my challenge"
+                            onPress={() => {
+                              setState((v) => ({
+                                ...v,
+                                assignment: {
+                                  exerciseId: active.id,
+                                  rehearsedAt: new Date().toISOString(),
+                                },
+                              }));
+                              setPhase(2);
+                            }}
+                            icon="checkmark"
+                          />
+                        </>
+                      ) : (
+                        <>
+                          <View
+                            style={[
+                              s.card,
+                              { backgroundColor: C.mint, gap: 10 },
+                            ]}
+                          >
+                            <Label>YOUR REAL-WORLD CHALLENGE</Label>
+                            <Text style={s.body}>{active.challenge}</Text>
+                          </View>
+                          <Text style={s.bodyMuted}>
+                            Come back after trying this in a real situation.
+                            Your challenge stays saved until you reflect.
+                          </Text>
+                          <Field
+                            label="Where did you try it?"
+                            value={situation}
+                            onChange={setSituation}
+                            placeholder="e.g. Monday’s team meeting"
+                          />
+                          <Field
+                            label="What happened? What did you notice?"
+                            value={note}
+                            onChange={setNote}
+                            multiline
+                            placeholder="One thing that worked, or something that felt difficult…"
+                          />
+                          <Text style={s.fieldLabel}>
+                            How did that practice feel?
+                          </Text>
+                          <Rating value={confidence} onChange={setConfidence} />
+                          <Field
+                            label="What would you try next time? (optional)"
+                            value={next}
+                            onChange={setNext}
+                            placeholder="A small adjustment for next time"
+                          />
+                          <Button
+                            title="Save reflection & keep growing"
+                            onPress={complete}
+                            disabled={!note.trim() || !situation.trim()}
+                            icon="checkmark"
+                          />
+                          <Button
+                            secondary
+                            title="I’ll come back after trying it"
+                            onPress={() => setSheet(null)}
+                          />
+                        </>
+                      )}
+                    </>
+                  )}
+                  {sheet === "occasion" && (
+                    <>
+                      <Text style={s.modalTitle}>Your moment. Your plan.</Text>
+                      <Text style={s.bodyMuted}>
+                        Turn an upcoming occasion into a simple preparation
+                        checklist.
+                      </Text>
+                      <Text style={s.fieldLabel}>What’s coming up?</Text>
+                      <View style={[s.row, { flexWrap: "wrap" }]}>
+                        {[
+                          "Client meeting",
+                          "Job interview",
+                          "Business dinner",
+                          "Networking event",
+                          "Presentation",
+                        ].map((t) => (
+                          <Chip
+                            key={t}
+                            title={t}
+                            selected={eventTitle === t}
+                            onPress={() => setEventTitle(t)}
+                          />
+                        ))}
+                      </View>
+                      <Field
+                        label="Date (YYYY-MM-DD)"
+                        value={date}
+                        onChange={setDate}
+                      />
                       <View
-                        key={p}
-                        style={[
-                          s.pill,
-                          { backgroundColor: phase === i ? C.mint : C.bg },
-                        ]}
+                        style={[s.card, { backgroundColor: C.cream, gap: 10 }]}
                       >
-                        <Text style={s.pillText}>
-                          {i + 1}. {p}
+                        <Label>YOUR PREPARATION PLAN</Label>
+                        <Text style={s.body}>
+                          The day before → Before you leave → In the moment
+                        </Text>
+                        <Text style={s.small}>
+                          Nine practical steps, saved to your profile.
                         </Text>
                       </View>
-                    ))}
-                  </View>
-                  <Text style={s.modalTitle}>{active.title}</Text>
-                  {phase === 0 ? (
-                    <>
-                      <Text style={s.body}>{active.lesson}</Text>
-                      <View
-                        style={[s.card, { backgroundColor: C.cream, gap: 8 }]}
-                      >
-                        <Label>WHY THIS PRACTICE</Label>
-                        <Text style={s.bodyMuted}>{active.description}</Text>
-                      </View>
                       <Button
-                        title="Got it. Let’s rehearse"
+                        title="Create my preparation plan"
+                        disabled={
+                          !/^\d{4}-\d{2}-\d{2}$/.test(date) ||
+                          !Number.isFinite(Date.parse(date)) ||
+                          new Date(date).toISOString().slice(0, 10) !== date ||
+                          loadFailed
+                        }
                         onPress={() => {
                           setState((v) => ({
                             ...v,
-                            learned: [...new Set([...v.learned, active.id])],
+                            occasions: [
+                              {
+                                id: uid(),
+                                title: eventTitle,
+                                date,
+                                checked: [],
+                              },
+                              ...v.occasions,
+                            ],
                           }));
-                          setPhase(1);
+                          setSheet(null);
+                          setTab("Profile");
+                          setMessage("Your preparation plan is ready.");
                         }}
                         icon="arrow-forward"
                       />
                     </>
-                  ) : phase === 1 ? (
+                  )}
+                  {sheet === "garment" && (
                     <>
-                      <Text style={s.bodyMuted}>
-                        Take {active.minutes} minutes. Move through each step at
-                        your own pace.
-                      </Text>
-                      {active.steps.map((step, i) => (
-                        <View
-                          style={[s.row, { alignItems: "flex-start" }]}
-                          key={step}
-                        >
-                          <View style={s.stepCircle}>
-                            <Text style={s.body}>{i + 1}</Text>
-                          </View>
-                          <Text style={[s.body, { flex: 1 }]}>{step}</Text>
-                        </View>
-                      ))}
+                      <Text style={s.modalTitle}>An everyday favorite.</Text>
+                      <Field
+                        label="Piece name"
+                        value={garment}
+                        onChange={setGarment}
+                        placeholder="e.g. White Oxford shirt"
+                      />
+                      <Text style={s.fieldLabel}>Category</Text>
+                      <View style={[s.row, { flexWrap: "wrap" }]}>
+                        {[
+                          "Tops",
+                          "Bottoms",
+                          "Shoes",
+                          "Layers",
+                          "Accessories",
+                        ].map((c) => (
+                          <Chip
+                            key={c}
+                            title={c}
+                            selected={category === c}
+                            onPress={() => setCategory(c)}
+                          />
+                        ))}
+                      </View>
+                      <Field label="Color" value={color} onChange={setColor} />
                       <Button
-                        title="I’ve rehearsed — set my challenge"
+                        title="Add to my wardrobe"
+                        disabled={
+                          !garment.trim() || !color.trim() || loadFailed
+                        }
                         onPress={() => {
                           setState((v) => ({
                             ...v,
-                            assignment: {
-                              exerciseId: active.id,
-                              rehearsedAt: new Date().toISOString(),
-                            },
+                            wardrobe: [
+                              ...v.wardrobe,
+                              {
+                                id: uid(),
+                                name: garment.trim(),
+                                category,
+                                color: color.trim(),
+                              },
+                            ],
                           }));
-                          setPhase(2);
+                          setSheet(null);
+                          setMessage("Added to your wardrobe.");
                         }}
-                        icon="checkmark"
-                      />
-                    </>
-                  ) : (
-                    <>
-                      <View
-                        style={[s.card, { backgroundColor: C.mint, gap: 10 }]}
-                      >
-                        <Label>YOUR REAL-WORLD CHALLENGE</Label>
-                        <Text style={s.body}>{active.challenge}</Text>
-                      </View>
-                      <Text style={s.bodyMuted}>
-                        Come back after trying this in a real situation. Your
-                        challenge stays saved until you reflect.
-                      </Text>
-                      <Field
-                        label="Where did you try it?"
-                        value={situation}
-                        onChange={setSituation}
-                        placeholder="e.g. Monday’s team meeting"
-                      />
-                      <Field
-                        label="What happened? What did you notice?"
-                        value={note}
-                        onChange={setNote}
-                        multiline
-                        placeholder="One thing that worked, or something that felt difficult…"
-                      />
-                      <Text style={s.fieldLabel}>
-                        How did that practice feel?
-                      </Text>
-                      <Rating value={confidence} onChange={setConfidence} />
-                      <Field
-                        label="What would you try next time? (optional)"
-                        value={next}
-                        onChange={setNext}
-                        placeholder="A small adjustment for next time"
-                      />
-                      <Button
-                        title="Save reflection & keep growing"
-                        onPress={complete}
-                        disabled={!note.trim() || !situation.trim()}
-                        icon="checkmark"
-                      />
-                      <Button
-                        secondary
-                        title="I’ll come back after trying it"
-                        onPress={() => setSheet(null)}
+                        icon="add"
                       />
                     </>
                   )}
-                </>
-              )}
-              {sheet === "occasion" && (
-                <>
-                  <Text style={s.modalTitle}>Your moment. Your plan.</Text>
-                  <Text style={s.bodyMuted}>
-                    Turn an upcoming occasion into a simple preparation
-                    checklist.
-                  </Text>
-                  <Text style={s.fieldLabel}>What’s coming up?</Text>
-                  <View style={[s.row, { flexWrap: "wrap" }]}>
-                    {[
-                      "Client meeting",
-                      "Job interview",
-                      "Business dinner",
-                      "Networking event",
-                      "Presentation",
-                    ].map((t) => (
-                      <Chip
-                        key={t}
-                        title={t}
-                        selected={eventTitle === t}
-                        onPress={() => setEventTitle(t)}
+                  {sheet === "delete" && (
+                    <>
+                      <Text style={s.modalTitle}>
+                        Start with a clean slate?
+                      </Text>
+                      <Text style={s.body}>
+                        This deletes your profile, wardrobe, preparation plans,
+                        and reflection journal from this device. It cannot be
+                        undone.
+                      </Text>
+                      <Button
+                        title="Keep my data"
+                        onPress={() => setSheet(null)}
                       />
-                    ))}
-                  </View>
-                  <Field
-                    label="Date (YYYY-MM-DD)"
-                    value={date}
-                    onChange={setDate}
-                  />
-                  <View style={[s.card, { backgroundColor: C.cream, gap: 10 }]}>
-                    <Label>YOUR PREPARATION PLAN</Label>
-                    <Text style={s.body}>
-                      The day before → Before you leave → In the moment
-                    </Text>
-                    <Text style={s.small}>
-                      Nine practical steps, saved to your profile.
-                    </Text>
-                  </View>
-                  <Button
-                    title="Create my preparation plan"
-                    disabled={
-                      !/^\d{4}-\d{2}-\d{2}$/.test(date) ||
-                      !Number.isFinite(Date.parse(date)) ||
-                      new Date(date).toISOString().slice(0, 10) !== date ||
-                      loadFailed
-                    }
-                    onPress={() => {
-                      setState((v) => ({
-                        ...v,
-                        occasions: [
-                          { id: uid(), title: eventTitle, date, checked: [] },
-                          ...v.occasions,
-                        ],
-                      }));
-                      setSheet(null);
-                      setTab("Profile");
-                      setMessage("Your preparation plan is ready.");
-                    }}
-                    icon="arrow-forward"
-                  />
-                </>
-              )}
-              {sheet === "garment" && (
-                <>
-                  <Text style={s.modalTitle}>An everyday favorite.</Text>
-                  <Field
-                    label="Piece name"
-                    value={garment}
-                    onChange={setGarment}
-                    placeholder="e.g. White Oxford shirt"
-                  />
-                  <Text style={s.fieldLabel}>Category</Text>
-                  <View style={[s.row, { flexWrap: "wrap" }]}>
-                    {["Tops", "Bottoms", "Shoes", "Layers", "Accessories"].map(
-                      (c) => (
-                        <Chip
-                          key={c}
-                          title={c}
-                          selected={category === c}
-                          onPress={() => setCategory(c)}
-                        />
-                      ),
-                    )}
-                  </View>
-                  <Field label="Color" value={color} onChange={setColor} />
-                  <Button
-                    title="Add to my wardrobe"
-                    disabled={!garment.trim() || !color.trim() || loadFailed}
-                    onPress={() => {
-                      setState((v) => ({
-                        ...v,
-                        wardrobe: [
-                          ...v.wardrobe,
-                          {
-                            id: uid(),
-                            name: garment.trim(),
-                            category,
-                            color: color.trim(),
-                          },
-                        ],
-                      }));
-                      setSheet(null);
-                      setMessage("Added to your wardrobe.");
-                    }}
-                    icon="add"
-                  />
-                </>
-              )}
-              {sheet === "delete" && (
-                <>
-                  <Text style={s.modalTitle}>Start with a clean slate?</Text>
-                  <Text style={s.body}>
-                    This deletes your profile, wardrobe, preparation plans, and
-                    reflection journal from this device. It cannot be undone.
-                  </Text>
-                  <Button title="Keep my data" onPress={() => setSheet(null)} />
-                  <Button
-                    secondary
-                    title="Yes, delete all my local data"
-                    onPress={async () => {
-                      try {
-                        const empty = initialState();
-                        await cloud.disconnect();
-                        await setReminder(false, 9, 0);
-                        await saveState(empty);
-                        setState(empty);
-                        setLoadFailed(false);
-                        setStorageError("");
-                        setSheet(null);
-                        setTab("Today");
-                        setMessage("Your local data has been deleted.");
-                      } catch {
-                        setStorageError(
-                          "Deletion failed. Your data may still be stored. Try again.",
-                        );
-                        setSheet(null);
-                      }
-                    }}
-                  />
-                </>
-              )}
-            </ScrollView>
-          </View>
-        </KeyboardAvoidingView>
-      </Modal>
-    </SafeAreaView>
+                      <Button
+                        secondary
+                        title="Yes, delete all my local data"
+                        onPress={async () => {
+                          try {
+                            const empty = initialState();
+                            await cloud.disconnect();
+                            await setReminder(false, 9, 0);
+                            await saveState(empty);
+                            setState(empty);
+                            setLoadFailed(false);
+                            setStorageError("");
+                            setSheet(null);
+                            setTab("Today");
+                            setMessage("Your local data has been deleted.");
+                          } catch {
+                            setStorageError(
+                              "Deletion failed. Your data may still be stored. Try again.",
+                            );
+                            setSheet(null);
+                          }
+                        }}
+                      />
+                    </>
+                  )}
+                </ScrollView>
+              </View>
+            </KeyboardAvoidingView>
+          </Modal>
+        )}
+      </SafeAreaView>
+    </LanguageProvider>
   );
 }
 export default function App() {

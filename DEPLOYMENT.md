@@ -53,7 +53,11 @@ The app never sends studio media to an AI provider. Users attach media directly 
 
 ## 3. Native Android builds
 
-The Android source is version **1.1.0**, including the manual ChatGPT JSON studio, charts, illustrations, native clipboard and sharing, and removal of microphone access. `android.versionCode` supplies a baseline of 2; EAS manages build numbers remotely and increments them for preview and production builds. Installable upgrades must use the same application ID and signing key as the installed app.
+Version 1.2 adds English/Telugu onboarding, a Profile language picker, translated coaching lessons, and a branded native launch screen followed by a brief accessible animation. New profiles see onboarding automatically; returning profiles retain their saved data. Language is stored in `preferences.language` (older profiles default to English) and included in D1 state and manual ChatGPT requests. Deploy the updated Worker alongside clients so schema validation preserves the new preference. No SQL migration is needed for this JSON preference.
+
+Build and install a new APK for the native splash resources and Telugu screens; existing installed APKs do not change when the website deploys. User notes and imported analysis stay in their original language; new ChatGPT packages request human-readable output in the selected language while keeping JSON keys and enum values stable.
+
+The Android source is version **1.2.0**, including the manual ChatGPT JSON studio, charts, illustrations, native clipboard and sharing, and removal of microphone access. `android.versionCode` supplies a baseline of 2; EAS manages build numbers remotely and increments them for preview and production builds. Installable upgrades must use the same application ID and signing key as the installed app.
 
 `npm run build:android` verifies the JavaScript/Hermes bundle only. To produce an installable APK after EAS account/project setup, run `npm run build:android:apk`; use `npm run build:android:aab` for the Play Store bundle. Neither command submits a store release.
 

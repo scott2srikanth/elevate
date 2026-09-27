@@ -90,6 +90,7 @@ export const stateSchema = z.object({
     .default({ audience: "", expertise: "", value: "", statement: "" }),
   preferences: z
     .object({
+      language: z.enum(["en", "te"]).default("en"),
       reminderHour: z.number().int().min(0).max(23),
       reminderMinute: z.number().int().min(0).max(59),
       reminders: z.boolean(),
@@ -97,6 +98,7 @@ export const stateSchema = z.object({
       culture: z.string().max(100),
     })
     .default({
+      language: "en",
       reminderHour: 9,
       reminderMinute: 0,
       reminders: false,

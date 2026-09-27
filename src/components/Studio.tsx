@@ -1,5 +1,6 @@
+import { Image, Text } from "../i18n";
 import React, { useEffect, useState } from "react";
-import { Image, Platform, Text, View } from "react-native";
+import { Platform, View } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { State } from "../coach";
 import { api, privateMediaUri, uploadMedia } from "../api";
@@ -47,7 +48,9 @@ export function CoachMemory({
         />
         {state.memories.map((m) => (
           <View key={m.id} style={{ gap: 8 }}>
-            <Text style={k.body}>{m.text}</Text>
+            <Text raw style={k.body}>
+              {m.text}
+            </Text>
             <Action
               title={`Forget: ${m.text.slice(0, 35)}`}
               secondary
@@ -298,7 +301,7 @@ export function AssessmentHistory({
           {a.analysis ? (
             <AnalysisView analysis={a.analysis} />
           ) : (
-            <Text selectable style={k.body}>
+            <Text raw selectable style={k.body}>
               {a.feedback}
             </Text>
           )}

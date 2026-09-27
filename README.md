@@ -2,6 +2,12 @@
 
 React Native / Expo SDK 57 mobile app, with an Expo Router web build served by a Cloudflare Worker. D1 stores accounts and versioned coaching profiles. Private R2 objects hold optional wardrobe photos. Coaching analysis uses manual JSON exchange with ChatGPT—no API key, AI binding, or sign-in is needed for the studio.
 
+## English and Telugu
+
+On first launch, a short animated Elevate splash leads into profile setup with a language selector, name, goal, focus, daily practice time, and confidence. Change language later in **Profile → Choose your language**. English is the default for existing profiles. Telugu covers navigation, lessons, coaching tools, forms, and reminders. Your own notes and imported analyses are preserved as entered; new ChatGPT JSON requests specify the selected response language.
+
+The language preference is saved in the encrypted device profile and synced through D1. The splash respects reduced motion. Version 1.2.0 requires a rebuilt Android APK to show the new native splash and screens.
+
 ## Run locally
 
 Use Node 22 LTS (22.13+) or a supported newer LTS. The project includes a local Node 22 runtime for npm scripts.
