@@ -101,8 +101,8 @@ export function PracticeScene() {
       <Image
         accessibilityLabel="Professionals practicing a relaxed conversation together"
         source={require("../../assets/illustrations/practice.png")}
-        style={{ width: "100%", height: 170 }}
-        resizeMode="cover"
+        style={{ width: "100%", height: "auto", aspectRatio: 1672 / 941 }}
+        resizeMode="contain"
       />
     </View>
   );
