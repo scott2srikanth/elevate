@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { View } from "react-native";
 import { Pressable, Text } from "../i18n";
-import { videosForPractice } from "../coachingVideos";
 import { VideoLibrary } from "./VideoLibrary";
 import { k } from "./kit";
 export function PracticeVideos({ exerciseId }: { exerciseId?: string }) {
@@ -27,7 +26,7 @@ export function PracticeVideos({ exerciseId }: { exerciseId?: string }) {
       {open && (
         <VideoLibrary
           key={exerciseId || "all"}
-          videos={exerciseId ? videosForPractice(exerciseId) : undefined}
+          exerciseId={exerciseId}
           inPractice
         />
       )}

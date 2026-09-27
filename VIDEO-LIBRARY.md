@@ -1,3 +1,5 @@
+> Updated in 1.3.0: the three interview videos have been removed. Twelve direct-instruction videos remain bundled. Administrators can publish additional lessons, videos and languages; see [ADMIN-WORKFLOW.md](ADMIN-WORKFLOW.md). Topic filters are hidden inside individual practice sessions. The earlier source list below records previous curation.
+
 # Coaching video library
 
 Open **Coach → Videos** or **Practice → Browse practice videos**. Each exercise’s Learn step also offers **Videos for this practice** with topic-matched lessons. Fifteen videos cover speaking, listening, confidence, dressing, dining, public appearances, functions and holidays. Elevate provides original English/Telugu guidance and a real-world practice prompt for each lesson; twelve videos have English audio and three have Telugu audio (including English terms). Telugu UI sorts Telugu audio first; the audio filter is independent of the UI language. Captions vary by publisher. Watching does not create practice completions or alter coaching scores.

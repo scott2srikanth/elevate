@@ -1,4 +1,5 @@
 import React from "react";
+import { availableLanguages } from "../contentRuntime";
 import { View } from "react-native";
 import { Text, Pressable, type Language } from "../i18n";
 export function LanguagePicker({
@@ -14,12 +15,7 @@ export function LanguagePicker({
         Choose your language
       </Text>
       <View style={{ flexDirection: "row", gap: 12, flexWrap: "wrap" }}>
-        {(
-          [
-            ["en", "English"],
-            ["te", "తెలుగు"],
-          ] as const
-        ).map(([code, label]) => (
+        {availableLanguages().map(({ code, name: label }) => (
           <Pressable
             key={code}
             accessibilityRole="button"
@@ -44,7 +40,7 @@ export function LanguagePicker({
               {label}
             </Text>
             <Text raw style={{ fontSize: 12, color: "#52665C", marginTop: 6 }}>
-              {code === "en" ? "English" : "Telugu"}
+              {code}
             </Text>
           </Pressable>
         ))}

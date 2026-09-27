@@ -16,7 +16,7 @@ test("video filters, single player, practice handoff and Telugu guidance", async
   await page.getByRole("button", { name: "Videos", exact: true }).click();
   await expect(
     page.getByRole("button", { name: "Watch lesson", exact: true }),
-  ).toHaveCount(15);
+  ).toHaveCount(12);
   await expect(page.locator("iframe")).toHaveCount(0);
   await page
     .getByRole("button", { name: "Watch lesson", exact: true })
@@ -72,7 +72,7 @@ test("video filters, single player, practice handoff and Telugu guidance", async
   });
 });
 
-test("practice has occasion filters, Telugu audio and relevant in-session videos", async ({
+test("practice has occasion filters, contained session videos and Telugu guidance", async ({
   page,
 }) => {
   await page.route("https://www.youtube-nocookie.com/**", (route) =>
@@ -104,21 +104,11 @@ test("practice has occasion filters, Telugu audio and relevant in-session videos
         .count(),
     ).toBeGreaterThan(0);
   }
-  await page.getByRole("button", { name: "Telugu audio", exact: true }).click();
-  await expect(
-    page.getByText(
-      "No videos match this topic and audio language yet. Try all audio languages or another topic.",
-    ),
-  ).toBeVisible();
-  await page.getByRole("button", { name: "All videos", exact: true }).click();
-  await expect(
-    page.getByRole("button", { name: "Watch lesson", exact: true }),
-  ).toHaveCount(3);
   await page
     .getByRole("button", { name: "Watch lesson", exact: true })
     .first()
     .click();
-  await expect(page.locator("iframe")).toHaveAttribute("src", /QB0GEt_K_ZQ/);
+  await expect(page.locator("iframe")).toHaveCount(1);
   await page
     .getByRole("button", { name: "Browse practice videos", exact: true })
     .click();
@@ -131,12 +121,23 @@ test("practice has occasion filters, Telugu audio and relevant in-session videos
     .click();
   await expect(
     page.getByRole("button", { name: "Watch lesson", exact: true }),
-  ).toHaveCount(2);
+  ).toHaveCount(1);
   await page
     .getByRole("button", { name: "Watch lesson", exact: true })
     .first()
     .click();
   await expect(page.locator("iframe")).toHaveAttribute("src", /zA2PfKRcm0g/);
+  await expect(page.getByText("Video topic", { exact: true })).toHaveCount(0);
+  const bounds = await page.locator("iframe").evaluate((frame) => {
+    const a = frame.getBoundingClientRect();
+    const b = frame.parentElement!.getBoundingClientRect();
+    return {
+      contained: a.left >= b.left && a.right <= b.right,
+      width: a.width,
+    };
+  });
+  expect(bounds.contained).toBe(true);
+  expect(bounds.width).toBeGreaterThanOrEqual(200);
   await expect(
     page.getByRole("button", { name: "Go to practice", exact: true }),
   ).toHaveCount(0);
@@ -153,5 +154,5 @@ test("practice has occasion filters, Telugu audio and relevant in-session videos
     .getByRole("button", { name: "పాఠం చూడండి", exact: true })
     .first()
     .click();
-  await expect(page.locator("iframe")).toHaveAttribute("src", /QB0GEt_K_ZQ/);
+  await expect(page.locator("iframe")).toHaveAttribute("src", /eIho2S0ZahI/);
 });

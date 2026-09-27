@@ -1,7 +1,10 @@
 import te from "./te.json";
-export type Language = "en" | "te";
+import { translatedRemote } from "../contentRuntime";
+export type Language = string;
 export function translate(text: string, language: Language): string {
-  if (language === "en") return text;
+  const remote = translatedRemote(text, language);
+  if (remote !== undefined) return remote;
+  if (language !== "te") return text;
   const key = text.replace(/\s+/g, " ").trim();
   const found = (te as Record<string, string>)[key];
   if (found) return text.match(/^\s/) ? ` ${found}` : found;

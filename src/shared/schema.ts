@@ -1,9 +1,7 @@
 import { analysisSchema } from "./analysis";
 import { z } from "zod";
-import { AREAS, exercises } from "../coach";
-const exerciseId = z
-  .string()
-  .refine((id) => exercises.some((e) => e.id === id));
+import { AREAS } from "../coach";
+const exerciseId = z.string().regex(/^[a-zA-Z0-9_-]{1,80}$/);
 const timestamp = z.string().refine((s) => Number.isFinite(Date.parse(s)));
 const rating = z.number().int().min(1).max(5);
 export const stateSchema = z.object({
@@ -90,7 +88,10 @@ export const stateSchema = z.object({
     .default({ audience: "", expertise: "", value: "", statement: "" }),
   preferences: z
     .object({
-      language: z.enum(["en", "te"]).default("en"),
+      language: z
+        .string()
+        .regex(/^[a-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$/)
+        .default("en"),
       reminderHour: z.number().int().min(0).max(23),
       reminderMinute: z.number().int().min(0).max(59),
       reminders: z.boolean(),

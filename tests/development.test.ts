@@ -100,7 +100,7 @@ test("brand statement uses supplied facts without invented credentials", () => {
     "Alex, Designer, helps teams build usable products through research.",
   );
 });
-test("invalid retention and exercise IDs are rejected", () => {
+test("invalid retention and malformed exercise IDs are rejected", () => {
   assert.throws(() =>
     stateSchema.parse({
       ...initialState(),
@@ -110,7 +110,10 @@ test("invalid retention and exercise IDs are rejected", () => {
   assert.throws(() =>
     stateSchema.parse({
       ...initialState(),
-      assignment: { exerciseId: "fake", rehearsedAt: "2026-09-27" },
+      assignment: {
+        exerciseId: "invalid id with spaces",
+        rehearsedAt: "2026-09-27",
+      },
     }),
   );
 });

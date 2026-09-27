@@ -1,3 +1,5 @@
+import { useContent } from "./src/ContentProvider";
+import AdminEntry from "./src/components/AdminEntry";
 import { LanguageProvider, translate } from "./src/i18n";
 import { LaunchSplash } from "./src/components/LaunchSplash";
 import { LanguagePicker } from "./src/components/LanguagePicker";
@@ -299,11 +301,24 @@ function AppContent() {
       openProfile();
       return;
     }
+    if (
+      state.assignment &&
+      !exercises.some((e) => e.id === state.assignment!.exerciseId)
+    ) {
+      setState((v) => ({ ...v, assignment: null }));
+      setActive(exercise);
+      setPhase(0);
+      setSheet("exercise");
+      return;
+    }
     if (state.assignment && state.assignment.exerciseId !== exercise.id) {
       setMessage(
         "Finish your current real-world practice before starting another.",
       );
-      setActive(exercises.find((e) => e.id === state.assignment!.exerciseId)!);
+      setActive(
+        exercises.find((e) => e.id === state.assignment!.exerciseId) ||
+          exercises[0],
+      );
       setPhase(2);
     } else {
       setActive(exercise);
@@ -739,7 +754,8 @@ function AppContent() {
                   · CONFIDENCE {r.confidence}/5
                 </Label>
                 <Text style={s.cardTitle}>
-                  {exercises.find((e) => e.id === r.exerciseId)?.title}
+                  {exercises.find((e) => e.id === r.exerciseId)?.title ||
+                    r.exerciseId}
                 </Text>
                 <Text raw style={s.small}>
                   {r.situation}
@@ -1062,6 +1078,7 @@ function AppContent() {
             />
           </View>
           <Account cloud={cloud} state={state} />
+          <AdminEntry />
           <Preferences state={state} update={setState} />
         </View>
         <View style={[s.card, { marginTop: 28, gap: 14 }]}>
@@ -1087,7 +1104,7 @@ function AppContent() {
       </>
     );
   }
-  const changeLanguage = (language: "en" | "te") => {
+  const changeLanguage = (language: string) => {
     setState((v) => ({ ...v, preferences: { ...v.preferences, language } }));
     const defaultGoal = "Feel confident in professional situations";
     if (
@@ -1845,6 +1862,7 @@ function AppContent() {
   );
 }
 export default function App() {
+  useContent();
   return (
     <SafeAreaProvider>
       <AppContent />

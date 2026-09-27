@@ -7,23 +7,62 @@ import {
   videoTopics,
   videoUrl,
   matchesVideoTopic,
+  practiceVideoTopics,
   type CoachingVideo,
 } from "../coachingVideos";
+import { useContent } from "../ContentProvider";
+import { youtubeId } from "../shared/content";
+import { API_URL } from "../api";
+import { availableLanguages } from "../contentRuntime";
+import FileVideo from "./FileVideo";
 import CoachingVideoPlayer from "./CoachingVideoPlayer";
 import { Action, Choice, k } from "./kit";
 export function VideoLibrary({
-  videos = coachingVideos,
+  exerciseId,
   inPractice = false,
 }: {
-  videos?: CoachingVideo[];
+  exerciseId?: string;
   inPractice?: boolean;
 }) {
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
+  const { document, revision } = useContent();
+  const managed: CoachingVideo[] = document.videos
+    .filter((v) => v.format === "lesson")
+    .map((v) => ({
+      ...v,
+      te: t(v.title),
+      noteTe: t(v.note),
+      practiceTe: t(v.practice),
+    }));
+  const catalog = [
+    ...coachingVideos.filter((v) => !managed.some((m) => m.id === v.id)),
+    ...managed,
+  ];
+  const videos = exerciseId
+    ? catalog.filter((v) =>
+        v.lessonIds
+          ? v.lessonIds.includes(exerciseId)
+          : (practiceVideoTopics[exerciseId] || []).some((topic) =>
+              matchesVideoTopic(v, topic),
+            ),
+      )
+    : catalog;
+  const topics = [...new Set([...videoTopics, ...catalog.map((v) => v.topic)])];
+  const audioLanguages = [...new Set(catalog.map((v) => v.audio))];
+  const audioLabel = (code: string) =>
+    code === "en"
+      ? "English audio"
+      : code === "te"
+        ? "Telugu audio"
+        : `${availableLanguages().find((p) => p.code === code)?.name || code} audio`;
+  const playUrl = (video: CoachingVideo) =>
+    video.url?.startsWith("/")
+      ? `${API_URL}${video.url}`
+      : video.url || videoUrl(video.id);
   const [topic, setTopic] = useState<string>("All videos");
   const [selected, setSelected] = useState<CoachingVideo | null>(null);
-  const [audio, setAudio] = useState<string>("All audio languages");
+  const [audio, setAudio] = useState<string>("all");
   const [error, setError] = useState("");
-  const local = (en: string, te: string) => (language === "te" ? te : en);
   return (
     <View style={{ gap: 16 }}>
       <Text style={k.title}>Watch. Try. Grow.</Text>
@@ -32,8 +71,8 @@ export function VideoLibrary({
         practical next step.
       </Text>
       <Text style={k.muted}>
-        Choose English or Telugu audio. Telugu videos appear first when your app
-        language is Telugu. Captions depend on the publisher. Internet required.
+        Choose a video language. Lessons in your selected language appear first
+        when available. Captions depend on the publisher. Internet required.
       </Text>
       <Text style={k.muted}>
         Adapt advice to your culture, comfort and the occasion. Personal style
@@ -41,70 +80,95 @@ export function VideoLibrary({
       </Text>
       <Text style={k.label}>Video language</Text>
       <View style={k.row}>
-        {["All audio languages", "Telugu audio", "English audio"].map(
-          (item) => (
-            <Choice
-              key={item}
-              title={item}
-              selected={audio === item}
-              onPress={() => {
-                setAudio(item);
-                setSelected(null);
-                setError("");
-              }}
-            />
-          ),
-        )}
+        {["all", ...audioLanguages].map((item) => (
+          <Choice
+            key={item}
+            title={item === "all" ? "All audio languages" : audioLabel(item)}
+            selected={audio === item}
+            onPress={() => {
+              setAudio(item);
+              setSelected(null);
+              setError("");
+            }}
+          />
+        ))}
       </View>
-      <Text style={k.label}>Video topic</Text>
-      <View style={k.row}>
-        {videoTopics
-          .filter(
-            (topic) =>
-              topic === "All videos" ||
-              videos.some((video) => matchesVideoTopic(video, topic)),
-          )
-          .map((item) => (
-            <Choice
-              key={item}
-              title={item}
-              selected={topic === item}
-              onPress={() => {
-                setTopic(item);
-                setSelected(null);
-                setError("");
-              }}
-            />
-          ))}
-      </View>
+      {!exerciseId && (
+        <>
+          <Text style={k.label}>Video topic</Text>
+          <View style={k.row}>
+            {topics
+              .filter(
+                (topic) =>
+                  topic === "All videos" ||
+                  videos.some((video) => matchesVideoTopic(video, topic)),
+              )
+              .map((item) => (
+                <Choice
+                  key={item}
+                  title={item}
+                  selected={topic === item}
+                  onPress={() => {
+                    setTopic(item);
+                    setSelected(null);
+                    setError("");
+                  }}
+                />
+              ))}
+          </View>
+        </>
+      )}
       {videos
         .filter(
           (video) =>
             (topic === "All videos" || matchesVideoTopic(video, topic)) &&
-            (audio === "All audio languages" ||
-              video.audio === (audio === "Telugu audio" ? "te" : "en")),
+            (audio === "all" || video.audio === audio),
         )
         .sort((a, b) =>
-          language === "te"
-            ? Number(b.audio === "te") - Number(a.audio === "te")
+          language !== "en"
+            ? Number(b.audio === language) - Number(a.audio === language)
             : 0,
         )
         .map((video) => (
           <View
-            key={video.id}
-            style={[k.card, { padding: 16, marginBottom: 0 }]}
+            key={`${revision}-${video.id}`}
+            style={[
+              k.card,
+              {
+                padding: 16,
+                marginBottom: 0,
+                width: "100%",
+                overflow: "hidden",
+              },
+            ]}
           >
             {selected?.id === video.id ? (
-              <CoachingVideoPlayer
-                key={video.id}
-                id={video.id}
-                title={video.title}
-              />
+              video.url && !youtubeId(video.url) ? (
+                <FileVideo url={playUrl(video)} />
+              ) : (
+                <CoachingVideoPlayer
+                  key={`${revision}-${video.id}`}
+                  id={video.url ? youtubeId(video.url)! : video.id}
+                  title={video.title}
+                />
+              )
+            ) : video.url && !youtubeId(video.url) ? (
+              <View
+                style={{
+                  width: "100%",
+                  aspectRatio: 16 / 9,
+                  backgroundColor: "#E3ECD9",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Text style={k.title}>Video lesson</Text>
+              </View>
             ) : (
               <Image
                 accessible={false}
                 source={{
-                  uri: `https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`,
+                  uri: `https://i.ytimg.com/vi/${video.url ? youtubeId(video.url) : video.id}/hqdefault.jpg`,
                 }}
                 style={{
                   width: "100%",
@@ -116,7 +180,7 @@ export function VideoLibrary({
               />
             )}
             <Text raw style={k.title}>
-              {local(video.title, video.te)}
+              {language === "te" && !video.url ? video.te : t(video.title)}
             </Text>
             {language === "te" && (
               <Text raw style={k.muted}>
@@ -126,11 +190,9 @@ export function VideoLibrary({
             <Text raw style={k.label}>
               {video.author}
             </Text>
-            <Text style={k.muted}>
-              {video.audio === "te" ? "Telugu audio" : "English audio"}
-            </Text>
+            <Text style={k.muted}>{audioLabel(video.audio)}</Text>
             <Text raw style={k.body}>
-              {local(video.note, video.noteTe)}
+              {language === "te" && !video.url ? video.noteTe : t(video.note)}
             </Text>
             <View style={k.row}>
               <Action
@@ -143,11 +205,15 @@ export function VideoLibrary({
                 }}
               />
               <Action
-                title="Open on YouTube"
+                title={
+                  video.url && !youtubeId(video.url)
+                    ? "Open video link"
+                    : "Open on YouTube"
+                }
                 secondary
                 onPress={() => {
                   setSelected(null);
-                  void Linking.openURL(videoUrl(video.id)).catch(() =>
+                  void Linking.openURL(playUrl(video)).catch(() =>
                     setError(
                       "Could not open YouTube. Check your connection and try again.",
                     ),
@@ -158,12 +224,13 @@ export function VideoLibrary({
             {selected?.id === video.id && (
               <View style={{ gap: 10 }}>
                 <Text style={k.muted}>
-                  If playback is blocked or unavailable, open the official video
-                  on YouTube.
+                  If playback is unavailable, open the original video link.
                 </Text>
                 <Text style={k.label}>Try it in real life</Text>
                 <Text raw style={k.body}>
-                  {local(video.practice, video.practiceTe)}
+                  {language === "te" && !video.url
+                    ? video.practiceTe
+                    : t(video.practice)}
                 </Text>
                 <Text style={k.muted}>
                   Watching is preparation. Log your real-world practice and
@@ -186,8 +253,7 @@ export function VideoLibrary({
       {!videos.some(
         (video) =>
           (topic === "All videos" || matchesVideoTopic(video, topic)) &&
-          (audio === "All audio languages" ||
-            video.audio === (audio === "Telugu audio" ? "te" : "en")),
+          (audio === "all" || video.audio === audio),
       ) && (
         <View style={k.card}>
           <Text style={k.body}>
@@ -198,7 +264,7 @@ export function VideoLibrary({
             title="Reset video filters"
             secondary
             onPress={() => {
-              setAudio("All audio languages");
+              setAudio("all");
               setTopic("All videos");
               setSelected(null);
             }}

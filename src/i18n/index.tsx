@@ -57,7 +57,7 @@ export function Text({
       }
       style={[
         style,
-        language === "te" && {
+        language !== "en" && {
           fontFamily: undefined,
           letterSpacing: 0,
           lineHeight: Math.max(

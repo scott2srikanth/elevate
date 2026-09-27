@@ -21,7 +21,15 @@ export default function CoachingVideoPlayer({
     return () => sub.remove();
   }, []);
   return (
-    <View style={{ width: "100%", aspectRatio: 16 / 9, minHeight: 220 }}>
+    <View
+      style={{
+        width: "100%",
+        maxWidth: "100%",
+        overflow: "hidden",
+        aspectRatio: 16 / 9,
+        minHeight: 200,
+      }}
+    >
       {active && !failed ? (
         <WebView
           accessibilityLabel={title}

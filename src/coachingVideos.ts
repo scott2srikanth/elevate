@@ -15,7 +15,9 @@ export type CoachingVideo = {
   id: string;
   topic: string;
   topics?: string[];
-  audio: "en" | "te";
+  audio: string;
+  url?: string;
+  lessonIds?: string[];
   title: string;
   author: string;
   te: string;
@@ -214,64 +216,6 @@ export const coachingVideos: CoachingVideo[] = [
       "At your next outing, leave space for others, keep your phone quiet and thank someone who helps you. Notice how it changes the interaction.",
     practiceTe:
       "తదుపరి బయటకు వెళ్లినప్పుడు ఇతరులకు చోటివ్వండి, ఫోన్ నిశ్శబ్దంగా ఉంచండి, సహాయం చేసినవారికి ధన్యవాదాలు చెప్పండి. స్పందనను గమనించండి.",
-  },
-
-  {
-    id: "QB0GEt_K_ZQ",
-    topic: "Dressing & etiquette",
-    topics: ["Public appearances"],
-    audio: "te",
-    title:
-      "Unlocking Celebrity Style Secrets with Image Coach Chaitanya CH | Wow Talks with Prashanthi | iDream",
-    author: "Chaitanya CH · iDream Media",
-    te: "చైతన్య CHతో వ్యక్తిగత శైలి గురించి తెలుగు సంభాషణ",
-    note: "A Telugu interview about image and styling. Choose ideas that fit your own identity, budget and comfort.",
-    noteTe:
-      "వ్యక్తిగత ఇమేజ్, స్టైలింగ్ గురించి తెలుగు ఇంటర్వ్యూ. మీ అభిరుచి, బడ్జెట్, సౌకర్యానికి సరిపోయే సూచనలు ఎంచుకోండి.",
-    practice:
-      "Choose one styling idea and try it with your existing wardrobe. Describe what feels comfortable and authentic to you.",
-    practiceTe:
-      "ఒక స్టైలింగ్ సూచనను మీ వద్ద ఉన్న దుస్తులతో ప్రయత్నించండి. ఏది సౌకర్యంగా, మీలా అనిపించిందో రాయండి.",
-  },
-
-  {
-    id: "-iv-sAVxK8Y",
-    topic: "Functions & celebrations",
-    topics: ["Public appearances", "Dressing & etiquette"],
-    audio: "te",
-    title:
-      "Image Coach Chaitanya CH About Date Tips.. | Wow Talks with Prashanthi | iDream Media",
-    author: "Chaitanya CH · iDream Media",
-    te: "చైతన్య CHతో కలయికకు సిద్ధమయ్యే సూచనలు",
-    note: "A Telugu conversation about preparing for a social meeting or date. Apply what suits your situation.",
-    noteTe:
-      "సామాజిక కలయిక లేదా డేట్‌కు సిద్ధమవ్వడం గురించి తెలుగు సంభాషణ. మీ సందర్భానికి సరిపోయే సూచనలు ఉపయోగించండి.",
-    practice:
-      "Prepare for a relaxed meeting: choose comfortable clothes, arrive on time and ask a thoughtful question. Respect the other person’s preferences.",
-    practiceTe:
-      "సౌకర్యమైన దుస్తులు ఎంచుకుని, సమయానికి చేరుకుని, ఆలోచించి ఒక ప్రశ్న అడగండి. ఎదుటివారి అభిరుచులను గౌరవించండి.",
-  },
-
-  {
-    id: "gBDlk4oiMOg",
-    topic: "Dining & etiquette",
-    topics: [
-      "Dressing & etiquette",
-      "Functions & celebrations",
-      "Public appearances",
-    ],
-    audio: "te",
-    title:
-      "You are Beautiful, But NOT Attractive. Why? | Harish Katkam | Ms. Ch. Chaitanya | Ep-44",
-    author: "Ch. Chaitanya · Harish Katkam",
-    te: "చైతన్యతో దుస్తులు, భోజన మర్యాదలు, వేడుకల శైలి",
-    note: "Long Telugu interview. Useful chapters: dressing 08:06, wedding styling 15:18, dining 26:30. Presenter opinions are personal perspectives.",
-    noteTe:
-      "విస్తృతమైన తెలుగు ఇంటర్వ్యూ. ఉపయోగకరమైన భాగాలు: దుస్తులు 08:06, పెళ్లి శైలి 15:18, భోజన మర్యాదలు 26:30. వ్యాఖ్యాతల అభిప్రాయాలు వారి వ్యక్తిగత దృక్కోణాలు.",
-    practice:
-      "For a meal or family function, prepare a comfortable outfit, ask about local customs and practice one courteous dining habit.",
-    practiceTe:
-      "భోజనం లేదా కుటుంబ వేడుకకు సౌకర్యమైన దుస్తులు సిద్ధం చేయండి. స్థానిక పద్ధతులు అడిగి తెలుసుకుని, ఒక భోజన మర్యాదను సాధన చేయండి.",
   },
 ];
 export function videoUrl(id: string) {

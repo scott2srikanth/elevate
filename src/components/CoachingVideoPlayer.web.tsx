@@ -15,8 +15,10 @@ export default function CoachingVideoPlayer({
       src={embedUrl(id, language)}
       style={{
         width: "100%",
+        maxWidth: "100%",
+        overflow: "hidden",
         aspectRatio: "16 / 9",
-        minHeight: 220,
+        minHeight: 200,
         border: 0,
         background: "#173B31",
       }}

@@ -127,7 +127,7 @@ export function brandStatement(
   audience: string,
   expertise: string,
   value: string,
-  language: "en" | "te" = "en",
+  language: string = "en",
 ) {
   if (language === "te")
     return `${name}${role ? ` (${role})` : ""}, ${expertise.trim()} నైపుణ్యంతో ${audience.trim()} కోసం ${value.trim()} సాధించేందుకు సహాయపడతారు.`;

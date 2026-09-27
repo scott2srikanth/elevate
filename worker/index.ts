@@ -1,3 +1,4 @@
+import { contentRoute } from "./content";
 import { z } from "zod";
 import { stateSchema } from "../src/shared/schema";
 import { initialState } from "../src/coach";
@@ -108,6 +109,8 @@ async function signIn(
 async function handle(request: Request, env: Env): Promise<Response> {
   const path = new URL(request.url).pathname;
   const method = request.method;
+  const content = await contentRoute(request, env, () => userFor(request, env));
+  if (content) return content;
   if (path === "/api/health")
     return json({ ok: true, ai: false, coaching: "manual-chatgpt-json" });
   if (path.startsWith("/api/auth/") && method === "POST") {

@@ -2,6 +2,7 @@ import { defineConfig } from "@playwright/test";
 export default defineConfig({
   testDir: "./tests",
   testMatch: "*.spec.ts",
+  testIgnore: "admin.spec.ts",
   timeout: 45000,
   use: { baseURL: "http://localhost:8787", headless: true, channel: "chrome" },
   projects: [

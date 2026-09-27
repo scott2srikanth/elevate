@@ -14,7 +14,7 @@ test("old profiles default to English; Telugu survives schema roundtrip", () => 
   assert.equal(
     stateSchema.safeParse({
       ...legacy,
-      preferences: { ...legacy.preferences, language: "xx" },
+      preferences: { ...legacy.preferences, language: "not a language code" },
     }).success,
     false,
   );

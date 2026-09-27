@@ -73,7 +73,7 @@ export type State = {
     statement: string;
   };
   preferences: {
-    language: "en" | "te";
+    language: string;
     reminderHour: number;
     reminderMinute: number;
     reminders: boolean;
@@ -275,9 +275,10 @@ export function recommend(state: State): {
   exercise: Exercise;
   reason: string;
 } {
-  if (state.assignment)
+  const assigned = exercises.find((e) => e.id === state.assignment?.exerciseId);
+  if (assigned)
     return {
-      exercise: exercises.find((e) => e.id === state.assignment!.exerciseId)!,
+      exercise: assigned,
       reason:
         "You have rehearsed this. Your next step is to try it in real life.",
     };
@@ -285,7 +286,7 @@ export function recommend(state: State): {
   if (last && last.confidence <= 2)
     return {
       exercise: practiceForTime(
-        exercises.find((e) => e.id === last.exerciseId)!,
+        exercises.find((e) => e.id === last.exerciseId) || exercises[0],
         state.profile?.minutes || 5,
       ),
       reason:
@@ -393,4 +394,12 @@ export function occasionChecklist(title: string) {
       ],
     },
   ];
+}
+
+const bundledExercises = [...exercises];
+export function installLessons(lessons: Omit<Exercise, "icon">[]) {
+  const merged = new Map(bundledExercises.map((e) => [e.id, e]));
+  for (const lesson of lessons)
+    merged.set(lesson.id, { ...lesson, icon: "play-circle-outline" });
+  exercises.splice(0, exercises.length, ...merged.values());
 }
