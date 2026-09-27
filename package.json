@@ -58,11 +58,12 @@
     "db:migrate:local": "wrangler d1 migrations apply DB --local --config wrangler.local.jsonc",
     "db:migrate:remote": "wrangler d1 migrations apply DB --remote",
     "dev:cloud": "wrangler dev --config wrangler.local.jsonc --port 8787",
-    "deploy": "node scripts/check-deploy.mjs && npm run build:web && wrangler deploy",
+    "deploy": "node scripts/check-deploy.mjs && wrangler deploy",
     "test:api": "node --import tsx --test tests/api.integration.ts",
     "check:deploy": "node scripts/check-deploy.mjs",
     "build:android:apk": "npx eas-cli@latest build --platform android --profile preview",
-    "build:android:aab": "npx eas-cli@latest build --platform android --profile production"
+    "build:android:aab": "npx eas-cli@latest build --platform android --profile production",
+    "build": "npm run build:web"
   },
   "private": true,
   "engines": {

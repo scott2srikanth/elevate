@@ -24,7 +24,26 @@ npm run deploy
 
 The deployment packages the Expo web export and API in one Worker. D1 and R2 bindings refer to your account resources. Cloudflare Workers hosting is used directly; no Sites service is involved.
 
-For a Workers Builds pipeline, use this repository's `elevate` directory as the root, `npm ci && npm run build:web` as the build command, and `npm run deploy` as the deploy command. Apply D1 migrations explicitly as a controlled release step. Do not include a development `EXPO_PUBLIC_API_URL` value in production web builds; the web client defaults to its own origin.
+### GitHub-connected Cloudflare Workers build
+
+The app now lives at the **repository root**. Use **Workers**, with static assets and the D1/R2 API in the same deployment.
+
+In **Settings → Builds**, configure:
+
+| Setting | Value |
+| --- | --- |
+| Root directory | Repository root (`/` or leave blank); remove any old `elevate` value |
+| Build command | `npm ci` |
+| Deploy command | `npm run deploy` |
+| Production branch | `main` |
+| Worker name | `elevate-coach` (must match `wrangler.jsonc`) |
+| Node version | `22.23.3` (set `NODE_VERSION` in build variables if needed) |
+
+Wrangler's custom build runs `npm run build:web` before uploading `dist/`. This also works for a direct `npx wrangler deploy`; use `npm run deploy` to run the production configuration checks first. Do not upload the TypeScript source as a static directory. Generated `dist/` files stay out of Git.
+
+Before the first deployment, configure the real D1 ID and HTTPS origins above, create the private R2 bucket, and apply D1 migrations explicitly as a controlled release step. Do not include a development `EXPO_PUBLIC_API_URL` value in production web builds; the web client defaults to its own origin.
+
+If you previously received “Could not detect a directory containing static files”, retry after updating the root/build/deploy settings and pulling the root-layout commit. The repository root now contains both `package.json` and `wrangler.jsonc`; `dist/index.html` is produced during the build. A Pages-only static deployment would not run this app's Worker API.
 
 ## 2. ChatGPT JSON studio
 
