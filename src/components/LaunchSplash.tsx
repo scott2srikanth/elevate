@@ -178,7 +178,13 @@ const styles = StyleSheet.create({
     flexShrink: 1,
     zIndex: 1,
   },
-  wordWindow: { height: rowHeight, overflow: "hidden", width: "100%" },
+  wordWindow: {
+    height: rowHeight,
+    overflow: "hidden",
+    width: "100%",
+    backgroundColor: "rgba(247,243,236,0.78)",
+    borderRadius: 22,
+  },
   wordRow: {
     height: rowHeight,
     alignItems: "center",
