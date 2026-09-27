@@ -15,7 +15,7 @@
     {
       "binding": "DB",
       "database_name": "elevate",
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      "database_id": "47528be1-496e-43a9-a7c7-1fed3e4a7060",
       "migrations_dir": "migrations",
     },
   ],
