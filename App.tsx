@@ -15,6 +15,7 @@ import {
   CoachIllustration,
   PracticeScene,
 } from "./src/components/CoachIllustration";
+import { PracticeVideos } from "./src/components/PracticeVideos";
 import { CoachHub } from "./src/components/CoachHub";
 import { MediaStudio, PrivateImage } from "./src/components/Studio";
 import { Outfit, Preferences } from "./src/components/CoachingTools";
@@ -767,6 +768,7 @@ function AppContent() {
           subtitle="Short exercises. Real situations. Changes that stay with you."
         />
         <PracticeScene />
+        {sheet === null && <PracticeVideos />}
         <View
           style={[
             s.card,
@@ -1559,6 +1561,10 @@ function AppContent() {
                       {phase === 0 ? (
                         <>
                           <Text style={s.body}>{active.lesson}</Text>
+                          <PracticeVideos
+                            key={active.id}
+                            exerciseId={active.id}
+                          />
                           <View
                             style={[
                               s.card,

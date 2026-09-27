@@ -5,10 +5,29 @@ export const videoTopics = [
   "Speaking",
   "Listening",
   "Confidence",
+  "Dressing & etiquette",
+  "Dining & etiquette",
+  "Public appearances",
+  "Functions & celebrations",
+  "Holiday & vacation",
 ] as const;
-export const coachingVideos = [
+export type CoachingVideo = {
+  id: string;
+  topic: string;
+  topics?: string[];
+  audio: "en" | "te";
+  title: string;
+  author: string;
+  te: string;
+  note: string;
+  noteTe: string;
+  practice: string;
+  practiceTe: string;
+};
+export const coachingVideos: CoachingVideo[] = [
   {
     id: "eIho2S0ZahI",
+    audio: "en",
     topic: "Speaking",
     title: "How to speak so that people want to listen",
     author: "Julian Treasure · TED",
@@ -23,6 +42,7 @@ export const coachingVideos = [
   },
   {
     id: "R1vskiVDwl4",
+    audio: "en",
     topic: "Listening",
     title: "10 ways to have a better conversation",
     author: "Celeste Headlee · TED",
@@ -36,6 +56,7 @@ export const coachingVideos = [
   },
   {
     id: "cSohjlYQI2A",
+    audio: "en",
     topic: "Listening",
     title: "5 ways to listen better",
     author: "Julian Treasure · TED",
@@ -49,6 +70,7 @@ export const coachingVideos = [
   },
   {
     id: "MEDgtjpycYg",
+    audio: "en",
     topic: "Confidence",
     title: "How to speak up for yourself",
     author: "Adam Galinsky · TED",
@@ -63,6 +85,7 @@ export const coachingVideos = [
   },
   {
     id: "HAnw168huqA",
+    audio: "en",
     topic: "Speaking",
     title: "Think Fast, Talk Smart: Communication Techniques",
     author: "Matt Abrahams · Stanford Graduate School of Business",
@@ -76,6 +99,7 @@ export const coachingVideos = [
   },
   {
     id: "x6TsR3y5Qfg",
+    audio: "en",
     topic: "Confidence",
     title: "Think Faster, Talk Smarter with Matt Abrahams",
     author: "Matt Abrahams · Stanford Alumni",
@@ -88,11 +112,195 @@ export const coachingVideos = [
     practiceTe:
       "ఊహించని ప్రశ్న అడగమని స్నేహితుడిని కోరండి. కాసేపు ఆగి, రెండు వాక్యాల్లో సమాధానం చెప్పండి. ఏది స్పష్టంగా ఉందో అడగండి.",
   },
-] as const;
-export type CoachingVideo = (typeof coachingVideos)[number];
+  {
+    id: "zA2PfKRcm0g",
+    topic: "Dining & etiquette",
+    topics: [],
+    audio: "en",
+    title: "Dining Etiquette: how to master the basic table manners",
+    author: "Jamila Musayeva",
+    te: "భోజన సమయంలో పాటించాల్సిన మర్యాదలు",
+    note: "A demonstration of Western table settings and cutlery. Adapt it to the meal and your host’s customs.",
+    noteTe:
+      "పాశ్చాత్య భోజన పద్ధతులు, కత్తి-ఫోర్క్ వాడకంపై ప్రదర్శన. భోజనం, ఆతిథ్య సంప్రదాయాలకు అనుగుణంగా ఉపయోగించండి.",
+    practice:
+      "Set a place at home. Rehearse using a napkin and asking politely for an item instead of reaching across someone.",
+    practiceTe:
+      "ఇంట్లో భోజన స్థలం సిద్ధం చేయండి. నాప్‌కిన్ వాడటం, ఎదుటివారిపై నుంచి చేయి చాపకుండా వస్తువును మర్యాదగా అడగటం సాధన చేయండి.",
+  },
+
+  {
+    id: "HDm9Q_UGZBA",
+    topic: "Dressing & etiquette",
+    topics: ["Functions & celebrations"],
+    audio: "en",
+    title:
+      "FAVORITE SPRING DRESSES | Versatile Dresses Suitable For Casual Outings, Work or A Cocktail Party",
+    author: "Jamila Musayeva",
+    te: "ఒకే దుస్తులను వేర్వేరు సందర్భాలకు సిద్ధం చేయండి",
+    note: "See how shoes and accessories change an outfit for work or a gathering. Use pieces you already own.",
+    noteTe:
+      "చెప్పులు, యాక్సెసరీలతో దుస్తులను ఉద్యోగానికి లేదా వేడుకకు ఎలా మార్చుకోవాలో చూడండి. మీ వద్ద ఉన్నవే వాడండి.",
+    practice:
+      "Create two versions of one outfit: everyday and a celebration. Check comfort, weather and the invitation before choosing.",
+    practiceTe:
+      "ఒక దుస్తుల సెట్‌ను రోజువారీ అవసరానికి, వేడుకకు రెండు రకాలుగా సిద్ధం చేయండి. సౌకర్యం, వాతావరణం, ఆహ్వానం పరిశీలించండి.",
+  },
+
+  {
+    id: "43kVI33M0gc",
+    topic: "Functions & celebrations",
+    topics: ["Dressing & etiquette"],
+    audio: "en",
+    title: "Cocktail Dress Code & My Favorite Cocktail Outfits",
+    author: "Jamila Musayeva",
+    te: "వేడుకల దుస్తుల నియమాలను అర్థం చేసుకోండి",
+    note: "Understand one common event dress code. Family functions and cultural ceremonies may follow different expectations.",
+    noteTe:
+      "వేడుకల్లో ఉపయోగించే ఒక సాధారణ డ్రెస్ కోడ్‌ను తెలుసుకోండి. కుటుంబ, సాంస్కృతిక వేడుకల పద్ధతులు వేరుగా ఉండవచ్చు.",
+    practice:
+      "For your next function, confirm the dress code with the host, choose an outfit and rehearse a warm greeting.",
+    practiceTe:
+      "తదుపరి వేడుకకు ఆతిథ్యమిచ్చేవారిని డ్రెస్ కోడ్ అడగండి. దుస్తులు ఎంచుకుని, ఆప్యాయంగా పలకరించడం సాధన చేయండి.",
+  },
+
+  {
+    id: "seu1p01ibDU",
+    topic: "Public appearances",
+    topics: ["Functions & celebrations"],
+    audio: "en",
+    title:
+      "How to sit, stand and pick dropped items elegantly (Deportment, Part 2)",
+    author: "Jamila Musayeva",
+    te: "సభల్లో సౌకర్యంగా కూర్చోవడం, నిలబడటం",
+    note: "Observe movement and posture demonstrations. Adapt every movement to your comfort and mobility.",
+    noteTe:
+      "కదలికలు, భంగిమల ప్రదర్శనలను చూడండి. మీ సౌకర్యం, కదలిక సామర్థ్యానికి అనుగుణంగా మార్చుకోండి.",
+    practice:
+      "Rehearse entering a room, greeting someone and settling comfortably into a seat. Choose a natural posture you can sustain.",
+    practiceTe:
+      "గదిలోకి రావడం, పలకరించడం, సౌకర్యంగా కూర్చోవడం సాధన చేయండి. మీకు సహజంగా అనిపించే భంగిమను ఎంచుకోండి.",
+  },
+
+  {
+    id: "1A484E_VfSU",
+    topic: "Holiday & vacation",
+    topics: ["Dressing & etiquette"],
+    audio: "en",
+    title:
+      "11 Pieces, 29 Outfits: Summer Travel Capsule In A Carry-On Suitcase",
+    author: "Audrey Coyne",
+    te: "తక్కువ దుస్తులతో ప్రయాణానికి సిద్ధం అవ్వండి",
+    note: "A travel wardrobe demonstration for mixing and reusing clothes across a trip.",
+    noteTe: "ప్రయాణంలో దుస్తులను కలిపి, మళ్లీ ఉపయోగించే విధానాల ప్రదర్శన.",
+    practice:
+      "Plan outfits for a travel day, sightseeing and dinner using shared pieces. Check the forecast, walking comfort and local dress expectations.",
+    practiceTe:
+      "ఒకే దుస్తులను కలిపి ప్రయాణం, ప్రదేశాల సందర్శన, విందుకు సెట్‌లు సిద్ధం చేయండి. వాతావరణం, నడక సౌకర్యం, స్థానిక పద్ధతులు పరిశీలించండి.",
+  },
+
+  {
+    id: "cD5en_mMIIE",
+    topic: "Public appearances",
+    topics: ["Holiday & vacation", "Functions & celebrations"],
+    audio: "en",
+    title: "Basic Manners Everyone Should Have",
+    author: "Jamila Musayeva",
+    te: "బయట పాటించాల్సిన సాధారణ మర్యాదలు",
+    note: "Everyday courtesy for shared spaces and social encounters, useful at events and while travelling.",
+    noteTe:
+      "ఉమ్మడి ప్రదేశాలు, సామాజిక సందర్భాల్లో మర్యాదలు. వేడుకల్లో, ప్రయాణాల్లో ఉపయోగపడతాయి.",
+    practice:
+      "At your next outing, leave space for others, keep your phone quiet and thank someone who helps you. Notice how it changes the interaction.",
+    practiceTe:
+      "తదుపరి బయటకు వెళ్లినప్పుడు ఇతరులకు చోటివ్వండి, ఫోన్ నిశ్శబ్దంగా ఉంచండి, సహాయం చేసినవారికి ధన్యవాదాలు చెప్పండి. స్పందనను గమనించండి.",
+  },
+
+  {
+    id: "QB0GEt_K_ZQ",
+    topic: "Dressing & etiquette",
+    topics: ["Public appearances"],
+    audio: "te",
+    title:
+      "Unlocking Celebrity Style Secrets with Image Coach Chaitanya CH | Wow Talks with Prashanthi | iDream",
+    author: "Chaitanya CH · iDream Media",
+    te: "చైతన్య CHతో వ్యక్తిగత శైలి గురించి తెలుగు సంభాషణ",
+    note: "A Telugu interview about image and styling. Choose ideas that fit your own identity, budget and comfort.",
+    noteTe:
+      "వ్యక్తిగత ఇమేజ్, స్టైలింగ్ గురించి తెలుగు ఇంటర్వ్యూ. మీ అభిరుచి, బడ్జెట్, సౌకర్యానికి సరిపోయే సూచనలు ఎంచుకోండి.",
+    practice:
+      "Choose one styling idea and try it with your existing wardrobe. Describe what feels comfortable and authentic to you.",
+    practiceTe:
+      "ఒక స్టైలింగ్ సూచనను మీ వద్ద ఉన్న దుస్తులతో ప్రయత్నించండి. ఏది సౌకర్యంగా, మీలా అనిపించిందో రాయండి.",
+  },
+
+  {
+    id: "-iv-sAVxK8Y",
+    topic: "Functions & celebrations",
+    topics: ["Public appearances", "Dressing & etiquette"],
+    audio: "te",
+    title:
+      "Image Coach Chaitanya CH About Date Tips.. | Wow Talks with Prashanthi | iDream Media",
+    author: "Chaitanya CH · iDream Media",
+    te: "చైతన్య CHతో కలయికకు సిద్ధమయ్యే సూచనలు",
+    note: "A Telugu conversation about preparing for a social meeting or date. Apply what suits your situation.",
+    noteTe:
+      "సామాజిక కలయిక లేదా డేట్‌కు సిద్ధమవ్వడం గురించి తెలుగు సంభాషణ. మీ సందర్భానికి సరిపోయే సూచనలు ఉపయోగించండి.",
+    practice:
+      "Prepare for a relaxed meeting: choose comfortable clothes, arrive on time and ask a thoughtful question. Respect the other person’s preferences.",
+    practiceTe:
+      "సౌకర్యమైన దుస్తులు ఎంచుకుని, సమయానికి చేరుకుని, ఆలోచించి ఒక ప్రశ్న అడగండి. ఎదుటివారి అభిరుచులను గౌరవించండి.",
+  },
+
+  {
+    id: "gBDlk4oiMOg",
+    topic: "Dining & etiquette",
+    topics: [
+      "Dressing & etiquette",
+      "Functions & celebrations",
+      "Public appearances",
+    ],
+    audio: "te",
+    title:
+      "You are Beautiful, But NOT Attractive. Why? | Harish Katkam | Ms. Ch. Chaitanya | Ep-44",
+    author: "Ch. Chaitanya · Harish Katkam",
+    te: "చైతన్యతో దుస్తులు, భోజన మర్యాదలు, వేడుకల శైలి",
+    note: "Long Telugu interview. Useful chapters: dressing 08:06, wedding styling 15:18, dining 26:30. Presenter opinions are personal perspectives.",
+    noteTe:
+      "విస్తృతమైన తెలుగు ఇంటర్వ్యూ. ఉపయోగకరమైన భాగాలు: దుస్తులు 08:06, పెళ్లి శైలి 15:18, భోజన మర్యాదలు 26:30. వ్యాఖ్యాతల అభిప్రాయాలు వారి వ్యక్తిగత దృక్కోణాలు.",
+    practice:
+      "For a meal or family function, prepare a comfortable outfit, ask about local customs and practice one courteous dining habit.",
+    practiceTe:
+      "భోజనం లేదా కుటుంబ వేడుకకు సౌకర్యమైన దుస్తులు సిద్ధం చేయండి. స్థానిక పద్ధతులు అడిగి తెలుసుకుని, ఒక భోజన మర్యాదను సాధన చేయండి.",
+  },
+];
 export function videoUrl(id: string) {
   return `https://www.youtube.com/watch?v=${id}`;
 }
 export function embedUrl(id: string, language: string) {
   return `https://www.youtube-nocookie.com/embed/${id}?playsinline=1&hl=${language}&cc_load_policy=1`;
+}
+
+export const practiceVideoTopics: Record<string, string[]> = {
+  introduction: ["Speaking", "Public appearances"],
+  listening: ["Listening"],
+  wardrobe: [
+    "Dressing & etiquette",
+    "Functions & celebrations",
+    "Holiday & vacation",
+  ],
+  dining: ["Dining & etiquette"],
+  posture: ["Public appearances", "Confidence"],
+  story: ["Speaking"],
+  grooming: ["Dressing & etiquette", "Holiday & vacation"],
+  network: ["Functions & celebrations", "Public appearances", "Listening"],
+};
+export function matchesVideoTopic(video: CoachingVideo, topic: string) {
+  return video.topic === topic || !!video.topics?.includes(topic);
+}
+export function videosForPractice(exerciseId: string) {
+  const topics = practiceVideoTopics[exerciseId] || [];
+  return coachingVideos.filter((video) =>
+    topics.some((topic) => matchesVideoTopic(video, topic)),
+  );
 }

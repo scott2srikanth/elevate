@@ -6,43 +6,89 @@ import {
   coachingVideos,
   videoTopics,
   videoUrl,
+  matchesVideoTopic,
   type CoachingVideo,
 } from "../coachingVideos";
 import CoachingVideoPlayer from "./CoachingVideoPlayer";
 import { Action, Choice, k } from "./kit";
-export function VideoLibrary() {
+export function VideoLibrary({
+  videos = coachingVideos,
+  inPractice = false,
+}: {
+  videos?: CoachingVideo[];
+  inPractice?: boolean;
+}) {
   const { language } = useLanguage();
   const [topic, setTopic] = useState<string>("All videos");
   const [selected, setSelected] = useState<CoachingVideo | null>(null);
+  const [audio, setAudio] = useState<string>("All audio languages");
   const [error, setError] = useState("");
   const local = (en: string, te: string) => (language === "te" ? te : en);
   return (
     <View style={{ gap: 16 }}>
       <Text style={k.title}>Watch. Try. Grow.</Text>
       <Text style={k.body}>
-        Expert lessons from TED and Stanford, chosen for clear advice you can
-        practice today.
+        Lessons on communication, dressing, dining and everyday presence, with a
+        practical next step.
       </Text>
       <Text style={k.muted}>
-        English audio. Telugu guidance available. Caption languages depend on
-        the video. Internet required; videos play through YouTube.
+        Choose English or Telugu audio. Telugu videos appear first when your app
+        language is Telugu. Captions depend on the publisher. Internet required.
       </Text>
+      <Text style={k.muted}>
+        Adapt advice to your culture, comfort and the occasion. Personal style
+        is a choice, not a measure of your worth.
+      </Text>
+      <Text style={k.label}>Video language</Text>
       <View style={k.row}>
-        {videoTopics.map((item) => (
-          <Choice
-            key={item}
-            title={item}
-            selected={topic === item}
-            onPress={() => {
-              setTopic(item);
-              setSelected(null);
-              setError("");
-            }}
-          />
-        ))}
+        {["All audio languages", "Telugu audio", "English audio"].map(
+          (item) => (
+            <Choice
+              key={item}
+              title={item}
+              selected={audio === item}
+              onPress={() => {
+                setAudio(item);
+                setSelected(null);
+                setError("");
+              }}
+            />
+          ),
+        )}
       </View>
-      {coachingVideos
-        .filter((video) => topic === "All videos" || video.topic === topic)
+      <Text style={k.label}>Video topic</Text>
+      <View style={k.row}>
+        {videoTopics
+          .filter(
+            (topic) =>
+              topic === "All videos" ||
+              videos.some((video) => matchesVideoTopic(video, topic)),
+          )
+          .map((item) => (
+            <Choice
+              key={item}
+              title={item}
+              selected={topic === item}
+              onPress={() => {
+                setTopic(item);
+                setSelected(null);
+                setError("");
+              }}
+            />
+          ))}
+      </View>
+      {videos
+        .filter(
+          (video) =>
+            (topic === "All videos" || matchesVideoTopic(video, topic)) &&
+            (audio === "All audio languages" ||
+              video.audio === (audio === "Telugu audio" ? "te" : "en")),
+        )
+        .sort((a, b) =>
+          language === "te"
+            ? Number(b.audio === "te") - Number(a.audio === "te")
+            : 0,
+        )
         .map((video) => (
           <View
             key={video.id}
@@ -79,6 +125,9 @@ export function VideoLibrary() {
             )}
             <Text raw style={k.label}>
               {video.author}
+            </Text>
+            <Text style={k.muted}>
+              {video.audio === "te" ? "Telugu audio" : "English audio"}
             </Text>
             <Text raw style={k.body}>
               {local(video.note, video.noteTe)}
@@ -120,18 +169,42 @@ export function VideoLibrary() {
                   Watching is preparation. Log your real-world practice and
                   reflection in Practice.
                 </Text>
-                <Action
-                  title="Go to practice"
-                  secondary
-                  onPress={() => {
-                    setSelected(null);
-                    router.push("/practice");
-                  }}
-                />
+                {!inPractice && (
+                  <Action
+                    title="Go to practice"
+                    secondary
+                    onPress={() => {
+                      setSelected(null);
+                      router.push("/practice");
+                    }}
+                  />
+                )}
               </View>
             )}
           </View>
         ))}
+      {!videos.some(
+        (video) =>
+          (topic === "All videos" || matchesVideoTopic(video, topic)) &&
+          (audio === "All audio languages" ||
+            video.audio === (audio === "Telugu audio" ? "te" : "en")),
+      ) && (
+        <View style={k.card}>
+          <Text style={k.body}>
+            No videos match this topic and audio language yet. Try all audio
+            languages or another topic.
+          </Text>
+          <Action
+            title="Reset video filters"
+            secondary
+            onPress={() => {
+              setAudio("All audio languages");
+              setTopic("All videos");
+              setSelected(null);
+            }}
+          />
+        </View>
+      )}
       {!!error && (
         <Text accessibilityRole="alert" style={k.error}>
           {error}
