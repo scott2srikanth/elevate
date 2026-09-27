@@ -8,7 +8,6 @@ export default function WelcomeVideo({
   width: number;
   height: number;
 }) {
-  const videoHeight = Math.min((width * 9) / 16, height * 0.64);
   const ref = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(false);
   useEffect(() => {
@@ -40,9 +39,9 @@ export default function WelcomeVideo({
         source={require("../../assets/brand-splash.png")}
         style={{
           width,
-          height: videoHeight,
+          height,
           position: "absolute",
-          top: height * 0.1,
+          top: 0,
           opacity: playing ? 0 : 1,
         }}
         resizeMode="contain"
@@ -62,11 +61,11 @@ export default function WelcomeVideo({
         onError={() => setPlaying(false)}
         style={{
           position: "absolute",
-          top: height * 0.1,
+          top: 0,
           left: 0,
           width,
-          height: videoHeight,
-          objectFit: "contain",
+          height,
+          objectFit: "cover",
           pointerEvents: "none",
           opacity: playing ? 1 : 0,
         }}

@@ -11,7 +11,6 @@ export default function WelcomeVideo({
   width: number;
   height: number;
 }) {
-  const videoHeight = Math.min((width * 9) / 16, height * 0.64);
   const player = useVideoPlayer(
     require("../../assets/video/welcome.mp4"),
     (player) => {
@@ -52,9 +51,9 @@ export default function WelcomeVideo({
         source={require("../../assets/brand-splash.png")}
         style={{
           width,
-          height: videoHeight,
+          height,
           position: "absolute",
-          top: height * 0.1,
+          top: 0,
           opacity: visible ? 0 : 1,
         }}
         resizeMode="contain"
@@ -63,14 +62,14 @@ export default function WelcomeVideo({
       <VideoView
         player={player}
         nativeControls={false}
-        contentFit="contain"
+        contentFit="cover"
         surfaceType="textureView"
         style={{
           position: "absolute",
-          top: height * 0.1,
+          top: 0,
           left: 0,
           width,
-          height: videoHeight,
+          height,
           opacity: visible ? 1 : 0,
         }}
       />

@@ -98,7 +98,7 @@ export function LaunchSplash({
         pointerEvents="none"
         style={[
           StyleSheet.absoluteFill,
-          { backgroundColor: "rgba(232,217,193,0.12)" },
+          { backgroundColor: "rgba(247,243,236,0.48)" },
         ]}
       />
       <View
@@ -209,11 +209,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "100%",
     maxWidth: 560,
-    backgroundColor: "rgba(247,243,236,0.94)",
-    borderRadius: 28,
     paddingVertical: 18,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.55)",
     flexShrink: 1,
     zIndex: 1,
   },
