@@ -1,3 +1,4 @@
+import SplashBackdrop from "./SplashBackdrop";
 import WelcomeVideo from "./WelcomeVideo";
 import React, { useEffect, useState } from "react";
 import {
@@ -91,9 +92,10 @@ export function LaunchSplash({
   return (
     <View testID="launch-splash" style={styles.root}>
       <StatusBar style="dark" />
+      <SplashBackdrop />
       <View style={styles.content}>
         <Text raw style={styles.eyebrow}>
-          YOUR PERSONAL COACH
+          YOUR NEXT CHAPTER STARTS HERE
         </Text>
         {reducedMotion ? (
           <Image
@@ -197,13 +199,14 @@ const styles = StyleSheet.create({
     width: "100%",
     maxWidth: 560,
     flexShrink: 1,
+    zIndex: 1,
   },
   eyebrow: {
     fontSize: 10,
     letterSpacing: 3,
     fontWeight: "600",
     color: "#59634F",
-    marginBottom: 12,
+    marginBottom: 20,
   },
   wordWindow: { height: rowHeight, overflow: "hidden", width: "100%" },
   wordRow: {
@@ -250,6 +253,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 20,
     paddingHorizontal: 20,
+    zIndex: 1,
   },
   continueText: { color: "#FFFFFF", fontSize: 16, fontWeight: "600" },
 });

@@ -26,7 +26,13 @@ export default function WelcomeVideo({ size }: { size: number }) {
         width: size,
         height: (size * 9) / 16,
         position: "relative",
-        borderRadius: 18,
+        paddingTop: 18,
+        paddingBottom: 10,
+        boxSizing: "content-box",
+        background: "radial-gradient(ellipse at 50% 45%, #F1E7D3, #E8D9C1)",
+        boxShadow: "0 16px 40px rgba(93, 70, 40, 0.10)",
+        border: "1px solid rgba(255,255,255,0.4)",
+        borderRadius: 24,
         overflow: "hidden",
       }}
     >

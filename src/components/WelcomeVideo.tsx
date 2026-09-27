@@ -33,8 +33,11 @@ export default function WelcomeVideo({ size }: { size: number }) {
       accessible
       style={{
         width: size,
-        height: (size * 9) / 16,
-        borderRadius: 18,
+        height: (size * 9) / 16 + 28,
+        paddingTop: 18,
+        paddingBottom: 10,
+        backgroundColor: "#E8D9C1",
+        borderRadius: 24,
         overflow: "hidden",
       }}
       pointerEvents="none"
@@ -45,6 +48,7 @@ export default function WelcomeVideo({ size }: { size: number }) {
           width: size,
           height: (size * 9) / 16,
           position: "absolute",
+          top: 18,
           opacity: visible ? 0 : 1,
         }}
         resizeMode="contain"
