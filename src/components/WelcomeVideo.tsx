@@ -1,11 +1,17 @@
-import CoachWindowHeader from "./CoachWindowHeader";
 import { useEvent } from "expo";
 import React, { useEffect } from "react";
 import { AppState, View } from "react-native";
 import { useVideoPlayer, VideoView } from "expo-video";
 import { Image } from "../i18n";
 
-export default function WelcomeVideo({ size }: { size: number }) {
+export default function WelcomeVideo({
+  width,
+  height,
+}: {
+  width: number;
+  height: number;
+}) {
+  const videoHeight = Math.min((width * 9) / 16, height * 0.64);
   const player = useVideoPlayer(
     require("../../assets/video/welcome.mp4"),
     (player) => {
@@ -33,12 +39,11 @@ export default function WelcomeVideo({ size }: { size: number }) {
       accessibilityLabel="Welcome to Elevate. Tap Continue below to begin."
       accessible
       style={{
-        width: size,
-        height: (size * 9) / 16 + 40,
-        paddingTop: 30,
-        paddingBottom: 10,
-        backgroundColor: "#E8D9C1",
-        borderRadius: 24,
+        position: "absolute",
+        top: 0,
+        left: 0,
+        width,
+        height,
         overflow: "hidden",
       }}
       pointerEvents="none"
@@ -46,10 +51,10 @@ export default function WelcomeVideo({ size }: { size: number }) {
       <Image
         source={require("../../assets/brand-splash.png")}
         style={{
-          width: size,
-          height: (size * 9) / 16,
+          width,
+          height: videoHeight,
           position: "absolute",
-          top: 30,
+          top: height * 0.1,
           opacity: visible ? 0 : 1,
         }}
         resizeMode="contain"
@@ -61,12 +66,14 @@ export default function WelcomeVideo({ size }: { size: number }) {
         contentFit="contain"
         surfaceType="textureView"
         style={{
-          width: size,
-          height: (size * 9) / 16,
+          position: "absolute",
+          top: height * 0.1,
+          left: 0,
+          width,
+          height: videoHeight,
           opacity: visible ? 1 : 0,
         }}
       />
-      <CoachWindowHeader />
     </View>
   );
 }

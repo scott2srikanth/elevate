@@ -1,8 +1,14 @@
-import CoachWindowHeader from "./CoachWindowHeader";
 import React, { useEffect, useRef, useState } from "react";
 import { Image } from "../i18n";
 const source = require("../../assets/video/welcome.mp4");
-export default function WelcomeVideo({ size }: { size: number }) {
+export default function WelcomeVideo({
+  width,
+  height,
+}: {
+  width: number;
+  height: number;
+}) {
+  const videoHeight = Math.min((width * 9) / 16, height * 0.64);
   const ref = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(false);
   useEffect(() => {
@@ -24,25 +30,19 @@ export default function WelcomeVideo({ size }: { size: number }) {
       role="img"
       aria-label="Welcome to Elevate. Tap Continue below to begin."
       style={{
-        width: size,
-        height: (size * 9) / 16,
-        position: "relative",
-        paddingTop: 30,
-        paddingBottom: 10,
-        boxSizing: "content-box",
-        background: "radial-gradient(ellipse at 50% 45%, #F1E7D3, #E8D9C1)",
-        boxShadow: "0 16px 40px rgba(93, 70, 40, 0.10)",
-        border: "1px solid rgba(255,255,255,0.4)",
-        borderRadius: 24,
+        position: "absolute",
+        inset: 0,
         overflow: "hidden",
+        pointerEvents: "none",
       }}
     >
       <Image
         source={require("../../assets/brand-splash.png")}
         style={{
-          width: size,
-          height: (size * 9) / 16,
+          width,
+          height: videoHeight,
           position: "absolute",
+          top: height * 0.1,
           opacity: playing ? 0 : 1,
         }}
         resizeMode="contain"
@@ -61,15 +61,16 @@ export default function WelcomeVideo({ size }: { size: number }) {
         onPlaying={() => setPlaying(true)}
         onError={() => setPlaying(false)}
         style={{
-          position: "relative",
-          width: size,
-          height: (size * 9) / 16,
+          position: "absolute",
+          top: height * 0.1,
+          left: 0,
+          width,
+          height: videoHeight,
           objectFit: "contain",
           pointerEvents: "none",
           opacity: playing ? 1 : 0,
         }}
       />
-      <CoachWindowHeader />
     </div>
   );
 }

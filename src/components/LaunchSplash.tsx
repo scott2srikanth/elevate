@@ -93,19 +93,30 @@ export function LaunchSplash({
     <View testID="launch-splash" style={styles.root}>
       <StatusBar style="dark" />
       <SplashBackdrop />
-      <View style={styles.content}>
+      {!reducedMotion && <WelcomeVideo width={width} height={height} />}
+      <View
+        pointerEvents="none"
+        style={[
+          StyleSheet.absoluteFill,
+          { backgroundColor: "rgba(232,217,193,0.12)" },
+        ]}
+      />
+      <View
+        style={[
+          styles.content,
+          { marginTop: reducedMotion ? 0 : height * 0.34 },
+        ]}
+      >
         <Text raw style={styles.eyebrow}>
           YOUR NEXT CHAPTER STARTS HERE
         </Text>
-        {reducedMotion ? (
+        {reducedMotion && (
           <Image
             source={require("../../assets/brand-splash.png")}
             style={{ width: artworkSize, height: artworkSize }}
             resizeMode="contain"
             accessibilityLabel="Elevate coaching companions"
           />
-        ) : (
-          <WelcomeVideo size={Math.min(width - 48, 520, artworkSize * 1.8)} />
         )}
         <View
           accessible
@@ -198,6 +209,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "100%",
     maxWidth: 560,
+    backgroundColor: "rgba(247,243,236,0.94)",
+    borderRadius: 28,
+    paddingVertical: 18,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.55)",
     flexShrink: 1,
     zIndex: 1,
   },

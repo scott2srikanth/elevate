@@ -4,4 +4,4 @@
 
 Rebuild with `sh scripts/build-welcome-video.sh /path/to/original.mp4`. The original is not bundled. Foot cropping present in the original cannot be recovered through playback styling.
 
-Web and Android preserve the frame with contain sizing. The video loops muted, pauses in the background, and unmounts on Continue. Reduced-motion users see the supplied still image. Load/autoplay failures retain the still-image fallback. The multilingual writing animation remains separate.
+The video sits in an absolute splash background layer, behind the translucent welcome panel. Web and Android preserve the frame with contain sizing rather than cropping the landscape clip to a portrait screen. The video loops muted, pauses in the background, and unmounts on Continue. Reduced-motion users see the supplied still image. Load/autoplay failures retain the still-image fallback. The multilingual writing animation remains separate.
