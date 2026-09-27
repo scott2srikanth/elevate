@@ -186,7 +186,7 @@ export function LaunchSplash({
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: "#F7F3EC",
+    backgroundColor: "#E8D9C1",
     alignItems: "center",
     justifyContent: "space-evenly",
     paddingHorizontal: 24,
