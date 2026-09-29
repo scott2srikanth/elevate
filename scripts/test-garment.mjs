@@ -40,6 +40,21 @@ try {
       process.env.GARMENT_TEST_IMAGE || "/tmp/elevate-fashion/dress.jpg",
     );
   await frame.locator("#review").waitFor({ state: "visible", timeout: 120000 });
+  await page.waitForFunction(() => {
+    const frame = document.querySelector(
+      'iframe[title="On-device garment analysis"]',
+    );
+    return (
+      frame?.contentDocument?.documentElement.scrollHeight <=
+      frame.clientHeight + 2
+    );
+  });
+  await frame.locator("#save").scrollIntoViewIfNeeded();
+  const saveBounds = await frame.locator("#save").boundingBox();
+  assert.ok(
+    saveBounds && saveBounds.y >= 0 && saveBounds.y + saveBounds.height <= 844,
+    "Generated-result save control must be reachable in the mobile viewport",
+  );
   console.log(
     "INFERENCE",
     await frame.locator("#prediction").innerText(),

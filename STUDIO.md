@@ -43,3 +43,9 @@ The server health mode is `on-device-elevate-one`; `ai: false` means no **server
 The same Expo 57 / React Native screen and inference module build for web and Android. `npm run build:web` exports the web client; `npm run build:android` creates the Android JavaScript/Hermes bundle. An export is not an APK or device test. Follow the existing EAS preview/production workflow to build and sign a new Android application, and deploy web/Worker changes separately. Existing installed apps do not update merely because source files change.
 
 Existing lessons retain English/Telugu support. The new navigation/consent labels include Telugu translations; new adaptive diagnostic prose currently falls back to English pending language review.
+
+### Mobile result scrolling
+
+Photo check and Recordings expand their embedded document to its measured content height. The main menu owns vertical scrolling after a height is received; WebView nested scrolling remains available as a fallback before measurement. Native height reporting is injected by the APK, so existing downloaded model pages receive the fix without a model update. Web iframes observe their same-origin document on each load, including the offline redirect. Height messages are session-bound, origin-checked and bounded.
+
+Shared menu and dialog scroll views keep input taps active and dismiss the keyboard on drag. Regression coverage in `tests/scroll.spec.ts` checks main menus, coaching tools, dialog scrolling, result expansion/shrinkage, parent scroll propagation and the native bridge. The real garment inference test verifies that the result save action is reachable in a mobile viewport. A rebuilt APK is required; physical Android gesture/keyboard verification remains necessary.

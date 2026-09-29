@@ -1246,6 +1246,13 @@ function AppContent() {
               )}
               <ScrollView
                 ref={coachScroll}
+                testID="menu-scroll"
+                style={{ flex: 1, minHeight: 0 }}
+                keyboardShouldPersistTaps="handled"
+                keyboardDismissMode="on-drag"
+                automaticallyAdjustKeyboardInsets
+                nestedScrollEnabled
+                removeClippedSubviews={false}
                 onScroll={(e) => {
                   scrollOffset.current = e.nativeEvent.contentOffset.y;
                 }}
@@ -1424,6 +1431,7 @@ function AppContent() {
                     style={[
                       s.between,
                       {
+                        flexShrink: 0,
                         padding: 22,
                         borderBottomWidth: 1,
                         borderColor: C.line,
@@ -1453,6 +1461,11 @@ function AppContent() {
                     </Pressable>
                   </View>
                   <ScrollView
+                    testID="dialog-scroll"
+                    style={{ flexShrink: 1, minHeight: 0 }}
+                    keyboardDismissMode="on-drag"
+                    nestedScrollEnabled
+                    removeClippedSubviews={false}
                     keyboardShouldPersistTaps="handled"
                     contentContainerStyle={{ padding: 26, gap: 22 }}
                   >

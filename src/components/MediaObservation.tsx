@@ -1,3 +1,4 @@
+import { embeddedHeightScript, parseEmbeddedHeight } from "./embeddedHeight";
 import React, { useState } from "react";
 import { View } from "react-native";
 import { WebView } from "react-native-webview";
@@ -28,6 +29,7 @@ export function MediaObservation({
   const [session] = useState(
     () => `${Date.now()}-${Math.random().toString(36).slice(2)}`,
   );
+  const [contentHeight, setContentHeight] = useState<number | null>(null);
   const [error, setError] = useState("");
   if (!API_URL)
     return (
@@ -38,14 +40,19 @@ export function MediaObservation({
     );
   const uri = `${API_URL}/observation/?session=${session}`;
   return (
-    <View style={{ height: 620 }}>
+    <View>
       {!!error && <Text style={k.message}>{error}</Text>}
       <WebView
         source={{ uri }}
         originWhitelist={[new URL(API_URL).origin]}
         javaScriptEnabled
         domStorageEnabled
+        containerStyle={{ height: contentHeight ?? 620, flex: 0 }}
         cacheEnabled
+        injectedJavaScript={embeddedHeightScript(session)}
+        scrollEnabled={contentHeight === null}
+        nestedScrollEnabled={contentHeight === null}
+        bounces={false}
         allowFileAccess={false}
         allowFileAccessFromFileURLs={false}
         allowUniversalAccessFromFileURLs={false}
@@ -61,10 +68,19 @@ export function MediaObservation({
         onMessage={(event) => {
           if (!allowedObservationUrl(event.nativeEvent.url, API_URL, session))
             return;
+          const measured = parseEmbeddedHeight(event.nativeEvent.data, session);
+          if (measured !== null) {
+            setContentHeight(measured);
+            return;
+          }
           const report = parseMediaMessage(event.nativeEvent.data, session);
           if (report) onReport(report);
         }}
-        style={{ backgroundColor: "#faf8f2" }}
+        style={{
+          height: contentHeight ?? 620,
+          flex: 0,
+          backgroundColor: "#faf8f2",
+        }}
       />
     </View>
   );

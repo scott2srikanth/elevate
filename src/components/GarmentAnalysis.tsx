@@ -1,3 +1,4 @@
+import { embeddedHeightScript, parseEmbeddedHeight } from "./embeddedHeight";
 import React, { useRef, useState } from "react";
 import { View } from "react-native";
 import { WebView } from "react-native-webview";
@@ -29,6 +30,7 @@ export function GarmentAnalysis({
   const [session] = useState(
     () => `${Date.now()}-${Math.random().toString(36).slice(2)}`,
   );
+  const [contentHeight, setContentHeight] = useState<number | null>(null);
   const [error, setError] = useState("");
   if (!API_URL)
     return (
@@ -37,17 +39,27 @@ export function GarmentAnalysis({
       </Text>
     );
   return (
-    <View style={{ height: 850 }}>
+    <View>
       {!!error && <Text style={k.message}>{error}</Text>}
       <WebView
         ref={ref}
+        style={{
+          height: contentHeight ?? 850,
+          flex: 0,
+          backgroundColor: "#faf8f2",
+        }}
         source={{
           uri: `${API_URL}/observation/garment/index.html?session=${session}`,
         }}
         originWhitelist={[new URL(API_URL).origin]}
         javaScriptEnabled
         domStorageEnabled
+        containerStyle={{ height: contentHeight ?? 850, flex: 0 }}
         cacheEnabled
+        injectedJavaScript={embeddedHeightScript(session)}
+        scrollEnabled={contentHeight === null}
+        nestedScrollEnabled={contentHeight === null}
+        bounces={false}
         allowFileAccess={false}
         allowFileAccessFromFileURLs={false}
         allowUniversalAccessFromFileURLs={false}
@@ -60,6 +72,11 @@ export function GarmentAnalysis({
         }
         onMessage={(event) => {
           if (!allowed(event.nativeEvent.url, session)) return;
+          const measured = parseEmbeddedHeight(event.nativeEvent.data, session);
+          if (measured !== null) {
+            setContentHeight(measured);
+            return;
+          }
           const result = parseGarmentMessage(event.nativeEvent.data, session);
           if (result) {
             onResult(result);

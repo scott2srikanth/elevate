@@ -1,11 +1,12 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useFrameHeight } from "./useFrameHeight.web";
+import React, { useEffect, useState } from "react";
 import { parseGarmentMessage, type GarmentResult } from "../shared/garment";
 export function GarmentAnalysis({
   onResult,
 }: {
   onResult: (result: GarmentResult) => void;
 }) {
-  const frame = useRef<HTMLIFrameElement>(null);
+  const { frame, height, onLoad } = useFrameHeight(850);
   const [session] = useState(
     () => `${Date.now()}-${Math.random().toString(36).slice(2)}`,
   );
@@ -31,13 +32,20 @@ export function GarmentAnalysis({
     };
     window.addEventListener("message", receive);
     return () => window.removeEventListener("message", receive);
-  }, [onResult, session]);
+  }, [onResult, session, frame]);
   return (
     <iframe
       ref={frame}
+      onLoad={onLoad}
       title="On-device garment analysis"
       src={`/observation/garment/index.html?session=${session}`}
-      style={{ width: "100%", height: 850, border: 0, borderRadius: 16 }}
+      style={{
+        width: "100%",
+        height,
+        border: 0,
+        borderRadius: 16,
+        flexShrink: 0,
+      }}
       allow="camera 'none'; microphone 'none'"
     />
   );
