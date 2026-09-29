@@ -1,7 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { parseAnalysis } from "../src/shared/analysis";
-import { buildStudioRequest } from "../src/studioExchange";
 import { initialState } from "../src/coach";
 import { stateSchema } from "../src/shared/schema";
 import { exampleAnalysis } from "./fixtures/analysis";
@@ -53,31 +52,4 @@ test("charts reject invalid scales and numerical claims", () => {
     () => parseAnalysis(JSON.stringify(a), "weekly"),
     /maximum of 5/,
   );
-});
-test("JSON packages are individually typed, exclude unchecked context and specify media attachment limits", () => {
-  const state = initialState();
-  state.memories.push({
-    id: "1",
-    at: new Date().toISOString(),
-    text: "private memory",
-  });
-  for (const kind of ["weekly", "coach", "media"] as const) {
-    const p = buildStudioRequest(state, kind, {
-      question: "Help me prepare",
-      mediaType: "voice",
-      transcript: "My introduction",
-      includeProfile: false,
-      includeHistory: false,
-      includeMemories: false,
-    });
-    assert.equal(p.kind, kind);
-    assert.deepEqual(p.context, {});
-    assert.ok(p.response_schema.properties?.visualGuides);
-    assert.ok(p.response_schema.properties?.charts);
-    assert.ok(!JSON.stringify(p).includes("private memory"));
-    if (kind === "media") {
-      assert.equal(p.media?.transcript, "My introduction");
-      assert.match(p.media!.attachmentInstruction, /no audio\/image bytes/);
-    }
-  }
 });

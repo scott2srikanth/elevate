@@ -1,0 +1,78 @@
+{
+  "SILERO_LICENSE": {
+    "bytes": 1075,
+    "sha256": "2e63e9a38b6e8fc0c7bc37ce174caca1862870856c6daf5697cfb785e925520b"
+  },
+  "ort/LICENSE": {
+    "bytes": 1073,
+    "sha256": "2f07c72751aed99790b8a4869cf2311df85a860b22ded05fa22803587a48922c"
+  },
+  "ort/dist/ort-wasm-simd-threaded.mjs": {
+    "bytes": 20856,
+    "sha256": "30dd851d9c00622940500f71ddd2ff8820c5cb65270816080175b958705385a8"
+  },
+  "ort/dist/ort-wasm-simd-threaded.wasm": {
+    "bytes": 11210254,
+    "sha256": "71aef04959c5c1b6de461b6538e2058e306610034a85aad2742d0c7fd4533fe4"
+  },
+  "ort/dist/ort.wasm.min.js": {
+    "bytes": 48327,
+    "sha256": "65e09376df69107e881b5c34d2d37aed333a366b6d941073ec518168e269b87d"
+  },
+  "ort/package.json": {
+    "bytes": 3638,
+    "sha256": "6161720a4479e5bcf3457092c96a59466123f2b5830f3e60193dbc50ed1f3040"
+  },
+  "pose_landmarker_lite.task": {
+    "bytes": 5777746,
+    "sha256": "59929e1d1ee95287735ddd833b19cf4ac46d29bc7afddbbf6753c459690d574a"
+  },
+  "vad/LICENSE": {
+    "bytes": 1896,
+    "sha256": "239ebca4207803d3507124517c0dd6324c0d5cf73e1c486ade16bac1788f4a79"
+  },
+  "vad/dist/bundle.min.js": {
+    "bytes": 69143,
+    "sha256": "206cf2ca0bacee64f115eba1769e33ce68bd979c9b53be31e6e0ec0edbab9ff8"
+  },
+  "vad/dist/bundle.min.js.LICENSE.txt": {
+    "bytes": 132,
+    "sha256": "85d829adcdee0fe0a5caa95c238f9e4d49758f2b222944171f5d2e8f926e01b4"
+  },
+  "vad/dist/silero_vad_legacy.onnx": {
+    "bytes": 1807522,
+    "sha256": "a35ebf52fd3ce5f1469b2a36158dba761bc47b973ea3382b3186ca15b1f5af28"
+  },
+  "vad/package.json": {
+    "bytes": 1085,
+    "sha256": "e786ffbf2c81c5ea71accae690d899600dafa578a1cb98387990e7c4505f4b87"
+  },
+  "vision/LICENSE": {
+    "bytes": 12331,
+    "sha256": "8707eef0533987efc5b155d64761eeb6e20793f50b9bd1a68dad1cf4719d0ed8"
+  },
+  "vision/package.json": {
+    "bytes": 604,
+    "sha256": "30be811f5a26203a2cdcb38db2b06d1d37762d348ae804e1fc2322ec21a4adfd"
+  },
+  "vision/vision_bundle.mjs": {
+    "bytes": 137809,
+    "sha256": "3252b10e0fd26c4095e4b6ee545c1c898120b3a3813388ecd4876abe6f1399a9"
+  },
+  "vision/wasm/vision_wasm_internal.js": {
+    "bytes": 204284,
+    "sha256": "4a97e2520ba506c680ecd6ba6acfb146888afa0e2746d57f205352bc6ebb82eb"
+  },
+  "vision/wasm/vision_wasm_internal.wasm": {
+    "bytes": 9574032,
+    "sha256": "f00ec4731faa23b3e714d00e88d4d10e2df5c0a427d3a2b4ae6e3526fdd14ef7"
+  },
+  "vision/wasm/vision_wasm_nosimd_internal.js": {
+    "bytes": 204137,
+    "sha256": "927def7b465c51b86e4b3060f93646aca4e27121f4b8fc0483786e407ea9cf1f"
+  },
+  "vision/wasm/vision_wasm_nosimd_internal.wasm": {
+    "bytes": 9448638,
+    "sha256": "3821ea9b1f7fb8c549ef2a064ef5c85750bf375c545a49fd6eea0df44a95f1f4"
+  }
+}

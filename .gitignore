@@ -47,3 +47,9 @@ playwright-report/
 .dev.vars
 .env
 dist-android/
+
+# Vendored local observation runtimes are source assets, not build output.
+!public/observation/vendor/ort/dist/
+!public/observation/vendor/ort/dist/**
+!public/observation/vendor/vad/dist/
+!public/observation/vendor/vad/dist/**

@@ -1,33 +1,45 @@
-# ChatGPT JSON coaching studio
+# On-device AI Coach
 
-Each primary studio tab is an independent manual exchange: **Weekly review**, **My coach**, and **Photo & voice**. The app needs no API key or cloud account for this workflow.
+The learner studio now provides **Overview**, **Recordings**, **Self-check**, and **Progress** on both Android and web. It replaces the ChatGPT request/response export-and-import flow. No API key or separate ChatGPT account is needed. User profile backups and administrator content imports remain separate features.
 
-1. Save a weekly review, enter your coaching question, or describe the media context. Voice users can paste a transcript.
-2. Select which profile context, history and approved memories to include. Your name is omitted from the profile fields; free-text notes can still contain personal information.
-3. Generate and review the JSON. Copy it or download the file, open ChatGPT, and paste it there. Attach images directly in ChatGPT. Recording support depends on the ChatGPT interface; use a transcript if a recording cannot be attached or inspected. No media bytes or device paths are included in JSON.
-4. The package includes task instructions, context, image keys and a complete JSON response schema. Ask ChatGPT to return only the response object.
-5. Paste the response, preview it, and save it. Analyses persist in the encrypted local profile, appear in History, and sync to D1 if cloud sync is connected. Delete individual analyses from History.
+## Studio navigation
 
-## Response format
+Overview shows one recommended practice, three compact progress indicators and two actions. Recordings contains the on-device analyser, offline downloads/updates and a collapsed list of saved measurements. Self-check saves ratings automatically. Progress contains the full learning-stage and skill history, without repeating empty-state messages per skill.
 
-`version: 1` and `kind: weekly | coach | media` identify the format and destination tab. The response must include:
+Resources & settings contains videos, weekly review, saved plans, coach memory, dining, cultural context, personal brand and coach settings. Detailed reports and model diagnostics open only when requested. Mobile uses an even two-column tab layout and large touch targets; wide web layouts place the two overview actions side by side. Consent remains available in settings after setup. These layout changes preserve learning rules, media privacy and explicit offline model sync.
 
-- `title`, `summary`, `evidence`, `strengths`, `opportunities`, `limitations`.
-- `charts`: up to three bar or trend charts. Each has `title`, `type`, `unit`, `max`, `basis`, `explanation`, and labelled numeric `points`. Basis is `self_reported`, `observed`, or `suggested`. Confidence is on a 0–5 scale; percentages on 0–100. Empty charts are valid when no useful numbers exist.
-- `diagram`: a title and 2–6 ordered steps, each with `title`, `detail`, and an image key.
-- `visualGuides`: 1–5 objects with `image`, `title`, `caption`, and `tryThis`.
-- `actions`: 1–5 objects with `title`, `when`, `steps`, and a follow-up `reflection` question.
+## Learning progression
 
-The exact schema in each export is generated from the same Zod schema used to validate imports. Raw JSON and a single fenced JSON block are accepted. Wrong tabs, missing fields, invalid scales, non-finite numbers, external image URLs and unknown object keys are rejected with a field-specific message. Limit: 60,000 pasted characters and 24,000 characters for the normalized analysis. Text is rendered as text, never as executable HTML or code.
+The next practice is chosen in this order:
 
-Images use `reflection`, `conversation`, `speaking`, `posture`, or `style` to select bundled educational illustrations. They illustrate the advice; they do not claim to depict the user's body or behavior. Chart numbers are ChatGPT's returned claims, not independently verified measurements; the prompt requires evidence or a clear suggested-target label. A transcript alone cannot substantiate vocal tone, pace or posture claims.
+1. An existing rehearsed assignment, so the learner can finish its real-world challenge.
+2. A smaller repetition after the most recent difficult reflection (confidence 1–2/5).
+3. A due spaced review: 1 day after difficulty, 3 days at 3/5, 7 days at 4–5/5, or 14 days after three distinct practice days rated 4–5/5.
+4. An accepted Elevate One next-exercise decision based on a current self-check.
+5. Explicit keyword themes in reflections, unfinished curriculum skills, then less-practised skills matching the profile focus.
 
-The three tab drafts survive switching within the studio. Save an imported analysis before leaving or reloading the app; unsaved forms and previews are temporary. The authored coaching exercises and real-world reflection loop remain available under Practice.
+The eight-stage curriculum still advances only on qualifying real-world reflections (at least 3/5); repeated stages require new practice. Future records are excluded. Progress counts at most one observation per skill per local calendar day and deduplicates reflection IDs. Trends compare the latest three practice days with the preceding two or three; insufficient evidence produces no trend. Consistent self-reported confidence is **not mastery**.
 
-The old automated `/api/coach` and `/api/analyze` routes return HTTP 410. There are no Workers AI bindings or processing calls. R2 remains available only as optional private wardrobe storage; existing legacy uploads can still be removed.
+This adapts the recommendation policy and learner state. The trained model's weights do **not** learn online from user data. No effectiveness study or real-world coaching calibration is claimed.
 
-## References
+## Decision model and evidence
 
-- [ChatGPT image inputs](https://learn.chatgpt.com/docs/image-inputs)
-- [ChatGPT prompting](https://learn.chatgpt.com/docs/prompting)
-- [Illustration prompts](./assets/illustrations/STUDIO-PROMPTS.md)
+`src/intelligence/model.ts` bundles the original Elevate One synthetic-policy weights: 50 feature-sparse softmax heads, 345 trained coefficients and per-head calibration temperatures. `engine.ts` runs them in pure TypeScript without a server, WebView or native ML dependency.
+
+The learner explicitly opts in. Optional self-check scores map 1–5 to [0,1]. Unanswered observations stay unknown. Context, fatigue and observation-quality ratings expire after 24 hours; other ratings expire after seven days. Profile goals, time budget and recent self-reported practice summaries are derived separately, without pretending that confidence is an observed posture or garment-fit measurement. Unknown/future/invalid observations are excluded. Automatic photo, video and voice observations are connected through Elevate Observe; see [OBSERVATION_MODEL.md](OBSERVATION_MODEL.md) for measured signals, reliability gates and limits.
+
+Each head withholds its categorical output when observations are missing, observation quality is below .35, or calibrated probability is below .70. An unavailable blazer is never selected. When the model cannot choose an exercise, the transparent history-based policy remains available. Free-text memories are retained as reference but are not interpreted by the small model.
+
+## Local storage and sync
+
+`aiCoach` stores consent and timestamped observations alongside the existing state, using the existing encrypted device storage. The shared Zod schema defaults older profiles to consent off with no observations; old imported analyses remain readable. Opting out stops model recommendations without silently deleting history. Clear self-checks or delete analyses in History to remove them.
+
+Saved analyses use the existing validated `CoachingAnalysis` contract and can sync through the existing opt-in D1 account flow. Deploy the updated Worker schema together with clients so old servers do not strip the new state field. No SQL migration is required. Account backup/export remains available; only the learner ChatGPT handoff was removed.
+
+The server health mode is `on-device-elevate-one`; `ai: false` means no **server-side** model. Retired `/api/coach` and `/api/analyze` routes still return 410 and direct callers to the app.
+
+## Platform delivery
+
+The same Expo 57 / React Native screen and inference module build for web and Android. `npm run build:web` exports the web client; `npm run build:android` creates the Android JavaScript/Hermes bundle. An export is not an APK or device test. Follow the existing EAS preview/production workflow to build and sign a new Android application, and deploy web/Worker changes separately. Existing installed apps do not update merely because source files change.
+
+Existing lessons retain English/Telugu support. The new navigation/consent labels include Telugu translations; new adaptive diagnostic prose currently falls back to English pending language review.

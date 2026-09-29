@@ -70,9 +70,17 @@ test("personal coaching loop survives reload, with wardrobe, occasions, and dele
     .getByRole("textbox", { name: "Piece name", exact: true })
     .fill("White Oxford shirt");
   await page.getByRole("button", { name: "Add to my wardrobe" }).click();
+  await page.getByRole("button", { name: "Wardrobe", exact: true }).click();
   await expect(
     page.getByText("White Oxford shirt", { exact: true }),
   ).toBeVisible();
+  await page.getByRole("textbox", {name: "Search wardrobe"}).fill("no match");
+  await expect(page.getByText("No matching pieces", {exact: true})).toBeVisible();
+  await page.getByRole("textbox", {name: "Search wardrobe"}).fill("Oxford");
+  await page.getByRole("button", {name: "Remove White Oxford shirt", exact: true}).click();
+  await expect(page.getByText("White Oxford shirt", {exact: true})).toHaveCount(0);
+  await page.getByRole("button", {name: "Undo removal", exact: true}).click();
+  await expect(page.getByText("White Oxford shirt", {exact: true})).toBeVisible();
   await page.getByRole("button", { name: "Profile", exact: true }).click();
   await page.getByRole("button", { name: "Prepare for an occasion" }).click();
   await page

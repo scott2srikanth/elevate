@@ -1,0 +1,20 @@
+import { test, expect } from "@playwright/test";
+import AxeBuilder from "@axe-core/playwright";
+test("floating coach points to real controls, moves, and yields to dialogs", async ({page}) => {
+ const errors: string[]=[];page.on("pageerror", e=>errors.push(e.message));
+ await page.goto('/style');await page.getByRole('button',{name:'Continue',exact:true}).click();await page.getByRole('textbox',{name:'What should we call you?'}).fill('Avatar QA');await page.getByRole('button',{name:'Begin my journey'}).click();await page.getByRole('button',{name:'My style',exact:true}).click();
+ await page.getByRole('button',{name:'Open floating AI coach'}).click();
+ await expect(page.getByText('On-device guidance',{exact:true})).toBeVisible();
+ await page.getByRole('button',{name:'Show me where to click'}).click();
+ const ring=page.getByTestId('coach-target-highlight');await expect(ring).toBeVisible();
+ const control=await page.getByRole('button',{name:'Photo check',exact:true}).boundingBox();const box=await ring.boundingBox();expect(Math.abs(box!.x-control!.x+4)).toBeLessThan(3);expect(Math.abs(box!.y-control!.y+4)).toBeLessThan(3);
+ await page.getByRole('button',{name:'Next coach tip'}).click();await expect(page.getByText(/Tap the outlined control: Outfits|Next control: Outfits/)).toBeVisible();
+ await page.getByRole('button',{name:'Show me where to click'}).click();await expect(ring).toBeVisible();
+ await page.getByRole('button',{name:'Move coach to other side'}).click();
+ await page.getByRole('switch',{name:'Reduce coach motion'}).click();await expect(page.getByRole('switch',{name:'Reduce coach motion'})).toHaveAttribute('aria-checked','true');
+ await page.getByRole('button',{name:'Wardrobe',exact:true}).click();await expect(page.getByRole('textbox',{name:'Search wardrobe'})).toBeVisible();
+ await page.getByRole('button',{name:'Add a wardrobe piece',exact:true}).click();await expect(page.getByRole('button',{name:'Close coach guidance'})).toHaveCount(0);
+ await page.getByRole('button',{name:'Close dialog'}).click();await expect(page.getByRole('button',{name:'Close coach guidance'})).toBeVisible();
+ const audit=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa']).analyze();expect(audit.violations.filter(v=>['critical','serious'].includes(v.impact||''))).toEqual([]);
+ await page.getByRole('button',{name:'Close coach guidance'}).click();await expect(ring).toHaveCount(0);expect(errors).toEqual([]);
+});

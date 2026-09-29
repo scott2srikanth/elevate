@@ -1,4 +1,6 @@
+import { garmentAnalysisSchema } from "./garment";
 import { analysisSchema } from "./analysis";
+import { mediaReportSchema } from "./observation";
 import { z } from "zod";
 import { AREAS } from "../coach";
 const exerciseId = z.string().regex(/^[a-zA-Z0-9_-]{1,80}$/);
@@ -6,6 +8,24 @@ const timestamp = z.string().refine((s) => Number.isFinite(Date.parse(s)));
 const rating = z.number().int().min(1).max(5);
 export const stateSchema = z.object({
   version: z.literal(1),
+  aiCoach: z
+    .object({
+      consent: z.boolean(),
+      mediaReports: z.array(mediaReportSchema).max(10).optional(),
+      observations: z
+        .record(
+          z.string().regex(/^[a-z_]{1,60}$/),
+          z.object({
+            value: z.number().finite().min(0).max(1),
+            at: timestamp,
+          }),
+        )
+        .refine(
+          (value) => Object.keys(value).length <= 60,
+          "Too many observations",
+        ),
+    })
+    .default({ consent: false, observations: {} }),
   profile: z
     .object({
       name: z.string().min(1),
@@ -38,6 +58,7 @@ export const stateSchema = z.object({
       category: z.string(),
       color: z.string(),
       mediaId: z.string().optional(),
+      garmentAnalysis: garmentAnalysisSchema.optional(),
     }),
   ),
   occasions: z.array(
@@ -75,6 +96,7 @@ export const stateSchema = z.object({
         feedback: z.string().max(20000),
         analysis: analysisSchema.optional(),
         mediaId: z.string().optional(),
+        garmentAnalysis: garmentAnalysisSchema.optional(),
       }),
     )
     .default([]),

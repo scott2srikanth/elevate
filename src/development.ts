@@ -1,6 +1,14 @@
+import { recommendOutfit } from "./intelligence/garmentOutfits";
 import type { Exercise, State } from "./coach";
 import { weeks } from "./curriculum";
-export function stagePlan(state: State) {
+export function stagePlan(state: State, now = new Date()) {
+  state = {
+    ...state,
+    reflections: state.reflections.filter(
+      (r) =>
+        Number.isFinite(Date.parse(r.at)) && Date.parse(r.at) <= now.getTime(),
+    ),
+  };
   let after = 0;
   for (let index = 0; index < weeks.length; index++) {
     const week = weeks[index];
@@ -105,21 +113,7 @@ export function weeklySummary(state: State, now = new Date()) {
   };
 }
 export function outfitSuggestion(state: State, occasion: string) {
-  const pick = (category: string) =>
-    state.wardrobe.find((g) => g.category === category);
-  const pieces = [
-    "Tops",
-    "Bottoms",
-    "Shoes",
-    ...(/meeting|interview|presentation/i.test(occasion) ? ["Layers"] : []),
-  ]
-    .map(pick)
-    .filter((g) => !!g);
-  return {
-    pieces,
-    missing: ["Tops", "Bottoms", "Shoes"].filter((c) => !pick(c)),
-    reason: `A starting combination from pieces you own for ${occasion.toLowerCase()}. Confirm the actual dress code, comfort, and weather; garment names alone cannot establish fit or formality.`,
-  };
+  return recommendOutfit(state.wardrobe, occasion);
 }
 export function brandStatement(
   name: string,

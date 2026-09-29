@@ -14,6 +14,7 @@ test("video filters, single player, practice handoff and Telugu guidance", async
   await page.getByRole("button", { name: "Continue", exact: true }).click();
   await page.getByRole("button", { name: "Close dialog" }).click();
   await page.getByRole("button", { name: "Coach", exact: true }).click();
+  await page.getByRole("button", { name: "More coaching tools", exact: true }).click();
   await page.getByRole("button", { name: "Videos", exact: true }).click();
   await expect(
     page.getByRole("button", { name: "Watch lesson", exact: true }),
@@ -43,7 +44,7 @@ test("video filters, single player, practice handoff and Telugu guidance", async
     .getByRole("button", { name: "Watch lesson", exact: true })
     .first()
     .click();
-  await page.getByRole("button", { name: "My coach", exact: true }).click();
+  await page.getByRole("button", { name: "Overview", exact: true }).click();
   await expect(page.locator("iframe")).toHaveCount(0);
   await page.getByRole("button", { name: "Videos", exact: true }).click();
   await page
@@ -58,6 +59,7 @@ test("video filters, single player, practice handoff and Telugu guidance", async
   await page.getByRole("button", { name: "Profile", exact: true }).click();
   await page.getByRole("button", { name: "తెలుగు", exact: true }).click();
   await page.getByRole("button", { name: "కోచ్", exact: true }).click();
+  await page.getByRole("button", { name: "మరిన్ని కోచింగ్ సాధనాలు", exact: true }).click();
   await page.getByRole("button", { name: "వీడియోలు", exact: true }).click();
   await expect(
     page.getByText("ఇతరులు ఆసక్తిగా వినేలా మాట్లాడండి", { exact: true }),

@@ -62,10 +62,11 @@ export default function WelcomeVideo({
         style={{
           position: "absolute",
           top: 0,
-          left: 0,
-          width,
+          // The bundled 960 × 540 video scales only with screen height.
+          left: (width - height * (16 / 9)) / 2,
+          width: height * (16 / 9),
           height,
-          objectFit: "cover",
+          objectFit: "contain",
           pointerEvents: "none",
           opacity: playing ? 1 : 0,
         }}

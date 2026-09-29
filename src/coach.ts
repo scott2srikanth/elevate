@@ -1,5 +1,8 @@
 import type { CoachingAnalysis } from "./shared/analysis";
 import { stagePlan, practiceForTime, reflectionSignals } from "./development";
+import { learningProgress, validReflections } from "./learning";
+import { mediaGuidance } from "./intelligence/observation";
+import { suggestedExercise, type CoachState } from "./intelligence/engine";
 export { weeks } from "./curriculum";
 export const AREAS = [
   "Executive presence",
@@ -34,6 +37,7 @@ export type Garment = {
   category: string;
   color: string;
   mediaId?: string;
+  garmentAnalysis?: import("./shared/garment").GarmentAnalysis;
 };
 export type Occasion = {
   id: string;
@@ -43,6 +47,7 @@ export type Occasion = {
 };
 export type State = {
   version: 1;
+  aiCoach: CoachState;
   profile: Profile | null;
   reflections: Reflection[];
   assignment: Assignment | null;
@@ -65,6 +70,7 @@ export type State = {
     feedback: string;
     analysis?: CoachingAnalysis;
     mediaId?: string;
+  garmentAnalysis?: import("./shared/garment").GarmentAnalysis;
   }[];
   brand: {
     audience: string;
@@ -234,6 +240,7 @@ export const exercises: Exercise[] = [
 export function initialState(): State {
   return {
     version: 1,
+    aiCoach: { consent: false, observations: {} },
     profile: null,
     reflections: [],
     assignment: null,
@@ -271,7 +278,10 @@ export function weekIndex(profile: Profile | null, now = new Date()) {
     ),
   );
 }
-export function recommend(state: State): {
+export function recommend(
+  state: State,
+  now = new Date(),
+): {
   exercise: Exercise;
   reason: string;
 } {
@@ -282,17 +292,52 @@ export function recommend(state: State): {
       reason:
         "You have rehearsed this. Your next step is to try it in real life.",
     };
-  const last = state.reflections[0];
+  const last = validReflections(state, now)[0];
   if (last && last.confidence <= 2)
     return {
       exercise: practiceForTime(
         exercises.find((e) => e.id === last.exerciseId) || exercises[0],
-        state.profile?.minutes || 5,
+        Math.min(2, state.profile?.minutes || 5),
       ),
       reason:
         "Your last reflection said this still felt difficult. Let’s try a smaller repetition.",
     };
-  const signal = reflectionSignals(state).find(
+  const skills = learningProgress(state, exercises, now);
+  const due = skills
+    .filter((skill) => skill.due)
+    .sort((a, b) => Date.parse(a.dueAt!) - Date.parse(b.dueAt!))[0];
+  if (due)
+    return {
+      exercise: practiceForTime(
+        exercises.find((e) => e.id === due.exerciseId)!,
+        state.profile?.minutes || 5,
+      ),
+      reason: `A spaced review is due for ${due.title.toLowerCase()}. Your latest self-reported confidence was ${due.latestConfidence}/5; revisit it before moving on.`,
+    };
+  const recordingAdvice = state.aiCoach?.consent
+    ? mediaGuidance(state.aiCoach.mediaReports, now)
+    : [];
+  if (recordingAdvice.length)
+    return {
+      exercise: practiceForTime(
+        exercises.find((e) => e.id === "introduction")!,
+        state.profile?.minutes || 5,
+      ),
+      reason: `Your latest recording suggests a setup check before a short introduction. ${recordingAdvice[0]} This does not change your curriculum stage.`,
+    };
+  const decision = suggestedExercise(state, now);
+  if (decision)
+    return {
+      exercise: practiceForTime(
+        exercises.find((e) => e.id === decision.id)!,
+        state.profile?.minutes || 5,
+      ),
+      reason: `Your current self-check suggests this practice (${(decision.confidence * 100).toFixed(1)}% model confidence). This experimental model was trained on synthetic examples; choose another practice if needed.`,
+    };
+  const signal = reflectionSignals({
+    ...state,
+    reflections: validReflections(state, now),
+  }).find(
     (signal) =>
       !state.profile ||
       exercises.find((e) => e.id === signal.id)?.area === state.profile.focus,
@@ -306,7 +351,7 @@ export function recommend(state: State): {
       reason: `Your recent reflections mention ${signal.label.toLowerCase()}. This is a transparent keyword-based suggestion; choose a different practice if it misses your meaning.`,
     };
   if (state.reflections.length > 0) {
-    const plan = stagePlan(state);
+    const plan = stagePlan(state, now);
     const stage = plan.index;
     const needed = plan.remaining[0];
     if (needed)

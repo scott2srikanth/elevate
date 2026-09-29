@@ -45,19 +45,19 @@ Before the first deployment, configure the real D1 ID and HTTPS origins above, c
 
 If you previously received “Could not detect a directory containing static files”, retry after updating the root/build/deploy settings and pulling the root-layout commit. The repository root now contains both `package.json` and `wrangler.jsonc`; `dist/index.html` is produced during the build. A Pages-only static deployment would not run this app's Worker API.
 
-## 2. ChatGPT JSON studio
+## 2. On-device AI Coach
 
-No model API keys, Workers AI binding, or AI model setup is required. Weekly review, My coach, and Photo & voice each generate a JSON request for users to paste into ChatGPT. Users paste the resulting JSON back into Elevate, preview charts and illustrated guidance, and save it to their profile. See [STUDIO.md](./STUDIO.md).
+No model API key or Worker AI binding is required. The client bundles Elevate One and generates typed decisions and coaching analyses locally. Deploy the updated Worker with the client so its shared state schema preserves `aiCoach.consent` and timestamped observations. No SQL migration is needed; existing histories are retained. See [STUDIO.md](./STUDIO.md).
 
-The app never sends studio media to an AI provider. Users attach media directly in ChatGPT or provide a transcript. Saved imported analyses are included in optional D1 sync. Old `/api/coach` and `/api/analyze` routes return HTTP 410; the Worker contains no model-processing code.
+Retired inference endpoints remain 410. Server health reports `coaching: on-device-elevate-one` and `ai: false` (no server inference). A native JavaScript export is not a signed APK; use the existing EAS build instructions for device delivery.
 
 ## 3. Native Android builds
 
-Version 1.2 adds English/Telugu onboarding, a Profile language picker, translated coaching lessons, and a branded native launch screen followed by a brief accessible animation. New profiles see onboarding automatically; returning profiles retain their saved data. Language is stored in `preferences.language` (older profiles default to English) and included in D1 state and manual ChatGPT requests. Deploy the updated Worker alongside clients so schema validation preserves the new preference. No SQL migration is needed for this JSON preference.
+Version 1.2 adds English/Telugu onboarding, a Profile language picker, translated coaching lessons, and a branded native launch screen followed by a brief accessible animation. New profiles see onboarding automatically; returning profiles retain their saved data. Language is stored in `preferences.language` (older profiles default to English) and included in D1 state. Deploy the updated Worker alongside clients so schema validation preserves the new preference. No SQL migration is needed for this JSON preference.
 
-Build and install a new APK for the native splash resources and Telugu screens; existing installed APKs do not change when the website deploys. User notes and imported analysis stay in their original language; new ChatGPT packages request human-readable output in the selected language while keeping JSON keys and enum values stable.
+Build and install a new APK for the native splash resources and Telugu screens; existing installed APKs do not change when the website deploys. User notes and imported analysis stay in their original language; new AI Coach diagnostic prose currently falls back to English pending language review.
 
-The Android source is version **1.2.0**, including the manual ChatGPT JSON studio, charts, illustrations, native clipboard and sharing, and removal of microphone access. `android.versionCode` supplies a baseline of 2; EAS manages build numbers remotely and increments them for preview and production builds. Installable upgrades must use the same application ID and signing key as the installed app.
+The Android source is version **1.2.0**, with AI Coach now replacing the learner ChatGPT exchange; charts, illustrations and account backups remain. `android.versionCode` supplies a baseline of 2; EAS manages build numbers remotely and increments them for preview and production builds. Installable upgrades must use the same application ID and signing key as the installed app.
 
 `npm run build:android` verifies the JavaScript/Hermes bundle only. To produce an installable APK after EAS account/project setup, run `npm run build:android:apk`; use `npm run build:android:aab` for the Play Store bundle. Neither command submits a store release.
 
@@ -77,7 +77,7 @@ Install the generated APK on a physical Android phone and verify:
 2. Rehearse, close the app, reopen, and complete a real-world reflection.
 3. Restore the same profile in a second device/browser, then deliberately test a conflicting edit.
 4. Grant and deny camera/notification permissions; both paths should remain usable.
-5. Generate and copy a studio JSON package, switch to ChatGPT, then return and import a response. Verify the charts, illustrations and saved history. Test an optional wardrobe photo separately.
+5. Enable AI Coach, add a self-check, start its recommended practice and save an analysis. Verify the charts and saved history after relaunch. Test an optional wardrobe photo separately.
 6. Schedule daily and Sunday reminders, close the app, verify delivery, then cancel them. Android power management can affect delivery.
 7. Check TalkBack, large font sizes, keyboard focus, portrait screens, and connectivity loss.
 8. Export the profile, delete a private upload, sign out, and delete the test account.
@@ -87,7 +87,7 @@ The current workspace has no configured EAS account/project and no installed Jav
 ## 4. Operations and recovery
 
 - Cron runs hourly at minute 17. Verify it appears in the Worker dashboard. It removes expired R2 media and cleans sessions, rate-limit records, and 30-day diagnostic events.
-- `GET /api/health` reports service availability and the manual ChatGPT exchange mode. Check authenticated state requests separately after deployment.
+- `GET /api/health` reports service availability and the on-device coaching mode. Check authenticated state requests separately after deployment.
 - Worker observability is enabled with sampling. API failures also receive a random diagnostic reference and a sanitized D1 `events` record. Raw private content is not logged by application code.
 - D1 is the authoritative cloud profile; device vaults hold offline edits. Writes include the expected revision and fail with HTTP 409 if another device saved first. The UI pauses synchronization, supports exporting the local copy, and asks which copy to keep. It does not silently merge conflicting journals.
 - Before schema changes or migrations, use Cloudflare's D1 export/Time Travel procedures and verify the account's retention window. Keep access-controlled backup copies according to your own retention policy. Do not restore production blindly; validate recovery in a separate database and account for deleted-user records before a restore.
@@ -111,7 +111,7 @@ npm run test:e2e
 npm run build:android
 ```
 
-Both configurations omit AI bindings. D1 and R2 are local emulators during local testing. A production Worker dry run can validate bundling without publishing. The actual copy/paste exchange should also be tried in the user’s ChatGPT interface.
+Both configurations omit AI bindings. D1 and R2 are local emulators during local testing. A production Worker dry run can validate bundling without publishing. Test the AI Coach consent gate, observation expiry and saved-state restore on both web and an Android device.
 
 ## Official references
 
@@ -120,3 +120,7 @@ Both configurations omit AI bindings. D1 and R2 are local emulators during local
 - [D1 recovery](https://developers.cloudflare.com/d1/reference/time-travel/)
 - [Expo SDK 57](https://docs.expo.dev/versions/v57.0.0/)
 - [Expo notifications](https://docs.expo.dev/versions/v57.0.0/sdk/notifications/)
+
+## Automatic observation rollout
+
+See [OBSERVATION_MODEL.md](OBSERVATION_MODEL.md). Deploy the web export including `public/observation` assets before a new Android build. Test JPEG, a short MP4 with speech, WAV, silence, missing-person cases, clearing observations and consent revocation on an actual Android device. Native media analysis loads from `EXPO_PUBLIC_API_URL`; the first installation needs connectivity, then the downloaded package supports offline use. See [OFFLINE_MODELS.md](OFFLINE_MODELS.md) for admin release and explicit user sync instructions.

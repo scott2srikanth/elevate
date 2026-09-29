@@ -112,7 +112,12 @@ async function handle(request: Request, env: Env): Promise<Response> {
   const content = await contentRoute(request, env, () => userFor(request, env));
   if (content) return content;
   if (path === "/api/health")
-    return json({ ok: true, ai: false, coaching: "manual-chatgpt-json" });
+    return json({
+      ok: true,
+      ai: false,
+      coaching: "on-device-elevate-one",
+      modelVersion: "0.1.0",
+    });
   if (path.startsWith("/api/auth/") && method === "POST") {
     await limit(
       env,
@@ -356,7 +361,7 @@ async function handle(request: Request, env: Env): Promise<Response> {
   if ((path === "/api/coach" || path === "/api/analyze") && method === "POST") {
     throw new HttpError(
       410,
-      "Use the coaching studio JSON exchange with ChatGPT. Automated AI processing has been removed.",
+      "Use AI Coach in the app. Decisions are computed on-device; this server does not process media or run model inference.",
     );
   }
   throw new HttpError(404, "API route not found.");

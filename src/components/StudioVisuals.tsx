@@ -201,7 +201,7 @@ export function AnalysisView({ analysis }: { analysis: CoachingAnalysis }) {
   return (
     <View style={{ gap: 12 }}>
       <View style={[k.card, { backgroundColor: "#E9F0E1" }]}>
-        <Text style={v.tag}>YOUR IMPORTED CHATGPT ANALYSIS</Text>
+        <Text style={v.tag}>YOUR COACHING ANALYSIS</Text>
         <Text raw accessibilityRole="header" style={k.title}>
           {analysis.title}
         </Text>
@@ -241,7 +241,7 @@ export function AnalysisView({ analysis }: { analysis: CoachingAnalysis }) {
       ))}
       {!analysis.charts.length && (
         <Text style={k.muted}>
-          No numerical chart was supplied. Your guidance can still be useful
+          No numerical chart is available yet. Your guidance can still be useful
           without a score.
         </Text>
       )}
@@ -249,7 +249,7 @@ export function AnalysisView({ analysis }: { analysis: CoachingAnalysis }) {
         See it. Try it. Make it yours.
       </Text>
       <Text style={k.muted}>
-        Illustrative examples selected by ChatGPT. These are teaching images,
+        Illustrative coaching examples. These are teaching images,
         not observations of you.
       </Text>
       <View style={v.columns}>

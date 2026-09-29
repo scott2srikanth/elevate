@@ -1,5 +1,4 @@
 import { localAccount } from "./fixtures/localAccount";
-import { exampleAnalysis } from "./fixtures/analysis";
 import { test, expect } from "@playwright/test";
 test("cloud account backs up coaching and restores it on a second device", async ({
   page,
@@ -37,6 +36,10 @@ test("cloud account backs up coaching and restores it on a second device", async
     page.getByText("Connected. Changes save automatically to D1."),
   ).toBeVisible();
   await page.getByRole("button", { name: "Coach", exact: true }).click();
+  await page.getByRole("button", { name: "More coaching tools", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Weekly review", exact: true })
+    .click();
   await page
     .getByRole("textbox", { name: "One win this week" })
     .fill("I introduced myself clearly.");
@@ -52,19 +55,24 @@ test("cloud account backs up coaching and restores it on a second device", async
       "Review saved. Your chosen focus will guide your next practices.",
     ),
   ).toBeVisible();
-  await page.getByRole("button", { name: "My coach", exact: true }).click();
+  await page.getByRole("button", { name: "Coach memory", exact: true }).click();
   await page
     .getByRole("textbox", { name: "A useful fact or preference" })
     .fill("I prefer short, seated exercises.");
   await page.getByRole("button", { name: "Save to coach memory" }).click();
+  await page.getByRole("button", { name: "Overview", exact: true }).click();
   await page
-    .getByRole("textbox", { name: "Paste ChatGPT response JSON" })
-    .fill(JSON.stringify(exampleAnalysis("coach")));
-  await page
-    .getByRole("button", { name: "Preview analysis", exact: true })
+    .getByRole("checkbox", {
+      name: "Use my reflections and self-checks with on-device AI Coach",
+    })
     .click();
+  await page.getByRole("button", { name: "Self-check", exact: true }).click();
   await page
-    .getByRole("button", { name: "Save analysis to my history" })
+    .getByRole("button", { name: "Observation quality: 5/5", exact: true })
+    .click();
+  await page.getByRole("button", { name: "Overview", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Save coaching plan", exact: true })
     .click();
 
   await page.getByRole("button", { name: "Profile", exact: true }).click();
@@ -95,37 +103,32 @@ test("cloud account backs up coaching and restores it on a second device", async
   await other.getByRole("button", { name: "Confirm sync direction" }).click();
   await expect(other.getByText("Morgan", { exact: true })).toBeVisible();
   await other.getByRole("button", { name: "Coach", exact: true }).click();
+  await other.getByRole("button", { name: "More coaching tools", exact: true }).click();
+  await other
+    .getByRole("button", { name: "Weekly review", exact: true })
+    .click();
   await expect(
     other.getByText("Win: I introduced myself clearly."),
   ).toBeVisible();
-  await other.getByRole("button", { name: "My coach", exact: true }).click();
+  await other.getByRole("button", { name: "Coach memory", exact: true }).click();
   await expect(
     other.getByText("I prefer short, seated exercises.", { exact: true }),
   ).toBeVisible();
-  await other
-    .getByRole("textbox", { name: "What would you like help with?" })
-    .fill("Help me speak with clarity.");
-  await other
-    .getByRole("button", { name: "Generate JSON for ChatGPT" })
-    .click();
-  const packet = JSON.parse(
-    await other
-      .getByRole("textbox", { name: "JSON to paste into ChatGPT" })
-      .inputValue(),
-  );
-  expect(packet.kind).toBe("coach");
-  expect(packet.context.previousAnalysis[0].summary).toBe(
-    exampleAnalysis("coach").summary,
-  );
+  await other.getByRole("button", { name: "Overview", exact: true }).click();
+  await expect(other.getByText(/Last saved/)).toBeVisible();
+  await other.getByRole("button", { name: "Coach settings", exact: true }).click();
   await expect(
-    other.getByText("Make space for your next sentence", { exact: true }),
-  ).toBeVisible();
-  expect(packet.context.approvedMemories).toContain(
-    "I prefer short, seated exercises.",
-  );
-  await other
-    .getByRole("button", { name: "More coaching tools", exact: true })
-    .click();
+    other.getByRole("checkbox", {
+      name: "Use my reflections and self-checks with on-device AI Coach",
+    }),
+  ).toHaveAttribute("aria-checked", "true");
+  await other.getByRole("button", { name: "Self-check", exact: true }).click();
+  await expect(
+    other.getByRole("button", {
+      name: "Observation quality: 5/5",
+      exact: true,
+    }),
+  ).toHaveAttribute("aria-pressed", "true");
   await other.getByRole("button", { name: "Dining", exact: true }).click();
   await other
     .getByRole("button", { name: "Look to the host and wait for a cue" })

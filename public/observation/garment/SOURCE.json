@@ -1,0 +1,10 @@
+{
+  "repository": "ff13/fashion-clip",
+  "revision": "0f99955d944c39bfd9d035a02ac273c7a44a406b",
+  "source_sha256": {
+    "vision.onnx": "c6d61df38ae56329347400dc42a285a4233d0c681744fb37f52129b5fe248952",
+    "text.onnx": "f475dd7a30bdebf09ba2efc06a3928f0a327179fbcfb30149685d1b5f66b1852",
+    "tokenizer.json": "f7f3b7af117d467b58374797691a6438d3e6b9e9cef800dfd5dced7f697a90cd",
+    "preprocessor_config.json": "6f638fb9401a6d6296feff533ee7efe657b787c49f954f82f5906b36ef2a1b1f"
+  }
+}

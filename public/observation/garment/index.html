@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en" data-offline-page="garment/index.html">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Garment One · On-device wardrobe</title>
+    <link rel="stylesheet" href="../style.css" />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <header>
+      <span class="eyebrow">GARMENT ONE · ON YOUR DEVICE</span>
+      <h1>Turn a photo into a wardrobe piece.</h1>
+      <p>
+        Use one item, centred on a plain background. Review its suggested type
+        and colour before adding it.
+      </p>
+    </header>
+    <section aria-label="Offline garment models">
+      <p id="offline-status" role="status">Checking offline readiness…</p>
+      <details id="offline-settings" open>
+        <summary>Downloads & updates</summary>
+        <button id="offline-download" disabled>Download for offline use</button
+        ><button id="offline-check" disabled>Check for model updates</button>
+        <p>
+          One-time package: approximately 140 MB including coaching models and
+          the web app. Updates install only when you sync. Clearing device
+          storage removes downloads.
+        </p>
+      </details>
+    </section>
+    <label class="consent"
+      ><input id="consent" type="checkbox" disabled /> Analyse this garment on
+      my device</label
+    >
+    <label for="file" class="file-label">Choose a garment photo</label
+    ><input
+      id="file"
+      type="file"
+      accept="image/jpeg,image/png,image/webp"
+      disabled
+    />
+    <p class="hint">JPEG, PNG or WebP · up to 12 MB · one garment per photo</p>
+    <p id="status" role="status">
+      Your photo is never uploaded or saved. Only the details you confirm enter
+      your wardrobe.
+    </p>
+    <img id="preview" alt="Selected garment, used only on this device" hidden />
+    <form id="review" hidden>
+      <h2>Review your piece</h2>
+      <p id="prediction"></p>
+      <p class="hint">
+        Model scores are relative suggestions, not validated accuracy. Correct
+        anything that looks wrong.
+      </p>
+      <label for="piece-name">Piece name</label
+      ><input id="piece-name" maxlength="100" required />
+      <label for="category">Category</label
+      ><select id="category" required>
+        <option value="">Choose a category</option>
+        <option>Tops</option>
+        <option>Bottoms</option>
+        <option>Dresses</option>
+        <option>Shoes</option>
+        <option>Layers</option>
+        <option>Accessories</option>
+      </select>
+      <label for="color">Colour</label
+      ><input id="color" maxlength="40" required list="colors" /><datalist
+        id="colors"
+      >
+        <option>Black</option>
+        <option>White</option>
+        <option>Grey</option>
+        <option>Navy</option>
+        <option>Blue</option>
+        <option>Brown</option>
+        <option>Beige</option>
+        <option>Red</option>
+        <option>Pink</option>
+        <option>Green</option>
+        <option>Purple</option>
+        <option>Yellow</option>
+        <option>Orange</option>
+        <option>Multicolour</option>
+      </datalist>
+      <label for="formality">When would you wear it?</label
+      ><select id="formality">
+        <option value="Any">Not sure / any occasion</option>
+        <option value="Casual">Casual</option>
+        <option value="Smart">Smart casual / work</option>
+        <option value="Formal">Formal</option>
+      </select>
+      <label class="consent"
+        ><input id="confirmed" type="checkbox" required /> I have checked these
+        details</label
+      >
+      <button id="save" type="submit">Add reviewed piece</button>
+    </form>
+    <details class="help">
+      <summary>How this works</summary>
+      <p>
+        A quantized FashionCLIP vision encoder and a small fixed garment
+        classifier run here. Colour is estimated from visible pixels. This is an
+        experimental integration; it is not trained on your wardrobe. It cannot
+        establish size, fit, fabric, condition, authenticity or personal
+        attractiveness. Full-body photos and complex backgrounds may give poor
+        results. Uncertain categories require your choice.
+      </p>
+      <p>
+        Saved details follow your existing account sync settings; the image
+        stays in memory and is discarded after adding or leaving. No sign-in is
+        needed for analysis.
+      </p>
+    </details>
+    <script type="module" src="../offline.mjs"></script>
+    <script src="../vendor/ort/dist/ort.wasm.min.js"></script>
+    <script type="module" src="./runtime.mjs"></script>
+  </body>
+</html>

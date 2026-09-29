@@ -50,6 +50,12 @@
       ],
       "expo-video"
     ],
-    "scheme": "elevate"
+    "scheme": "elevate",
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "3c4266da-0f2d-49a8-8690-1fea677f0071"
+      }
+    }
   }
 }

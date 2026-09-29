@@ -322,9 +322,11 @@ export function Preferences({
         build.
       </Text>
       <Text style={k.muted}>
-        Studio analysis uses a manual JSON exchange with ChatGPT. Elevate does
-        not upload studio photos or voice recordings. Optional wardrobe photos
-        are stored privately for 30 days and can be deleted in My style.
+        AI Coach uses saved practice history and optional self-checks on this
+        device. Elevate does not upload studio photos or voice recordings.
+        Garment photos are analysed on-device and discarded after review.
+        Only confirmed wardrobe details follow account sync. Older uploaded
+        photos can be managed in My style.
       </Text>
       {!!message && (
         <Text accessibilityRole="alert" style={k.message}>

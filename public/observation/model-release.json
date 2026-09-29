@@ -1,0 +1,187 @@
+{
+  "protocol": 1,
+  "id": "a65af6508f895bc9ced6ac4259e43753464d9e23fb40068ea1d4ba6ae2d81bed",
+  "version": "0.2.0",
+  "files": [
+    {
+      "path": "/observation/garment/LICENSE",
+      "bytes": 1074,
+      "sha256": "ada47201a05366f1c123767daea5e2f6ca92e9394b285ac60f1ef4d4728f3f81"
+    },
+    {
+      "path": "/observation/garment/SOURCE.json",
+      "bytes": 485,
+      "sha256": "e19001a3e4a0f7a1842a5bcc4683df0618c3c7a3b7ebdb8dd79d243cac50e039"
+    },
+    {
+      "path": "/observation/garment/engine.mjs",
+      "bytes": 3003,
+      "sha256": "13928469fcb9efe03815ead1f0bb1e33b9a133e9a2d283c7a5588b1666213cde"
+    },
+    {
+      "path": "/observation/garment/index.html",
+      "bytes": 4664,
+      "sha256": "013462eaaf090d7fca1fab07df6064c352840bca83e5d2fe70c8bd5dfb56fc04"
+    },
+    {
+      "path": "/observation/garment/model.json",
+      "bytes": 154657,
+      "sha256": "53f1246768592703881c3b950815678e3ec6d2ca763521637faf8d48d1ce3440"
+    },
+    {
+      "path": "/observation/garment/runtime.mjs",
+      "bytes": 7821,
+      "sha256": "3e1185d5cfdcfc873abb30d27564d513981b91c49d38ed7cfd348afd5ccf5cdd"
+    },
+    {
+      "path": "/observation/garment/style.css",
+      "bytes": 771,
+      "sha256": "bdc8010d4dd197597876dc8d07556e8438321bfd79981b24e7c3584b845e288e"
+    },
+    {
+      "path": "/observation/garment/vision-0.bin",
+      "bytes": 20000000,
+      "sha256": "ae54234d09a570cad469fe1e854dc9afcaf1de2d715683ecd1c53e806cdc22fb"
+    },
+    {
+      "path": "/observation/garment/vision-1.bin",
+      "bytes": 20000000,
+      "sha256": "0d8d31040cb484cbc7937aecfefe83a752e0419ab474107eb3958bc7b282feae"
+    },
+    {
+      "path": "/observation/garment/vision-2.bin",
+      "bytes": 20000000,
+      "sha256": "c8b02412ebea61517e00227346954fe067da4e6c2a891b5508f33e9643d576a5"
+    },
+    {
+      "path": "/observation/garment/vision-3.bin",
+      "bytes": 20000000,
+      "sha256": "d8267e595b14d60204a56a38dffc00b98e21f0d4841c92b043f73cb80028f3fb"
+    },
+    {
+      "path": "/observation/garment/vision-4.bin",
+      "bytes": 9117653,
+      "sha256": "d58f9ee141d5fc27c23e5ff7f9c5c602e1233892f01a52d6c88a522e483d1f09"
+    },
+    {
+      "path": "/observation/index.html",
+      "bytes": 2619,
+      "sha256": "4d538935f5fd38a651ec1b0c83283cd678384dfd10c3fe4ff7f0cf7d705b9a0b"
+    },
+    {
+      "path": "/observation/offline.mjs",
+      "bytes": 4719,
+      "sha256": "18b053f784bc15e2a5383a158db2364d00146f459ee9935d9df342c8a316e3f1"
+    },
+    {
+      "path": "/observation/runtime.mjs",
+      "bytes": 10779,
+      "sha256": "d774c3542d1cfa1b3cb80105a1c6e8471ad32bc7444e44b244cf6de5c3feb4fe"
+    },
+    {
+      "path": "/observation/signals.mjs",
+      "bytes": 2233,
+      "sha256": "af8c50880bc0d88beda902354247449b434765327a7496bc91566dfefaa3d501"
+    },
+    {
+      "path": "/observation/style.css",
+      "bytes": 2786,
+      "sha256": "f6715c7fa72793c7f834e9a5a7054aac0f4d36fc6e20242007ba6255a14a4ef8"
+    },
+    {
+      "path": "/observation/vendor/SILERO_LICENSE",
+      "bytes": 1075,
+      "sha256": "2e63e9a38b6e8fc0c7bc37ce174caca1862870856c6daf5697cfb785e925520b"
+    },
+    {
+      "path": "/observation/vendor/ort/LICENSE",
+      "bytes": 1073,
+      "sha256": "2f07c72751aed99790b8a4869cf2311df85a860b22ded05fa22803587a48922c"
+    },
+    {
+      "path": "/observation/vendor/ort/dist/ort-wasm-simd-threaded.mjs",
+      "bytes": 20856,
+      "sha256": "30dd851d9c00622940500f71ddd2ff8820c5cb65270816080175b958705385a8"
+    },
+    {
+      "path": "/observation/vendor/ort/dist/ort-wasm-simd-threaded.wasm",
+      "bytes": 11210254,
+      "sha256": "71aef04959c5c1b6de461b6538e2058e306610034a85aad2742d0c7fd4533fe4"
+    },
+    {
+      "path": "/observation/vendor/ort/dist/ort.wasm.min.js",
+      "bytes": 48327,
+      "sha256": "65e09376df69107e881b5c34d2d37aed333a366b6d941073ec518168e269b87d"
+    },
+    {
+      "path": "/observation/vendor/ort/package.json",
+      "bytes": 3638,
+      "sha256": "6161720a4479e5bcf3457092c96a59466123f2b5830f3e60193dbc50ed1f3040"
+    },
+    {
+      "path": "/observation/vendor/pose_landmarker_lite.task",
+      "bytes": 5777746,
+      "sha256": "59929e1d1ee95287735ddd833b19cf4ac46d29bc7afddbbf6753c459690d574a"
+    },
+    {
+      "path": "/observation/vendor/vad/LICENSE",
+      "bytes": 1896,
+      "sha256": "239ebca4207803d3507124517c0dd6324c0d5cf73e1c486ade16bac1788f4a79"
+    },
+    {
+      "path": "/observation/vendor/vad/dist/bundle.min.js",
+      "bytes": 69143,
+      "sha256": "206cf2ca0bacee64f115eba1769e33ce68bd979c9b53be31e6e0ec0edbab9ff8"
+    },
+    {
+      "path": "/observation/vendor/vad/dist/bundle.min.js.LICENSE.txt",
+      "bytes": 132,
+      "sha256": "85d829adcdee0fe0a5caa95c238f9e4d49758f2b222944171f5d2e8f926e01b4"
+    },
+    {
+      "path": "/observation/vendor/vad/dist/silero_vad_legacy.onnx",
+      "bytes": 1807522,
+      "sha256": "a35ebf52fd3ce5f1469b2a36158dba761bc47b973ea3382b3186ca15b1f5af28"
+    },
+    {
+      "path": "/observation/vendor/vad/package.json",
+      "bytes": 1085,
+      "sha256": "e786ffbf2c81c5ea71accae690d899600dafa578a1cb98387990e7c4505f4b87"
+    },
+    {
+      "path": "/observation/vendor/vision/LICENSE",
+      "bytes": 12331,
+      "sha256": "8707eef0533987efc5b155d64761eeb6e20793f50b9bd1a68dad1cf4719d0ed8"
+    },
+    {
+      "path": "/observation/vendor/vision/package.json",
+      "bytes": 604,
+      "sha256": "30be811f5a26203a2cdcb38db2b06d1d37762d348ae804e1fc2322ec21a4adfd"
+    },
+    {
+      "path": "/observation/vendor/vision/vision_bundle.mjs",
+      "bytes": 137809,
+      "sha256": "3252b10e0fd26c4095e4b6ee545c1c898120b3a3813388ecd4876abe6f1399a9"
+    },
+    {
+      "path": "/observation/vendor/vision/wasm/vision_wasm_internal.js",
+      "bytes": 204284,
+      "sha256": "4a97e2520ba506c680ecd6ba6acfb146888afa0e2746d57f205352bc6ebb82eb"
+    },
+    {
+      "path": "/observation/vendor/vision/wasm/vision_wasm_internal.wasm",
+      "bytes": 9574032,
+      "sha256": "f00ec4731faa23b3e714d00e88d4d10e2df5c0a427d3a2b4ae6e3526fdd14ef7"
+    },
+    {
+      "path": "/observation/vendor/vision/wasm/vision_wasm_nosimd_internal.js",
+      "bytes": 204137,
+      "sha256": "927def7b465c51b86e4b3060f93646aca4e27121f4b8fc0483786e407ea9cf1f"
+    },
+    {
+      "path": "/observation/vendor/vision/wasm/vision_wasm_nosimd_internal.wasm",
+      "bytes": 9448638,
+      "sha256": "3821ea9b1f7fb8c549ef2a064ef5c85750bf375c545a49fd6eea0df44a95f1f4"
+    }
+  ]
+}

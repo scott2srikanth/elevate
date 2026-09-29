@@ -3,6 +3,6 @@ const expo = require("eslint-config-expo/flat");
 module.exports = defineConfig([
   expo,
   {
-    ignores: ["dist/**", "dist-android/**", ".wrangler/**", "test-results/**"],
+    ignores: ["public/observation/vendor/**", "dist/**", "dist-android/**", ".wrangler/**", "test-results/**"],
   },
 ]);

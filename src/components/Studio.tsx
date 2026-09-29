@@ -1,12 +1,11 @@
 import { Image, Text } from "../i18n";
 import React, { useEffect, useState } from "react";
-import { Platform, View } from "react-native";
-import * as ImagePicker from "expo-image-picker";
+import { View } from "react-native";
 import { State } from "../coach";
-import { api, privateMediaUri, uploadMedia } from "../api";
+import { api, privateMediaUri } from "../api";
 import { Cloud } from "../useCloud";
-import { compressImage } from "../mediaTools";
-import { Action, Choice, Consent, Input, k } from "./kit";
+import { GarmentAnalysis } from "./GarmentAnalysis";
+import { Action, Input, k } from "./kit";
 import { AnalysisView } from "./StudioVisuals";
 const id = () => `${Date.now()}-${Math.random().toString(36).slice(2)}`;
 type Update = React.Dispatch<React.SetStateAction<State>>;
@@ -24,7 +23,9 @@ export function CoachMemory({
         <Text style={k.title}>What your coach should remember</Text>
         <Text style={k.muted}>
           You choose the facts that persist. Add preferences, accessibility
-          needs, goals, or lessons you want carried forward.
+          needs, goals, or lessons to keep as reference. The local decision
+          model uses your structured profile and self-checks; it does not
+          interpret these free-text notes.
         </Text>
         <Input
           label="A useful fact or preference"
@@ -102,166 +103,70 @@ export function MediaStudio({
   cloud: Cloud;
   wardrobe?: boolean;
 }) {
-  const [uri, setUri] = useState("");
-  const [pieceName, setPieceName] = useState("");
-  const [color, setColor] = useState("");
-  const [category, setCategory] = useState("Tops");
-  const [consent, setConsent] = useState(false);
-  const [busy, setBusy] = useState(false);
-  const [message, setMessage] = useState("");
+  const [show, setShow] = useState(false);
   const [media, setMedia] = useState<
     { id: string; purpose: string; expires_at: number }[]
   >([]);
-  async function run(fn: () => Promise<void>) {
-    setBusy(true);
-    setMessage("");
-    try {
-      await fn();
-    } catch (e) {
-      setMessage(e instanceof Error ? e.message : "Unable to save your photo.");
-    } finally {
-      setBusy(false);
-    }
-  }
-  async function pick(camera = false) {
-    if (camera && !(await ImagePicker.requestCameraPermissionsAsync()).granted)
-      throw new Error("Camera permission was not granted.");
-    const options: ImagePicker.ImagePickerOptions = {
-      mediaTypes: ["images"],
-      quality: 0.8,
-    };
-    const result = camera
-      ? await ImagePicker.launchCameraAsync(options)
-      : await ImagePicker.launchImageLibraryAsync(options);
-    if (!result.canceled) setUri(await compressImage(result.assets[0].uri));
-  }
+  const [message, setMessage] = useState("");
   return (
     <View style={k.card}>
-      <Text style={k.title}>Photograph a wardrobe piece</Text>
-      <Text style={k.body}>
-        Keep an optional private wardrobe photo. This is storage only; photos
-        are never sent to an AI service by Elevate.
-      </Text>
-      <View style={k.row}>
+      <GarmentAnalysis
+        onResult={(garment) =>
+          update((s) =>
+            s.wardrobe.some((g) => g.id === garment.id)
+              ? s
+              : { ...s, wardrobe: [...s.wardrobe, garment] },
+          )
+        }
+      />
+      {cloud.user && (
         <Action
-          title="Choose photo"
-          disabled={busy}
-          onPress={() => void run(() => pick())}
-        />
-        {Platform.OS !== "web" && (
-          <Action
-            title="Use camera"
-            disabled={busy}
-            secondary
-            onPress={() => void run(() => pick(true))}
-          />
-        )}
-      </View>
-      {!!uri && (
-        <Image
-          accessibilityLabel="Selected wardrobe photo"
-          source={{ uri }}
-          style={{ width: 150, height: 180, borderRadius: 12 }}
-        />
-      )}
-      <Input
-        label="Photographed piece name"
-        value={pieceName}
-        onChange={setPieceName}
-      />
-      <Input
-        label="Photographed piece color"
-        value={color}
-        onChange={setColor}
-      />
-      <View style={k.row}>
-        {["Tops", "Bottoms", "Shoes", "Layers", "Accessories"].map((c) => (
-          <Choice
-            key={c}
-            title={c}
-            selected={c === category}
-            onPress={() => setCategory(c)}
-          />
-        ))}
-      </View>
-      <Consent
-        label="I consent to storing this wardrobe photo privately in R2 for 30 days"
-        value={consent}
-        onChange={setConsent}
-      />
-      <Action
-        title="Save photo & wardrobe piece"
-        disabled={
-          busy ||
-          !cloud.user ||
-          !uri ||
-          !consent ||
-          !pieceName.trim() ||
-          !color.trim()
-        }
-        onPress={() =>
-          void run(async () => {
-            const uploaded = await uploadMedia(
-              uri,
-              "image/jpeg",
-              "wardrobe",
-              30,
-            );
-            update((s) => ({
-              ...s,
-              wardrobe: [
-                ...s.wardrobe,
-                {
-                  id: id(),
-                  name: pieceName.trim(),
-                  category,
-                  color: color.trim(),
-                  mediaId: uploaded.id,
-                },
-              ],
-            }));
-            setUri("");
-            setPieceName("");
-            setMessage(
-              "Wardrobe piece saved. Its private photo expires after 30 days.",
-            );
-          })
-        }
-      />
-      {!cloud.user && (
-        <Text style={k.muted}>
-          Sign in under Profile to enable optional photo storage.
-        </Text>
-      )}
-      <Text style={k.muted}>
-        Photos expire after 30 days. Refresh to manage stored files, including
-        older analysis uploads.
-      </Text>
-      <Action
-        title="Refresh uploaded media"
-        secondary
-        disabled={busy || !cloud.user}
-        onPress={() => void run(async () => setMedia(await api("/media")))}
-      />
-      {media.map((m) => (
-        <View key={m.id} style={{ gap: 8 }}>
-          <Text style={k.body}>
-            {m.purpose} · Expires{" "}
-            {new Date(m.expires_at * 1000).toLocaleDateString()}
-          </Text>
-          <Action
-            title={`Delete upload ${m.id.slice(0, 8)}`}
-            secondary
-            disabled={busy}
-            onPress={() =>
-              void run(async () => {
-                await api(`/media/${m.id}`, { method: "DELETE" });
+          title="Manage older cloud photos"
+          secondary
+          onPress={async () => {
+            setShow(!show);
+            if (!show)
+              try {
                 setMedia(await api("/media"));
-              })
-            }
-          />
-        </View>
-      ))}
+              } catch {
+                setMessage(
+                  "Unable to load older photos. Try again when connected.",
+                );
+              }
+          }}
+        />
+      )}
+      {show && (
+        <>
+          <Text style={k.muted}>
+            These files were uploaded using the previous photo-storage feature.
+            New garment photos are never uploaded. You can remove older uploads
+            here.
+          </Text>
+          {media.map((m) => (
+            <View key={m.id}>
+              <Text style={k.body}>
+                {m.purpose} · Expires{" "}
+                {new Date(m.expires_at * 1000).toLocaleDateString()}
+              </Text>
+              <Action
+                title={`Delete upload ${m.id.slice(0, 8)}`}
+                secondary
+                onPress={async () => {
+                  try {
+                    await api(`/media/${m.id}`, { method: "DELETE" });
+                    setMedia(await api("/media"));
+                  } catch {
+                    setMessage(
+                      "Unable to delete this older upload. Try again when connected.",
+                    );
+                  }
+                }}
+              />
+            </View>
+          ))}
+        </>
+      )}
       {!!message && (
         <Text accessibilityRole="alert" style={k.message}>
           {message}

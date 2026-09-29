@@ -62,13 +62,14 @@ export default function WelcomeVideo({
       <VideoView
         player={player}
         nativeControls={false}
-        contentFit="cover"
+        contentFit="contain"
         surfaceType="textureView"
         style={{
           position: "absolute",
           top: 0,
-          left: 0,
-          width,
+          // The bundled 960 × 540 video scales only with screen height.
+          left: (width - height * (16 / 9)) / 2,
+          width: height * (16 / 9),
           height,
           opacity: visible ? 1 : 0,
         }}

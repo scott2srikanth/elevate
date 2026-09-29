@@ -54,6 +54,7 @@ test("D1 account isolation, sync conflicts, private media, export, recovery, and
   assert.equal((await request("/state")).status, 401);
   const s = {
     ...initialState(),
+    aiCoach: { consent: true, observations: { fit: { value: 0.75, at: new Date().toISOString() } } },
     memories: [
       {
         id: "m",
@@ -88,6 +89,7 @@ test("D1 account isolation, sync conflicts, private media, export, recovery, and
   };
   assert.equal(own.state.memories[0].text, "I prefer concise practice.");
   assert.equal(own.revision, 1);
+  assert.deepEqual(own.state.aiCoach, s.aiCoach);
   const theirs = (await (
     await request("/state", { cookie: other })
   ).json()) as { state: typeof s };

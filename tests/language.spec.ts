@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
-test("Telugu onboarding, coaching, export language and profile language persist", async ({
+test("Telugu onboarding, AI Coach navigation and profile language persist", async ({
   page,
 }) => {
   const errors: string[] = [];
@@ -24,7 +24,7 @@ test("Telugu onboarding, coaching, export language and profile language persist"
   await page.getByRole("button", { name: "నా ప్రయాణం ప్రారంభించండి" }).click();
   await expect(page.getByText("అనన్య, మీ కొత్త ప్రయాణం.")).toBeVisible();
   await page.reload();
-  await page.getByRole("button", { name: "Continue", exact: true }).click();
+  await page.getByRole("button", { name: "కొనసాగించండి", exact: true }).click();
   await expect(page.getByText("అనన్య, మీ కొత్త ప్రయాణం.")).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Begin my journey" }),
@@ -39,20 +39,15 @@ test("Telugu onboarding, coaching, export language and profile language persist"
   ).toBeVisible();
   await page.getByRole("button", { name: "మూసివేయండి" }).click();
   await page.getByRole("button", { name: "కోచ్", exact: true }).click();
-  await page.getByRole("button", { name: "నా కోచ్", exact: true }).click();
-  await page
-    .getByRole("textbox", { name: "మీకు ఏ విషయంలో సహాయం కావాలి?" })
-    .fill("నా పరిచయం మెరుగుపరచాలి");
-  await page
-    .getByRole("button", { name: "ChatGPT కోసం JSON రూపొందించండి" })
-    .click();
-  const packet = JSON.parse(
-    await page
-      .getByRole("textbox", { name: "ChatGPTలో పేస్ట్ చేయాల్సిన JSON" })
-      .inputValue(),
-  );
-  expect(packet.responseLanguage).toBe("Telugu (తెలుగు)");
-  expect(packet.question).toBe("నా పరిచయం మెరుగుపరచాలి");
+  await expect(
+    page.getByRole("button", {
+      name: "అవలోకనం",
+      exact: true,
+    }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Generate JSON for ChatGPT" }),
+  ).toHaveCount(0);
   await page.getByRole("button", { name: "ప్రొఫైల్", exact: true }).click();
   await page.getByRole("button", { name: "English", exact: true }).click();
   await expect(page.getByText("Always, authentically you.")).toBeVisible();

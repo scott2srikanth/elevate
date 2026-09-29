@@ -121,16 +121,19 @@ export function Input({
 }
 export function Choice({
   title,
+  accessibilityLabel,
   selected,
   onPress,
 }: {
   title: string;
+  accessibilityLabel?: string;
   selected: boolean;
   onPress: () => void;
 }) {
   return (
     <Pressable
       accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel || title}
       accessibilityState={{ selected }}
       aria-pressed={selected}
       onPress={onPress}
